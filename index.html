@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Kolorowe Kulki</title>
+	<link rel="stylesheet" type="text/css" href="normal.css" />
+	<script type="text/javascript" src="GraKolory.js"></script>
+</head>
+<body onload="InitGame()">
+	<div id="container">
+        <form>
+            <div id="header"><h1>Kolorowe Kulki</h1></div>
+            <div id="board">
+                <div id="boardArea">
+                </div>
+                <label for="boardDimensionId">Wybierz rozmiar planszy:</label>
+                <select name="boardDimension" id="boardDimensionId">
+                    <option>12</option>
+                    <option selected="selected">16</option>
+                    <option>20</option>
+                </select>
+                <button onclick="InitGame();return false;">Nowa gra</button>
+            </div>
+            <div id="controlPanel">
+                <div id="maxScore">Najlepszy wynik: <span id="maxScoreValue">0</span></div>
+                <div id="totalScore">Punkty w grze: <span id="totalScoreValue">0</span></div>
+                <div id="score">Punkty za ruch: <span id="scoreValue">0</span></div>
+                <button id="btnEndGame" onclick="EndGame();return false;">Koniec gry</button>
+                <button id="btnUndo" disabled="disabled" onclick="UndoMove();return false;">Cofnij</button>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="footer">
+                &copy; 2009, Jarosław Wasilewski
+            </div>
+		</form>
+	</div>
+</body>
+</html>
