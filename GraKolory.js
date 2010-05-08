@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Kolorowe Kulki
  * @author Jarosław Wasilewski
  *
@@ -48,6 +48,35 @@ var selectedScore = 0;
 var maxScore = 0;
 
 /**
+ * Zapewnienie zgodności IE z innymi przeglądarkami
+ */
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function(elt /*, from*/) {
+    var len = this.length >>> 0;
+
+    var from = Number(arguments[1]) || 0;
+    from = (from < 0)
+         ? Math.ceil(from)
+         : Math.floor(from);
+    if (from < 0)
+      from += len;
+
+    for (; from < len; from++) {
+      if (from in this &&
+          this[from] === elt)
+        return from;
+    }
+    return -1;
+  };
+}
+
+if (!String.prototype.trim) {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g,"");
+	}
+}
+
+/**
  * Funkcja generuje planszę gry
  */
 function CreateBoard (size) {
@@ -70,8 +99,12 @@ function CreateBoard (size) {
 		}
 		boardTable.appendChild(row);
 	}
-	boardArea = document.getElementById("boardArea");
-	boardArea.appendChild(boardTable);
+	try {
+		document.getElementById("boardArea").appendChild(boardTable);
+	}
+	catch (e) {
+		alert(e.message);
+	}
 }
 
 /**
@@ -79,15 +112,20 @@ function CreateBoard (size) {
  * @param Event evn
  */
 function selectSimilarFields(evn) {
+
+	var evt=window.event || evn
+	if (!evt.target) { //if event obj doesn't support e.target, presume it does e.srcElement
+		evt.target=evt.srcElement; //extend obj with custom e.target prop
+	}
 	// krok 1: sprawdzenie czy nie klikamy na zaznaczony obszar - jesli tak to usuwamy go
-	selectedClassName = evn.target.getAttribute("class");
+	selectedClassName = evt.target.getAttribute("class").trim();
 
 	if (selectedClassName.indexOf("emptyField") !== -1) {
 		deselectFields();
 		return false;
 	}
 	else if (selectedClassName.indexOf("selected") !== -1 || selectedClassName.indexOf("emptyField") !== -1) {
-		removeSelected(evn.target, selectedClassName.slice(0,selectedClassName.indexOf(" ")));
+		removeSelected(evt.target, selectedClassName.slice(0,selectedClassName.indexOf(" ")));
  		if (isFinish()) {
 			alert("Koniec gry");
 			EndGame();
@@ -97,8 +135,8 @@ function selectSimilarFields(evn) {
 	else {
 		deselectFields();
 		// krok 3: zaznaczanie nowego miejsca
-		findSimilar(evn.target, selectedClassName, 0);
-		CountSelectedScore(evn.target);
+		findSimilar(evt.target, selectedClassName, 0);
+		CountSelectedScore(evt.target);
 	}
 	return true;
 }
@@ -179,7 +217,8 @@ function findSimilar(selElement, selClassName, licznik) {
 		}
 		var nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
 		if (nextSibling !== null && selectedFields.indexOf(nextSibling) == -1) {
-			if (nextSibling != undefined && nextSibling.getAttribute("class") == selClassName) {
+			nextSiblingClassName = nextSibling.getAttribute("class").trim();
+			if (nextSibling != undefined && (nextSiblingClassName == selClassName)) {
 				findSimilar(nextSibling, selClassName, 0);
 			}
 		}
@@ -341,6 +380,10 @@ function deselectFields () {
  * @return void
  */
 function InitGame() {
+  // ustalenie rozmiarów okna gadżetu
+  // document.body.style.width = "500px";
+  // document.body.style.height = "500px";
+
 	// odczyt rozmiaru planszy
 	control_boardDimension = document.getElementById("boardDimensionId");
 	totalScoreValue = 0;
@@ -349,6 +392,9 @@ function InitGame() {
 	CreateBoard(parseInt(control_boardDimension.options[control_boardDimension.selectedIndex].value));
 }
 
+/**
+ * Kończy grę.
+ */
 function EndGame() {
 	CountSelectedScore(null);
 	if (maxScore < totalScoreValue)
@@ -356,6 +402,20 @@ function EndGame() {
 	document.getElementById("maxScoreValue").innerHTML = maxScore;
 	document.getElementById("totalScoreValue").innerHTML = 0;
 	InitGame();
+}
+
+/**
+ * Odświeża planszę o wybranej z listy wielkości
+ */
+function changeBoardSize() {
+	if (totalScoreValue == 0 || confirm("Czy chcesz przerwać grę?")) {
+		InitGame();
+	}
+	else {
+		// przywrócenie poprzednio wybranej wielkości planszy
+		control_boardDimension = document.getElementById("boardDimensionId");
+		control_boardDimension.selectedIndex = boardSize == 12 ? 0 : boardSize == 16 ? 1 : 2;
+	}
 }
 
 /**

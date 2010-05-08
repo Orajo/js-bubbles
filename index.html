@@ -6,6 +6,7 @@
 	<title>Kolorowe Kulki</title>
 	<link rel="stylesheet" type="text/css" href="normal.css" />
 	<script type="text/javascript" src="GraKolory.js"></script>
+	<meta http-equiv='cache-control' content='no-cache'>
 </head>
 <body onload="InitGame()">
 	<div id="container">
@@ -15,10 +16,10 @@
                 <div id="boardArea">
                 </div>
                 <label for="boardDimensionId">Wybierz rozmiar planszy:</label>
-                <select name="boardDimension" id="boardDimensionId">
-                    <option>12</option>
-                    <option selected="selected">16</option>
-                    <option>20</option>
+                <select name="boardDimension" id="boardDimensionId" onchange="changeBoardSize();">
+                    <option value="12">12</option>
+                    <option value="16" selected="selected">16</option>
+                    <option value="20">20</option>
                 </select>
                 <button onclick="InitGame();return false;">Nowa gra</button>
             </div>
@@ -31,7 +32,7 @@
             </div>
             <div style="clear: both;"></div>
             <div id="footer">
-                &copy; 2009, Jarosław Wasilewski
+                &copy; 2009 - 2010, Jarosław Wasilewski
             </div>
 		</form>
 	</div>
