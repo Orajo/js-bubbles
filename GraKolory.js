@@ -70,20 +70,14 @@ if (!Array.prototype.indexOf) {
   };
 }
 
-if (!String.prototype.trim) {
-	String.prototype.trim = function() {
-		return this.replace(/^\s+|\s+$/g,"");
-	}
-}
-
 /**
  * Funkcja generuje planszę gry
  */
 function CreateBoard (size) {
 	boardSize = size;
-	if (oldBoardTable = document.getElementById("boardTable")) {
-		document.getElementById("boardArea").removeChild(oldBoardTable);
-	}
+	// czyszczenie planszy
+	$("#boardArea").empty();
+
 	boardTable = document.createElement("table");
 	boardTable.setAttribute("id", "boardTable");
 	for(i = 0; i < size; i++) {
@@ -113,12 +107,14 @@ function CreateBoard (size) {
  */
 function selectSimilarFields(evn) {
 
+	// obejście braku Event.target w IE
 	var evt=window.event || evn
 	if (!evt.target) { //if event obj doesn't support e.target, presume it does e.srcElement
 		evt.target=evt.srcElement; //extend obj with custom e.target prop
 	}
+	
 	// krok 1: sprawdzenie czy nie klikamy na zaznaczony obszar - jesli tak to usuwamy go
-	selectedClassName = evt.target.getAttribute("class").trim();
+	selectedClassName = jQuery.trim(evt.target.getAttribute("class"));
 
 	if (selectedClassName.indexOf("emptyField") !== -1) {
 		deselectFields();
@@ -136,7 +132,7 @@ function selectSimilarFields(evn) {
 		deselectFields();
 		// krok 3: zaznaczanie nowego miejsca
 		findSimilar(evt.target, selectedClassName, 0);
-		CountSelectedScore(evt.target);
+		CountSelectedScore(false);
 	}
 	return true;
 }
@@ -145,21 +141,58 @@ function selectSimilarFields(evn) {
  * Ustawia bieżące zaznaczenie oraz oblicza ilość punktów tego zaznaczenia
  * Punkty są naliczane jako SUMA(i*2), gdzie i to numer zaznaczonego elemetu zaczynając od 0
  *
- * @param Element fld
+ * @param bool reset Wskazuje czy wyczyścić punktację ruchu
  * @return void
  */
-function CountSelectedScore(fld) {
-	if (fld !== null && selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
-		selectedScore = 0;
+function CountSelectedScore(reset) {
+	selectedScore = 0;
+	if (reset == false && selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
 		for(i = 0; i < selectedFields.length; i++) {
-			selectedFields[i].setAttribute("class", fld.getAttribute("class") + " selected");
+			//zaznacza element -> dodanie klasy "selected"
+			$(selectedFields[i]).addClass("selected");
 			selectedScore += i * 2;
 		}
 	}
-	else {
-		selectedScore = 0;
+	if (selectedScore > 0) {
+		$("#scoreValue").text(selectedScore);
+		ShowScoreValue();
 	}
-	document.getElementById("scoreValue").innerHTML = selectedScore;
+	else {
+		ResetSelectedScores();
+	}
+}
+
+/**
+ * Kasuje punktację aktualnie zaznacoznych elementów
+ */
+function ResetSelectedScores() {
+	selectedScore = 0;
+	$("#scoreValue").text(selectedScore);
+	$("#scoreValue").css("top", 0);
+	$("#scoreValue").css("left", 0);
+//	$("#scoreValue").hide();
+}
+
+function ShowScoreValue() {
+	var top = left = 0;
+
+	if (selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
+		for(i = 0; i < selectedFields.length; i++) {
+			//zaznacza element -> dodanie klasy "selected"
+			var position = $(selectedFields[i]).offset();
+			if (left == 0 || position.left < left) {
+				left = position.left;
+				top = position.top;
+			}
+			if (top == 0 || position.top < top && position.left >= left) {
+				top = position.top;
+			}
+		}
+		$("#scoreValue").css("top", top - 20);
+		$("#scoreValue").css("left", left - 10);
+	}
+
+	$("#scoreValue").show();
 }
 
 /**
@@ -168,7 +201,15 @@ function CountSelectedScore(fld) {
  */
 function CountTotalScore() {
 	totalScoreValue += selectedScore;
-	document.getElementById("totalScoreValue").innerHTML = totalScoreValue;
+	$("#totalScoreValue").text(totalScoreValue);
+}
+
+/**
+ * Kasuje punktację aktualnie zaznacoznych elementów
+ */
+function ResetTotalScores() {
+	totalScoreValue = 0;
+	$("#totalScoreValue").text(totalScoreValue);	
 }
 
 /**
@@ -217,7 +258,7 @@ function findSimilar(selElement, selClassName, licznik) {
 		}
 		var nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
 		if (nextSibling !== null && selectedFields.indexOf(nextSibling) == -1) {
-			nextSiblingClassName = nextSibling.getAttribute("class").trim();
+			nextSiblingClassName = jQuery.trim(nextSibling.getAttribute("class"));
 			if (nextSibling != undefined && (nextSiblingClassName == selClassName)) {
 				findSimilar(nextSibling, selClassName, 0);
 			}
@@ -240,11 +281,22 @@ function removeSelected(elObj, classNameToRemove) {
 	SaveGameState();
 
 	// porządkowanie tablicy zaznaczonych elementów - zaczynam od najniżej połóżonych
-	selectedFields.sort(compare);
+	selectedFields.sort(function(a, b) {
+		// Funkcja pomocnicza do sortowania elementów w tablicy selectedElements
+		aId = a.getAttribute("id");
+		bId = b.getAttribute("id");
+		if (aId < bId)
+			return 1;
+		if (aId > bId)
+			return -1;
+		return 0;
+	});
+	
 	var i = 0;
 	var couldBeEmptyRow = false;
 	do {
-		var idElements = selectedFields[0].getAttribute("id").split("-");
+		//alert($(selectedFields[0]).attr("id"));
+		var idElements = $(selectedFields[0]).attr("id").split("-");
 		var posX = parseInt(idElements[2]);
 		var posY = parseInt(idElements[1]);
 		var parsedField = document.getElementById("field-" + (posY) + "-" + posX);
@@ -279,11 +331,11 @@ function removeSelected(elObj, classNameToRemove) {
 				if (selectedFields.indexOf(removedField) !== -1) {
 					selectedFields = cleanSelectedFields(selectedFields, removedField);
 				}
-				//document.getElementById(selectedFields[i].getAttribute("id")).setAttribute("class", upperField.getAttribute("class"));
 				upperPosY--;
 				parsedPosY--;
 			}
 			while(parsedPosY >= 0);
+
 			if (upperField !== null)
 				upperField.setAttribute("class", "emptyField");
 		}
@@ -301,7 +353,7 @@ function removeSelected(elObj, classNameToRemove) {
 		RemoveEmptyColumns();
 	}
 	CountTotalScore();
-	CountSelectedScore(null);
+	CountSelectedScore(true);
 }
 
 function RemoveEmptyColumns() {
@@ -309,7 +361,7 @@ function RemoveEmptyColumns() {
 		var lastField = document.getElementById("field-" + (boardSize-1) + "-" + k);
 		if (lastField.getAttribute("class") == "emptyField") { // ostatni element w kolumnie jest pusty
 			// przesuniecie kolejnych kolumn
-			var moveDim = 1; // wymiar presunięcia (reguleuje ile kolumn jest pustych)
+			var moveDim = 1; // wymiar przesunięcia (reguluje ile kolumn jest pustych)
 			for (var j = k; j >= 1; j--) {
 				for(var c = 0; c < boardSize; c++) {
 					if (j-moveDim < 0) moveDim = j;
@@ -334,23 +386,6 @@ function RemoveEmptyColumns() {
 }
 
 /**
- * Funkcja pomocnicza do sortowania elementów w tablicy selectedElements
- * @param Element a
- * @param Element b
- * @return -1, 0, 1 zależnie od wyniku sortowania
- */
-function compare(a, b)
-{
-	aId = a.getAttribute("id");
-	bId = b.getAttribute("id");
-	if (aId < bId)
-		return 1;
-	if (aId > bId)
-		return -1;
-	return 0;
-}
-
-/**
  * Usuwa z tablicy zaznaczonych elementów wskazany element
  * @param Array fldsList
  * @param TD Element fieldToRemove
@@ -358,50 +393,17 @@ function compare(a, b)
  */
 function cleanSelectedFields(fldsList, fieldToRemove) {
 	retVal = new Array();
-	for (var itemName in fldsList) {
-		if (fldsList[itemName] !== fieldToRemove) {
-			retVal.unshift(fldsList[itemName]);
+	for(var i = 0; i < fldsList.length; i++) {
+		if (fldsList[i] !== fieldToRemove) {
+			retVal.unshift(fldsList[i]);
 		}
 	}
 	return retVal;
 }
 
 function deselectFields () {
-	if (selectedFields.length > 0) {
-		for (i = 0; i< selectedFields.length; i ++) {
-			selectedFields[i] = DeselectField(selectedFields[i]);
-		}
-	}
+	$("#boardArea td.selected").removeClass("selected");
 	selectedFields = new Array();
-}
-
-/**
- * Inicjalizuje plansze gry
- * @return void
- */
-function InitGame() {
-  // ustalenie rozmiarów okna gadżetu
-  // document.body.style.width = "500px";
-  // document.body.style.height = "500px";
-
-	// odczyt rozmiaru planszy
-	control_boardDimension = document.getElementById("boardDimensionId");
-	totalScoreValue = 0;
-	CountSelectedScore(null);
-	document.getElementById("totalScoreValue").innerHTML = 0;
-	CreateBoard(parseInt(control_boardDimension.options[control_boardDimension.selectedIndex].value));
-}
-
-/**
- * Kończy grę.
- */
-function EndGame() {
-	CountSelectedScore(null);
-	if (maxScore < totalScoreValue)
-		maxScore = totalScoreValue;
-	document.getElementById("maxScoreValue").innerHTML = maxScore;
-	document.getElementById("totalScoreValue").innerHTML = 0;
-	InitGame();
 }
 
 /**
@@ -436,6 +438,54 @@ function isFinish() {
 		}
 	}
 	return true;
+}
+
+/**
+ * Inicjalizuje plansze gry
+ * @return void
+ */
+function InitGame() {
+  // ustalenie rozmiarów okna gadżetu
+  // document.body.style.width = "500px";
+  // document.body.style.height = "500px";
+
+	// podłączenie zdarzenia do pokazywania/ukrywania panelu opcji
+	$('#optionsSwitch ').click(function () {
+		if ( $('#optionsSwitch img').attr('src')== "images/1rightarrow.png") {
+			$('#optionsSwitch img').attr('src', 'images/1downarrow1.png');
+		}
+		else {
+			$('#optionsSwitch img').attr('src', "images/1rightarrow.png");
+		}
+		$('#options').slideToggle();
+	});
+
+
+	ResetTotalScores();
+	ResetSelectedScores();
+
+	// odczyt rozmiaru planszy
+	control_boardDimension = document.getElementById("boardDimensionId");
+	CreateBoard(parseInt(control_boardDimension.options[control_boardDimension.selectedIndex].value));
+}
+
+/**
+ * Kończy grę.
+ */
+function EndGame() {
+
+	if (maxScore < totalScoreValue)
+		maxScore = totalScoreValue;
+	document.getElementById("maxScoreValue").innerHTML = maxScore;
+	ResetSelectedScores();
+	ResetTotalScores();
+
+	// blokada cofania ruchu
+	lastBoardState = null;
+	document.getElementById("btnUndo").disabled = true;
+	$('#btnUndo').attr('src', "images/rewind_gray.png");
+
+	InitGame();
 }
 
 /**
@@ -497,6 +547,7 @@ function findMove(selElement, selClassName, licznik) {
 	return false;
 }
 
+
 /**
  * Wykonanie kopi planszy w celu umożliwienia cofnięcia ruchu
  */
@@ -504,6 +555,7 @@ function SaveGameState() {
 	lastBoardState = document.getElementById("boardTable").cloneNode(true);
 	document.getElementById("btnUndo").disabled = false;
 	lastGameScore = selectedScore;
+	$('#btnUndo').attr('src', "images/rewind.png");
 }
 
 /**
@@ -515,16 +567,11 @@ function UndoMove() {
 	if (lastBoardState != null) {
 		document.getElementById("boardArea").replaceChild(lastBoardState, document.getElementById("boardTable"));
 		lastBoardState = null;
-		// trzeba ponownie podpiąć zdarzenie onclick - nie wiem dlaczego nie jest kopiowane wraz z całą zawartością tablicy planszy!
-		var cells = document.getElementById("boardTable").getElementsByTagName("TD");
-		for (var i = 0; i < cells.length; i++) {
-			var selPos;
-			// trzeba też usunąć zaznaczenie poprednio wybranych kulek
-			if (selPos = cells[i].getAttribute("class").indexOf("selected") != -1) {
-				cells[i] = DeselectField(cells[i]);
-			}
-			cells[i].onclick = selectSimilarFields;
-		}
+		$('#btnUndo').attr('src', "images/rewind_gray.png");
+		
+		// trzeba ponownie podpiąć zdarzenie onclick - nie wiem dlaczego nie jest kopiowane wraz z całą zawartością tablicy planszy!		
+		$("#boardTable td").click(selectSimilarFields);
+		deselectFields();
 		document.getElementById("btnUndo").disabled = true;
 		// odtworzenie poprzedniego wyniku gry
 		selectedScore = -lastGameScore;
@@ -532,28 +579,4 @@ function UndoMove() {
 		return true;
 	}
 	return false;
-}
-
-/**
- * Zaznacza pojedyczne pole gry
- * @param Element obiekt pola gry (TD)
- * @return Element obiekt pola gry (TD) z dodaną klasą "selected"
- */
-function SelectField(fldObj) {
-	if (fldObj.getAttribute("class").indexOf("selected") === -1) {
-		return fldObj.setAttribute("class", fld.getAttribute("class") + " selected");
-	}
-	return fldObj;
-}
-
-/**
- * Usuwa zaznaczenie pola
- * @param Element obiekt pola gry (TD)
- * @return Element obiekt pola gry (TD) z usuniętą klasą "selected"
- */
-function DeselectField(fldObj) {
-	if (fldObj.getAttribute("class").indexOf("selected") !== -1) {
-		return fldObj.setAttribute("class", fldObj.getAttribute("class").replace(/selected/gi, ""));
-	}
-	return fldObj;
 }

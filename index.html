@@ -5,6 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Kolorowe Kulki</title>
 	<link rel="stylesheet" type="text/css" href="normal.css" />
+	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js "></script>
 	<script type="text/javascript" src="GraKolory.js"></script>
 	<meta http-equiv='cache-control' content='no-cache'>
 </head>
@@ -13,22 +14,30 @@
         <form>
             <div id="header"><h1>Kolorowe Kulki</h1></div>
             <div id="board">
+            	<!-- obszar na planszę gry -->
                 <div id="boardArea">
                 </div>
-                <label for="boardDimensionId">Wybierz rozmiar planszy:</label>
-                <select name="boardDimension" id="boardDimensionId" onchange="changeBoardSize();">
-                    <option value="12">12</option>
-                    <option value="16" selected="selected">16</option>
-                    <option value="20">20</option>
-                </select>
-                <button onclick="InitGame();return false;">Nowa gra</button>
+	            <div style="float:right; margin-left: 5px;">
+	                <input type="image" src="images/rewind_gray.png" id="btnUndo" disabled="disabled" onclick="UndoMove();return false;" alt="Undo move" title="Undo move"/><br/><br/>
+	                <input type="image" src="images/reload.png" onclick="EndGame();return false;" alt="New game" title="New game"/><br/><br/>
+	            </div>
             </div>
+            <div style="clear: both;"></div>
             <div id="controlPanel">
-                <div id="maxScore">Najlepszy wynik: <span id="maxScoreValue">0</span></div>
-                <div id="totalScore">Punkty w grze: <span id="totalScoreValue">0</span></div>
-                <div id="score">Punkty za ruch: <span id="scoreValue">0</span></div>
-                <button id="btnEndGame" onclick="EndGame();return false;">Koniec gry</button>
-                <button id="btnUndo" disabled="disabled" onclick="UndoMove();return false;">Cofnij</button>
+                <span id="selectedScore"">Selected score: <span id="scoreValue">0</span></span>
+                <span id="totalScore"><img src="images/cup.png" alt="Game score" style="vertical-align: middle" />Game score: <span id="totalScoreValue">0</span></span>
+                <span id="maxScore"><img src="images/user7.png" alt="Best score" style="vertical-align: middle" />Best score: <span id="maxScoreValue">0</span></span>
+                <div style="clear: both;">
+	                <a href="#" id="optionsSwitch"><img src="images/1rightarrow.png" alt="&lt;" style="margin-right: 10px" />Options</a>
+	                <div id="options">
+		                <label for="boardDimensionId">Board size:</label>
+		                <select name="boardDimension" id="boardDimensionId" onchange="changeBoardSize();">
+		                    <option value="12">12</option>
+		                    <option value="16" selected="selected">16</option>
+		                    <option value="20">20</option>
+		                </select>
+	                </div>
+                </div>
             </div>
             <div style="clear: both;"></div>
             <div id="footer">

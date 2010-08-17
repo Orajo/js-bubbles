@@ -8,23 +8,16 @@
 	margin: 20px auto;
 	overflow: hidden;
 	width: auto;
-	border: 2px solid #4286C1;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
+	border: 2px solid #000;
 	display: table;
+    background-color: black;
+	color: white;
 }
 
 #header {
 	padding: 5px 20px;
 	text-align: center;
-	background-color: #4286C1;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	background-color: #000;
 	margin-bottom: 10px;
 	color: white;
 }
@@ -38,10 +31,7 @@
 }
 
 #boardArea {
-	border: 4px outset #0C487D;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
+	border: 2px solid #fff;
 	padding: 2px;
 	margin-bottom: 10px;
 	display: table;
@@ -119,9 +109,6 @@ emptyField {
 #controlPanel input {	
 	border: 2px solid #4286C1;
 	padding: 2px 3px;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
 }
 
 #totalScore, #maxScore, #selectedScore {
@@ -157,7 +144,6 @@ emptyField {
 
 #maxScore {
 	font-size: 100%;
-
 	margin: 0;
   float: right;
 }
@@ -165,14 +151,9 @@ emptyField {
 #footer {
   clear: both;
 	float: none;
-	background-color: #4286C1;
+	border-top: 2px solid white;
+	background-color: #000;
 	font-size: smaller;
 	padding: 5px;
 	color: #CCE6FF;
-	-moz-border-radius-bottomleft: 5px;
-	-moz-border-radius-bottomright: 5px;
-	-webkit-border-bottom-left-radius: 5px;
-	-webkit-border-bottom-right-radius: 5px;
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
 }
