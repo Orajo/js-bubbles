@@ -3,42 +3,65 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Kolorowe Kulki</title>
+	<title>Colored Beads</title>
 	<link rel="stylesheet" type="text/css" href="normal.css" />
-	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js "></script>
-	<script type="text/javascript" src="GraKolory.js"></script>
+	<script type="text/javascript" src="jquery-1.4.2.min.js "></script>
+<!--	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js "></script> -->
+	<script type="text/javascript" src="game-core.js"></script>
+	<script type="text/javascript" src="game-ui.js"></script>
+	<script type="text/javascript" src="jquery.ezCookie_0.7.01.min.js"></script>
 	<meta http-equiv='cache-control' content='no-cache'>
 </head>
-<body onload="InitGame()">
+<body>
 	<div id="container">
         <form>
-            <div id="header"><h1>Kolorowe Kulki</h1></div>
-            <div id="board">
-            	<!-- obszar na planszę gry -->
-                <div id="boardArea">
-                </div>
-	            <div style="float:right; margin-left: 5px;">
-	                <input type="image" src="images/rewind_gray.png" id="btnUndo" disabled="disabled" onclick="UndoMove();return false;" alt="Undo move" title="Undo move"/><br/><br/>
-	                <input type="image" src="images/reload.png" onclick="EndGame();return false;" alt="New game" title="New game"/><br/><br/>
-	            </div>
-            </div>
-            <div style="clear: both;"></div>
-            <div id="controlPanel">
-                <span id="selectedScore"">Selected score: <span id="scoreValue">0</span></span>
-                <span id="totalScore"><img src="images/cup.png" alt="Game score" style="vertical-align: middle" />Game score: <span id="totalScoreValue">0</span></span>
-                <span id="maxScore"><img src="images/user7.png" alt="Best score" style="vertical-align: middle" />Best score: <span id="maxScoreValue">0</span></span>
-                <div style="clear: both;">
-	                <a href="#" id="optionsSwitch"><img src="images/1rightarrow.png" alt="&lt;" style="margin-right: 10px" />Options</a>
-	                <div id="options">
-		                <label for="boardDimensionId">Board size:</label>
-		                <select name="boardDimension" id="boardDimensionId" onchange="changeBoardSize();">
-		                    <option value="12">12</option>
-		                    <option value="16" selected="selected">16</option>
-		                    <option value="20">20</option>
-		                </select>
-	                </div>
-                </div>
-            </div>
+            <div id="header"><h1>Colored Beads</h1></div>
+            <div id="switchedPanel">
+				<div id="boardPanel">
+					<!-- obszar na planszę gry -->
+					<div id="boardArea">
+					</div>
+					<div style="float: left">
+						<input type="image" src="images/rewind_gray.png" id="btnUndo" onclick="UndoMove();return false;" alt="Undo move" title="Undo move"/><br/><br/>
+						<input type="image" src="images/reload.png" onclick="EndGame();return false;" alt="New game" title="New game"/><br/><br/>
+						<input type="image" src="images/spanner_48.png" id="optionsSwitch" onclick="GoToSettings();return false;" alt="Settings" title="Settings" style="width: 32px; height: 32px"/><br/><br/>
+						<input type="image" src="images/cup.png" id="resultsSwitch" onclick="ShowResults();return false;" alt="Results" title="Show results"/><br/><br/>
+					</div>
+					<div style="clear: both;">
+						<span id="selectedScore">Selected score: <span id="scoreValue">0</span></span>
+						<span id="totalScore">Game score: <span id="totalScoreValue">0</span></span>
+					</div>
+				</div>
+				<div id="controlPanel" class="panel">
+					<div class="panelView">
+						<div class="panelContent">
+							<div id="options">
+								<label for="boardDimensionId">Board size:</label>
+								<select name="boardDimension" id="boardDimensionId">
+									<option value="12">12x12</option>
+									<option value="16" selected="selected">12x16</option>
+									<option value="20">16x20</option>
+								</select>
+							</div>
+						</div>
+						<div class="panelButtons">
+							<input type="button" value="Cancel" onclick="GoToSettings();" />
+							<input type="button" value="OK" onclick="GoToSettings();changeBoardSize();" />
+						</div>
+					</div>
+				</div>
+				<div id="scorePanel" class="panel">
+					<div class="panelView">
+						<div class="panelContent">
+							<span id="maxScore"><img src="images/user7.png" alt="Best score" style="vertical-align: middle" />Best score: <span id="maxScoreValue">0</span></span>
+						</div>
+						<div class="panelButtons">
+							<input type="button" value="Clear" onclick="ResetResults();" />
+							<input type="button" value="Close" onclick="ShowResults();" />
+						</div>
+					</div>
+				</div>
+			</div>
             <div style="clear: both;"></div>
             <div id="footer">
                 &copy; 2009 - 2010, Jarosław Wasilewski

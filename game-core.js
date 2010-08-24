@@ -2,8 +2,9 @@
  * Kolorowe Kulki
  * @author Jarosław Wasilewski
  *
- * TODO: sprawdzanie, czy gracz ma jeszcze jakiś ruch i jeśli nie to kończenie gry
  * TODO: przejście na technikę obiektową
+ * TODO: obsługa plansz prostokątnych
+ * TODO: zapisywanie wyników gier do ciasteczka
  */
 
 /**
@@ -12,13 +13,13 @@
 var selectedFields = new Array();
 
 /**
- * Tablica ID elementów już sprawdzonych pod kątem posiadania opcju ruchu
+ * Tablica ID elementów już sprawdzonych pod kątem posiadania opcji ruchu
  *
  */
 var checkedFields = new Array();
 
 /**
- * Kopia stanu planszy sprzed ruchu;; pozwala na wykonanie cofnięcia (Undo)
+ * Kopia stanu planszy sprzed ruchu; pozwala na wykonanie cofnięcia (Undo)
  */
 var lastBoardState = null;
 
@@ -30,7 +31,10 @@ var lastGameScore = null;
 /**
  * Wielkość planszy
  */
-var boardSize = 16;
+var boardSize = {
+	x: 16, // szerokość planszy
+	y: 16  // wysokość planszy
+};
 
 /**
  * Łaczna ilość punktów w grze
@@ -55,16 +59,15 @@ if (!Array.prototype.indexOf) {
     var len = this.length >>> 0;
 
     var from = Number(arguments[1]) || 0;
-    from = (from < 0)
-         ? Math.ceil(from)
-         : Math.floor(from);
-    if (from < 0)
+    from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+    if (from < 0) {
       from += len;
+    }
 
     for (; from < len; from++) {
-      if (from in this &&
-          this[from] === elt)
+      if (from in this && this[from] === elt) {
         return from;
+    }
     }
     return -1;
   };
@@ -73,17 +76,18 @@ if (!Array.prototype.indexOf) {
 /**
  * Funkcja generuje planszę gry
  */
-function CreateBoard (size) {
-	boardSize = size;
+function CreateBoard (sizeX, sizeY) {
+	boardSize.x = sizeX;
+	boardSize.y = sizeY;
 	// czyszczenie planszy
 	$("#boardArea").empty();
 
 	boardTable = document.createElement("table");
 	boardTable.setAttribute("id", "boardTable");
-	for(i = 0; i < size; i++) {
+	for(i = 0; i < boardSize.y; i++) {
 		row = document.createElement("tr");
 		row.setAttribute("id", "row" + i);
-		for(j = 0; j < size; j ++) {
+		for(j = 0; j < boardSize.x; j ++) {
 			field = document.createElement("td");
 			field.setAttribute("id", "field-" + i + "-" + j);
 			// losowanie koloru tla
@@ -108,11 +112,11 @@ function CreateBoard (size) {
 function selectSimilarFields(evn) {
 
 	// obejście braku Event.target w IE
-	var evt=window.event || evn
+	var evt=window.event || evn;
 	if (!evt.target) { //if event obj doesn't support e.target, presume it does e.srcElement
 		evt.target=evt.srcElement; //extend obj with custom e.target prop
 	}
-	
+
 	// krok 1: sprawdzenie czy nie klikamy na zaznaczony obszar - jesli tak to usuwamy go
 	selectedClassName = jQuery.trim(evt.target.getAttribute("class"));
 
@@ -124,7 +128,7 @@ function selectSimilarFields(evn) {
 		removeSelected(evt.target, selectedClassName.slice(0,selectedClassName.indexOf(" ")));
  		if (isFinish()) {
 			alert("Koniec gry");
-			EndGame();
+			EndGame(true);
 		}
 	}
 	// krok 2: jeśli nie, to kasowanie poprzedniego zaznaczenia
@@ -146,7 +150,7 @@ function selectSimilarFields(evn) {
  */
 function CountSelectedScore(reset) {
 	selectedScore = 0;
-	if (reset == false && selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
+	if (reset === false && selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
 		for(i = 0; i < selectedFields.length; i++) {
 			//zaznacza element -> dodanie klasy "selected"
 			$(selectedFields[i]).addClass("selected");
@@ -174,17 +178,18 @@ function ResetSelectedScores() {
 }
 
 function ShowScoreValue() {
-	var top = left = 0;
+	var top = 0;
+	var left = 0;
 
 	if (selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
 		for(i = 0; i < selectedFields.length; i++) {
 			//zaznacza element -> dodanie klasy "selected"
 			var position = $(selectedFields[i]).offset();
-			if (left == 0 || position.left < left) {
+			if (left === 0 || position.left < left) {
 				left = position.left;
 				top = position.top;
 			}
-			if (top == 0 || position.top < top && position.left >= left) {
+			if (top === 0 || position.top < top && position.left >= left) {
 				top = position.top;
 			}
 		}
@@ -205,11 +210,11 @@ function CountTotalScore() {
 }
 
 /**
- * Kasuje punktację aktualnie zaznacoznych elementów
+ * Kasuje punktację aktualnie zaznaczonych elementów
  */
 function ResetTotalScores() {
 	totalScoreValue = 0;
-	$("#totalScoreValue").text(totalScoreValue);	
+	$("#totalScoreValue").text(totalScoreValue);
 }
 
 /**
@@ -241,7 +246,7 @@ function findSimilar(selElement, selClassName, licznik) {
 			case 1:
 				newPosX = parseInt(posX) + 1;
 				licznik++;
-				if (newPosX >= boardSize) continue;
+				if (newPosX >= boardSize.x) continue;
 				break;
 			case 2:
 				newPosX = posX;
@@ -253,13 +258,13 @@ function findSimilar(selElement, selClassName, licznik) {
 				newPosX = posX;
 				newPosY = parseInt(posY) + 1;
 				licznik++;
-				if (newPosX >= boardSize) continue;
+				if (newPosX >= boardSize.x) continue;
 				break;
 		}
 		var nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
 		if (nextSibling !== null && selectedFields.indexOf(nextSibling) == -1) {
 			nextSiblingClassName = jQuery.trim(nextSibling.getAttribute("class"));
-			if (nextSibling != undefined && (nextSiblingClassName == selClassName)) {
+			if (nextSibling !== undefined && (nextSiblingClassName == selClassName)) {
 				findSimilar(nextSibling, selClassName, 0);
 			}
 		}
@@ -291,8 +296,7 @@ function removeSelected(elObj, classNameToRemove) {
 			return -1;
 		return 0;
 	});
-	
-	var i = 0;
+
 	var couldBeEmptyRow = false;
 	do {
 		//alert($(selectedFields[0]).attr("id"));
@@ -305,7 +309,7 @@ function removeSelected(elObj, classNameToRemove) {
 		var upperField = null;
 		var removedField = null;
 
-		if (posY == boardSize-1) {
+		if (posY == boardSize.y-1) {
 			couldBeEmptyRow = true;
 		}
 
@@ -357,13 +361,13 @@ function removeSelected(elObj, classNameToRemove) {
 }
 
 function RemoveEmptyColumns() {
-	for (var k = boardSize-1; k > 0; k--) {
-		var lastField = document.getElementById("field-" + (boardSize-1) + "-" + k);
+	for (var k = boardSize.x-1; k > 0; k--) {
+		var lastField = document.getElementById("field-" + (boardSize.y-1) + "-" + k);
 		if (lastField.getAttribute("class") == "emptyField") { // ostatni element w kolumnie jest pusty
 			// przesuniecie kolejnych kolumn
 			var moveDim = 1; // wymiar przesunięcia (reguluje ile kolumn jest pustych)
 			for (var j = k; j >= 1; j--) {
-				for(var c = 0; c < boardSize; c++) {
+				for(var c = 0; c < boardSize.y; c++) {
 					if (j-moveDim < 0) moveDim = j;
 					var fieldToMoveFrom = document.getElementById("field-" + c + "-" + (j-moveDim));
 					var fieldToMoveTo = document.getElementById("field-" + c + "-" + (j));
@@ -416,7 +420,7 @@ function changeBoardSize() {
 	else {
 		// przywrócenie poprzednio wybranej wielkości planszy
 		control_boardDimension = document.getElementById("boardDimensionId");
-		control_boardDimension.selectedIndex = boardSize == 12 ? 0 : boardSize == 16 ? 1 : 2;
+		control_boardDimension.selectedIndex = boardSize.y == 12 ? 0 : boardSize.y == 16 ? 1 : 2;
 	}
 }
 
@@ -429,9 +433,9 @@ function isFinish() {
 
 	checkedFields = new Array();
 
-	for (var x = boardSize-1; x >= 0; x++) {
-		for(var y = boardSize-1; y >=0; y++) {
-			initField = document.getElementById("field-"+x+"-"+y);
+	for (var x = boardSize.x-1; x >= 0; x++) {
+		for(var y = boardSize.y-1; y >=0; y++) {
+			initField = document.getElementById("field-"+y+"-"+x);
 			if (initField.getAttribute("class") != 'emptyField') {
 				return !findMove(initField, initField.getAttribute("class"), 0);
 			}
@@ -450,7 +454,7 @@ function InitGame() {
   // document.body.style.height = "500px";
 
 	// podłączenie zdarzenia do pokazywania/ukrywania panelu opcji
-	$('#optionsSwitch ').click(function () {
+/* 	$('#optionsSwitch ').click(function () {
 		if ( $('#optionsSwitch img').attr('src')== "images/1rightarrow.png") {
 			$('#optionsSwitch img').attr('src', 'images/1downarrow1.png');
 		}
@@ -458,34 +462,53 @@ function InitGame() {
 			$('#optionsSwitch img').attr('src', "images/1rightarrow.png");
 		}
 		$('#options').slideToggle();
-	});
+	}); */
 
 
 	ResetTotalScores();
 	ResetSelectedScores();
 
+	mr = $.cookie("jsb_max_resutl");
+	if (mr) {
+		maxScore = mr;
+		document.getElementById("maxScoreValue").innerHTML = maxScore;
+	}
+	
 	// odczyt rozmiaru planszy
 	control_boardDimension = document.getElementById("boardDimensionId");
-	CreateBoard(parseInt(control_boardDimension.options[control_boardDimension.selectedIndex].value));
+	boardDim = parseInt(control_boardDimension.options[control_boardDimension.selectedIndex].value);
+	switch (boardDim) {
+		case 12:
+			CreateBoard(12, 12);
+			break;
+		case 16:
+			CreateBoard(12, 16);
+			break;
+		case 20:		
+			CreateBoard(16, 20);
+			break;
+	}
 }
 
 /**
  * Kończy grę.
+ * @param bool ended Wskazuje czy gra się skończyła (true) czy została przerwana (false)
  */
-function EndGame() {
+function EndGame(ended) {
+    if (ended || confirm("Czy chcesz zakończyć aktualną grę?")) {
+		if (maxScore < totalScoreValue) {
+			maxScore = totalScoreValue;
+			document.getElementById("maxScoreValue").innerHTML = maxScore;
+			// zapisanie wyniku do ciacha
+			$.setCookie("jsb_max_resutl", maxScore);
+		}
+		ResetSelectedScores();
+		ResetTotalScores();
 
-	if (maxScore < totalScoreValue)
-		maxScore = totalScoreValue;
-	document.getElementById("maxScoreValue").innerHTML = maxScore;
-	ResetSelectedScores();
-	ResetTotalScores();
-
-	// blokada cofania ruchu
-	lastBoardState = null;
-	document.getElementById("btnUndo").disabled = true;
-	$('#btnUndo').attr('src', "images/rewind_gray.png");
-
-	InitGame();
+		// blokada cofania ruchu
+		DisableUndo();
+		InitGame();
+	}
 }
 
 /**
@@ -514,7 +537,7 @@ function findMove(selElement, selClassName, licznik) {
 			case 1:
 				newPosX = parseInt(posX) + 1;
 				licznik++;
-				if (newPosX >= boardSize) continue;
+				if (newPosX >= boardSize.x) continue;
 				break;
 			case 2:
 				newPosX = posX;
@@ -526,7 +549,7 @@ function findMove(selElement, selClassName, licznik) {
 				newPosX = posX;
 				newPosY = parseInt(posY) + 1;
 				licznik++;
-				if (newPosX >= boardSize) continue;
+				if (newPosX >= boardSize.x) continue;
 				break;
 		}
 		nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
@@ -549,13 +572,12 @@ function findMove(selElement, selClassName, licznik) {
 
 
 /**
- * Wykonanie kopi planszy w celu umożliwienia cofnięcia ruchu
+ * Wykonanie kopii planszy w celu umożliwienia cofnięcia ruchu
  */
 function SaveGameState() {
 	lastBoardState = document.getElementById("boardTable").cloneNode(true);
-	document.getElementById("btnUndo").disabled = false;
 	lastGameScore = selectedScore;
-	$('#btnUndo').attr('src', "images/rewind.png");
+	EnableUndo();
 }
 
 /**
@@ -566,13 +588,13 @@ function SaveGameState() {
 function UndoMove() {
 	if (lastBoardState != null) {
 		document.getElementById("boardArea").replaceChild(lastBoardState, document.getElementById("boardTable"));
-		lastBoardState = null;
-		$('#btnUndo').attr('src', "images/rewind_gray.png");
-		
-		// trzeba ponownie podpiąć zdarzenie onclick - nie wiem dlaczego nie jest kopiowane wraz z całą zawartością tablicy planszy!		
+
+		DisableUndo();
+
+		// trzeba ponownie podpiąć zdarzenie onclick - nie wiem dlaczego nie jest kopiowane wraz z całą zawartością tablicy planszy!
 		$("#boardTable td").click(selectSimilarFields);
 		deselectFields();
-		document.getElementById("btnUndo").disabled = true;
+
 		// odtworzenie poprzedniego wyniku gry
 		selectedScore = -lastGameScore;
 		CountTotalScore(); // mała sztuczka, żeby nie zmieniać API
@@ -580,3 +602,32 @@ function UndoMove() {
 	}
 	return false;
 }
+
+/**
+ * Włącza funkcję undo
+ */
+function EnableUndo() {
+    $("#btnUndo").disabled = false;
+    $('#btnUndo').attr('src', "images/rewind.png");
+}
+
+/**
+* Wyłącza funkcję undo
+*/
+function DisableUndo() {
+    lastBoardState = null;
+    $("#btnUndo").disabled = true;
+    $('#btnUndo').attr('src', "images/rewind_gray.png");
+}
+
+function ResetResults() {
+	if (confirm("Are you sure you want to clear results?")) {
+		$.removeCookie("jsb_max_resutl");
+		maxScore = 0;
+		document.getElementById("maxScoreValue").innerHTML = maxScore;
+		return true;
+	}
+	return false;
+}
+
+$(window).load(InitGame);
