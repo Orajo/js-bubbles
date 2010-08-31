@@ -10,13 +10,13 @@
 /**
  * Tablica na zaznaczone elementy
  */
-var selectedFields = new Array();
+var selectedFields = [];
 
 /**
  * Tablica ID elementów już sprawdzonych pod kątem posiadania opcji ruchu
  *
  */
-var checkedFields = new Array();
+var checkedFields = [];
 
 /**
  * Kopia stanu planszy sprzed ruchu; pozwala na wykonanie cofnięcia (Undo)
@@ -29,19 +29,6 @@ var lastBoardState = null;
 var lastGameScore = null;
 
 /**
- * Wielkość planszy
- */
-var boardSize = {
-	x: 16, // szerokość planszy
-	y: 16  // wysokość planszy
-};
-
-/**
- * Łaczna ilość punktów w grze
- */
-var totalScoreValue = 0;
-
-/**
  * Ilość punktów za zaznaczone pola
  */
 var selectedScore = 0;
@@ -50,6 +37,127 @@ var selectedScore = 0;
  * Maksymalna ilość punktów uzyskanych we wszystich grach w danej sesji gry
  */
 var maxScore = 0;
+
+/**
+ * Typy gier
+ */
+var gameTypes = {
+	type1: "Type 1",
+	type2: "Type 2",
+}
+
+// aktualny tryb gry
+var currentGameType = gameTypes.type1;
+
+this.watch (currentGameType, function (id, oldValue, newValue) {
+	gameStats.currentType = currentGameType;
+	gameStats.Read();
+});
+
+/**
+ * Wielkości planszy
+ */
+var boardSizeList = {
+	size12: {
+		text: "12 x 12",
+		x: 12,
+		y: 12
+	},
+	size16: {
+		text: "12 x 16",
+		x: 12,
+		y: 16
+	},
+	size20: {
+		text: "16 x 20",
+		x: 16,
+		y: 20
+	},
+	size15: {
+		text: "10 x 15",
+		x: 16,
+		y: 20
+	}
+}
+
+/**
+ * Aktualna wielkość planszy
+ */
+var boardSize = {
+	x: boardSizeList.size16.x, // szerokość planszy
+	y: boardSizeList.size16.y  // wysokość planszy
+};
+
+gameStats = {
+
+	_gameScore: 0,
+
+	set gameScore(value) {this._gameScore += value;},
+
+	get gameScore() {return this._gameScore;},
+
+	// nazwa ciasteczka, przechowującego wyniki
+	_cookieName: "jsb_stats",
+
+	// aktualny tryb gry
+	currentType: gameTypes.type1,
+
+	// zapakowanie w kontener
+	stats: {
+		max: 0,
+		games: 0,
+		avgRes: 0,
+	},
+
+	Update: function() {
+		if (this.stats.max <= this.gameScore) {
+			this.stats.max = this.gameScore;
+		}
+		this.stats.games++;
+		this.stats.avgRes = ((this.stats.avgRes+this.gameScore)/this.stats.games).toFoxed(0);
+	},
+	
+	EndGame: function() {
+		this._gameScore = 0;
+	},
+	
+	Clear: function() {
+		$.removeSubCookie(this._cookieName, this.currentType);
+		this._gameScore = 0;
+		this.stats.max = 0;
+		this.stats.games = 0;
+		this.stats.avgRes = 0;
+	},
+	
+/*	Clear: function() {
+		this.gameScore = 0;
+	},*/
+		
+	/**
+	 * Zapisuje statyski gier
+	 * Zapisuje: 
+	 * 	- najlepszy wynik, z podziałem na typy
+	 *  - ilość gier, z podziałem na typy
+	 *  - średni wynik, z podziałem na typy
+	 */
+	Save: function (){
+		$.setSubCookie(this._cookieName, this.currentType, this.stats);
+	},
+	
+	Read: function() {
+		mr = $.subCookie(this._cookieName, this.currentType);
+		try {
+			if (mr !== undefined) {
+				this.stats.max = mr.max > 0 ? mr.max : 0;
+				this.stats.games = mr.games ? mr.games : 0;
+				this.stats.avgRes = mr.avgRes ? mr.avgRes : 0;
+			}
+		}
+		catch (exp) {
+			console.log("błąd odczytu statystyk");
+		}
+	}
+}
 
 /**
  * Zapewnienie zgodności IE z innymi przeglądarkami
@@ -74,7 +182,29 @@ if (!Array.prototype.indexOf) {
 }
 
 /**
+ * Inicjalizuje planszę gry
+ * @return void
+ */
+function InitGame() {
+	// odczyt rozmiaru planszy
+	boardDim = parseInt($("#boardDimensionId").get(0).value);
+	switch (boardDim) {
+		case boardSizeList.size12.y:
+			CreateBoard(boardSizeList.size12.x, boardSizeList.size12.y);
+			break;
+		case boardSizeList.size20:
+			CreateBoard(boardSizeList.size20.x, boardSizeList.size20.y);
+			break;
+		case boardSizeList.size16:
+		default:
+			CreateBoard(boardSizeList.size16.x, boardSizeList.size16.y);
+			break;
+	}
+}
+
+/**
  * Funkcja generuje planszę gry
+ * TODO: sprawdzić wiązanie zdarzenia onclick popprzez jquery.delegate()
  */
 function CreateBoard (sizeX, sizeY) {
 	boardSize.x = sizeX;
@@ -106,6 +236,32 @@ function CreateBoard (sizeX, sizeY) {
 }
 
 /**
+ * Kończy grę.
+ * @param bool ended Wskazuje czy gra się skończyła (true) czy została przerwana (false)
+ */
+function EndGame(ended) {
+    if (ended || confirm("Czy chcesz zakończyć aktualną grę?")) {
+		gameStats.Update();
+
+		// Kasuje punktację aktualnie zaznaczonych elementów
+		gameStats.EndGame();
+		$("#totalScoreValue").text(gameStats.gameScore);
+		refreashBoard();
+
+		// blokada cofania ruchu
+		DisableUndo();
+		InitGame();
+	}
+}
+
+/**
+ * Zmianie typ gry
+ */
+function ChangeGameType() {
+	
+}
+
+/**
  * Zaznacza klikniety element i elementy sasiednie o identycznym kolorze
  * @param Event evn
  */
@@ -127,7 +283,7 @@ function selectSimilarFields(evn) {
 	else if (selectedClassName.indexOf("selected") !== -1 || selectedClassName.indexOf("emptyField") !== -1) {
 		removeSelected(evt.target, selectedClassName.slice(0,selectedClassName.indexOf(" ")));
  		if (isFinish()) {
-			alert("Koniec gry");
+			alert("No more moves.\nGame over!");
 			EndGame(true);
 		}
 	}
@@ -205,16 +361,9 @@ function ShowScoreValue() {
  * @return void
  */
 function CountTotalScore() {
-	totalScoreValue += selectedScore;
-	$("#totalScoreValue").text(totalScoreValue);
-}
-
-/**
- * Kasuje punktację aktualnie zaznaczonych elementów
- */
-function ResetTotalScores() {
-	totalScoreValue = 0;
-	$("#totalScoreValue").text(totalScoreValue);
+//	totalScoreValue += selectedScore;
+	gameStats.gameScore = selectedScore;
+	$("#totalScoreValue").text(gameStats.gameScore);
 }
 
 /**
@@ -411,20 +560,6 @@ function deselectFields () {
 }
 
 /**
- * Odświeża planszę o wybranej z listy wielkości
- */
-function changeBoardSize() {
-	if (totalScoreValue == 0 || confirm("Czy chcesz przerwać grę?")) {
-		InitGame();
-	}
-	else {
-		// przywrócenie poprzednio wybranej wielkości planszy
-		control_boardDimension = document.getElementById("boardDimensionId");
-		control_boardDimension.selectedIndex = boardSize.y == 12 ? 0 : boardSize.y == 16 ? 1 : 2;
-	}
-}
-
-/**
  * Sprawdza czy gracz ma jeszcze jakieś opcje ruchu
  * @return bool
  */
@@ -442,73 +577,6 @@ function isFinish() {
 		}
 	}
 	return true;
-}
-
-/**
- * Inicjalizuje plansze gry
- * @return void
- */
-function InitGame() {
-  // ustalenie rozmiarów okna gadżetu
-  // document.body.style.width = "500px";
-  // document.body.style.height = "500px";
-
-	// podłączenie zdarzenia do pokazywania/ukrywania panelu opcji
-/* 	$('#optionsSwitch ').click(function () {
-		if ( $('#optionsSwitch img').attr('src')== "images/1rightarrow.png") {
-			$('#optionsSwitch img').attr('src', 'images/1downarrow1.png');
-		}
-		else {
-			$('#optionsSwitch img').attr('src', "images/1rightarrow.png");
-		}
-		$('#options').slideToggle();
-	}); */
-
-
-	ResetTotalScores();
-	ResetSelectedScores();
-
-	mr = $.cookie("jsb_max_resutl");
-	if (mr) {
-		maxScore = mr;
-		document.getElementById("maxScoreValue").innerHTML = maxScore;
-	}
-	
-	// odczyt rozmiaru planszy
-	control_boardDimension = document.getElementById("boardDimensionId");
-	boardDim = parseInt(control_boardDimension.options[control_boardDimension.selectedIndex].value);
-	switch (boardDim) {
-		case 12:
-			CreateBoard(12, 12);
-			break;
-		case 16:
-			CreateBoard(12, 16);
-			break;
-		case 20:		
-			CreateBoard(16, 20);
-			break;
-	}
-}
-
-/**
- * Kończy grę.
- * @param bool ended Wskazuje czy gra się skończyła (true) czy została przerwana (false)
- */
-function EndGame(ended) {
-    if (ended || confirm("Czy chcesz zakończyć aktualną grę?")) {
-		if (maxScore < totalScoreValue) {
-			maxScore = totalScoreValue;
-			document.getElementById("maxScoreValue").innerHTML = maxScore;
-			// zapisanie wyniku do ciacha
-			$.setCookie("jsb_max_resutl", maxScore);
-		}
-		ResetSelectedScores();
-		ResetTotalScores();
-
-		// blokada cofania ruchu
-		DisableUndo();
-		InitGame();
-	}
 }
 
 /**
@@ -570,7 +638,6 @@ function findMove(selElement, selClassName, licznik) {
 	return false;
 }
 
-
 /**
  * Wykonanie kopii planszy w celu umożliwienia cofnięcia ruchu
  */
@@ -607,8 +674,8 @@ function UndoMove() {
  * Włącza funkcję undo
  */
 function EnableUndo() {
-    $("#btnUndo").disabled = false;
-    $('#btnUndo').attr('src', "images/rewind.png");
+    $("#undoBtn").disabled = false;
+    $('#undoBtn').attr('src', "images/rewind.png");
 }
 
 /**
@@ -616,18 +683,43 @@ function EnableUndo() {
 */
 function DisableUndo() {
     lastBoardState = null;
-    $("#btnUndo").disabled = true;
-    $('#btnUndo').attr('src', "images/rewind_gray.png");
+    $("#undoBtn").disabled = true;
+    $('#undoBtn').attr('src', "images/rewind_gray.png");
 }
 
 function ResetResults() {
 	if (confirm("Are you sure you want to clear results?")) {
-		$.removeCookie("jsb_max_resutl");
-		maxScore = 0;
-		document.getElementById("maxScoreValue").innerHTML = maxScore;
+		gameStats.Clear();
+		refreashBoard();
 		return true;
 	}
 	return false;
 }
 
-$(window).load(InitGame);
+function refreashBoard() {
+	document.getElementById("gameTypeName").innerHTML = gameStats.currentType;
+	document.getElementById("maxScoreValue").innerHTML = gameStats.stats.max;
+	document.getElementById("avgScoreValue").innerHTML = gameStats.stats.avgRes;
+	document.getElementById("playedGamesValue").innerHTML = gameStats.stats.games;
+}
+
+
+// inicjalizacja aplikacji
+$(window).load(function () {
+	
+	InitEvents();
+	// odczytanie statystyk gry
+	gameStats.Read();
+	refreashBoard();
+	
+	RestoreSettings();
+	
+	// inicjalizacja gry
+	InitGame();
+});
+
+// sprzątenie
+$(window).unload(function() {
+	gameStats.Save(); // zapisanie stanu gry
+	this.unwatch(currentGameType); // koniec reagowania na zmiany typu gry
+});

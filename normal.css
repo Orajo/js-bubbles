@@ -147,10 +147,8 @@
 	background-color: white;
 }
 
-#totalScore, #maxScore, #selectedScore {
-	font-weight: bold;
+.scoreStatsData {
 	padding: 0 10px 5px 0;
-	display: table-cell;
 }
 
 #selectedScore {
@@ -180,6 +178,15 @@
 #maxScore {
 	font-size: 100%;
 	margin: 0;
+}
+
+#gameType {
+	margin-bottom: 10px;
+	font-weight: bold;
+}
+
+#playedGames, #avgScore {
+	margin-left: 37px;
 }
 
 #footer {
