@@ -44,7 +44,7 @@
 .panel {
 	position: absolute;
 	top: 0;
- 	width: 100%;
+	width: 100%;
 	height: 100%;
 }
 
@@ -70,6 +70,10 @@
 	padding: 2px 3px;
 }
 
+#options p {
+	margin-bottom: 15px;
+}
+
 #scorePanel {
 	background-color: #641442;
 	left: 100%;
@@ -89,8 +93,8 @@
 }
 
 #boardTable {
-    background-color: white;
-    border-collapse: collapse;
+	background-color: white;
+	border-collapse: collapse;
 }
 
 #boardTable td {
@@ -149,28 +153,27 @@
 
 .scoreStatsData {
 	padding: 0 10px 5px 0;
+	font-size: 0.8em;
+	font-weight: bold;
+}
+
+.scoreStatsData span {
+	color: white;	
 }
 
 #selectedScore {
-	font-size: 0.8em;
+	color: #cccccc;
 	text-align: center;
-	font-weight: bold;
 	padding-bottom: 10px;
 	float: left;
 }
 
 #scoreValue {
-/*	position: absolute;
-	top: 0;
-	right: 0;
-	display: none;
-	background-color: white;
-	overflow:visible;
-*/
 	color: red;
 }
 
 #totalScore {
+	color: #cccccc;
 	float: right;
 	font-size: 0.8em;
 }
@@ -183,6 +186,7 @@
 #gameType {
 	margin-bottom: 10px;
 	font-weight: bold;
+	color: #cccccc;
 }
 
 #playedGames, #avgScore {
@@ -197,4 +201,26 @@
 	font-size: smaller;
 	padding: 5px;
 	color: #CCE6FF;
+}
+
+#gmt1 {
+	background-image:url("images/gametype-1.png");
+}
+
+#gmt2 {
+	background-image:url("images/gametype-2.png");
+}
+
+#gmt1, #gmt2 {
+	background-repeat:no-repeat;
+	display:block;
+	height:70px;
+	width:70px;
+	float: left;
+	margin-right: 10px;
+	outline: none;
+}
+
+#gmt1:hover, #gmt2:hover, #gmt1:active, #gmt2:active, #gmt1.selected, #gmt2.selected {
+	background-position: 0 -80px;
 }

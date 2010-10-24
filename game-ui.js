@@ -5,7 +5,14 @@
 var boardPanelName = "boardPanel";
 
 /**
- * Pokazuje lub ukrywane dodatkowe panele na planszy
+ * tymczasowe pole do przechowywania zaznaczonego typy gry.
+ * Dzięki niemu można ten wybór anulować.
+ */
+var selectedGameType = "";
+
+/**
+ * Pokazuje lub ukrywane dodatkowe panele na planszy.
+ * Obecnie jest to panel opcji i panel wyników gry.
  */
 function TogglePanel(panelName) {
 	toggled = 0;
@@ -51,6 +58,7 @@ function InitEvents() {
 		TogglePanel('controlPanel');
 
 		if (gameStats.gameScore == 0 || confirm("Czy chcesz przerwać grę?")) {
+			gameOptions.ChangeGameType(selectedGameType);
 			InitGame();
 		}
 		else {
@@ -63,6 +71,19 @@ function InitEvents() {
 		TogglePanel('controlPanel');
 	});
 
+	// wybranie trybu gry
+	$("#options input").click(function() {
+		if (selectedGameType != this.value) {
+			selectedGameType = this.value;
+			// gameOptions.ChangeGameType(this.value);
+			// wyłaczenie poprzedniego wskaźnika (właściwie wszystkich)
+			$("#options input").removeClass("selected");
+			// i zaznaczenie tylko wybranego
+			$(this).addClass("selected");
+		}
+		return true;
+	});
+	
 	// Panel statystyk gier
 	$("#resultsSwitchBtn").click(function() {
 		TogglePanel('scorePanel');
@@ -97,22 +118,22 @@ function InitEvents() {
  */
 function RestoreSettings() {
 
-	$("#gameTypeId").empty();
-	// odczytanie typów gry i ustawienie listy w opcjach
-	for (var typeElement in gameTypes) {
-		$("<option />", {
-			value: typeElement,
-			selected: gameStats.currentType === gameTypes[typeElement] ? true : false,
-			text: gameTypes[typeElement],
-		}).appendTo("#gameTypeId");
+	// ustawienie wskaźnika typu gry
+	$("#options input").removeClass("selected");
+	if (gameOptions.currentGameType == gameTypes.type1) {
+		$("#gmt1").addClass("selected");
+	}
+	else {
+		$("#gmt2").addClass("selected");
 	}
 
+	// inicjalizacja listy rozmarów planszy
 	$("#boardDimensionId").empty();
 	// odczytanie wielkości planszy i ustawienie w opcjach
 	for (var sizeElement in boardSizeList) {
 		$("<option />", {
 			value: boardSizeList[sizeElement].y,
-			selected: boardSize.y === boardSizeList[sizeElement].y ? true : false,
+			selected: gameOptions.boardSize.y === boardSizeList[sizeElement].y ? true : false,
 			text: boardSizeList[sizeElement].text,
 		}).appendTo("#boardDimensionId");
 	}

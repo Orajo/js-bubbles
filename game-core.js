@@ -34,27 +34,6 @@ var lastGameScore = null;
 var selectedScore = 0;
 
 /**
- * Maksymalna ilość punktów uzyskanych we wszystich grach w danej sesji gry
- */
-var maxScore = 0;
-
-/**
- * Typy gier
- */
-var gameTypes = {
-	type1: "Type 1",
-	type2: "Type 2",
-}
-
-// aktualny tryb gry
-var currentGameType = gameTypes.type1;
-
-this.watch (currentGameType, function (id, oldValue, newValue) {
-	gameStats.currentType = currentGameType;
-	gameStats.Read();
-});
-
-/**
  * Wielkości planszy
  */
 var boardSizeList = {
@@ -63,50 +42,88 @@ var boardSizeList = {
 		x: 12,
 		y: 12
 	},
-	size16: {
-		text: "12 x 16",
-		x: 12,
-		y: 16
+	size15: {
+		text: "10 x 15",
+		x: 10,
+		y: 15
 	},
 	size20: {
 		text: "16 x 20",
 		x: 16,
 		y: 20
 	},
-	size15: {
-		text: "10 x 15",
-		x: 16,
-		y: 20
-	}
-}
-
-/**
- * Aktualna wielkość planszy
- */
-var boardSize = {
-	x: boardSizeList.size16.x, // szerokość planszy
-	y: boardSizeList.size16.y  // wysokość planszy
 };
 
-gameStats = {
+/**
+ * Typy gier
+ */
+var gameTypes =  {
+	type1: "Standard",
+	type2: "Dosuwanka"
+};
 
-	_gameScore: 0,
+var gameOptions = {
+	// nazwa ciasteczka, przechowującego opcje
+	_cookieName: "jsb_opt",
 
-	set gameScore(value) {this._gameScore += value;},
+	// aktualny tryb gry
+	currentGameType: gameTypes.type1,
 
-	get gameScore() {return this._gameScore;},
+	ChangeGameType: function (newGameType) {
+		if (this.currentGameType != newGameType) {
+			this.currentGameType = newGameType
+			gameStats.currentType = this.currentGameType;
+			gameStats.Read();
+			refreashBoard();
+		}
+	},
+
+	/**
+	 * Aktualna wielkość planszy
+	 */
+	boardSize: {
+		x: boardSizeList.size15.x, // szerokość planszy
+		y: boardSizeList.size15.y  // wysokość planszy
+	},
+	
+	Save: function (){
+		$.setSubCookie(this._cookieName, "options", this);
+	},
+	
+	Read: function() {
+		mo = $.subCookie(this._cookieName, "options");
+		try {
+			if (mo !== undefined) {
+				this.boardSize.x = mo.boardSize.x; // szerokość planszy
+				this.boardSize.y = mo.boardSize.y; // wysokość planszy
+				this.ChangeGameType(mo.currentGameType);
+			}
+		}
+		catch (exp) {
+			this.boardSize.x = boardSizeList.size15.x; // szerokość planszy
+			this.boardSize.y = boardSizeList.size15.y; // wysokość planszy
+			this.ChangeGameType(gameTypes.type1);
+		}
+	}
+};
+
+var gameStats = {
+
+	// łączna punktacja bieżącej gry
+	gameScore: 0,
 
 	// nazwa ciasteczka, przechowującego wyniki
 	_cookieName: "jsb_stats",
 
 	// aktualny tryb gry
-	currentType: gameTypes.type1,
+	currentType: gameOptions.currentGameType,
 
-	// zapakowanie w kontener
+	// statystyki gry
+	// kontener obiektu ułatwia zapisanie w ciasteczku
 	stats: {
 		max: 0,
 		games: 0,
-		avgRes: 0,
+		avgRes: 0
 	},
 
 	Update: function() {
@@ -114,24 +131,24 @@ gameStats = {
 			this.stats.max = this.gameScore;
 		}
 		this.stats.games++;
-		this.stats.avgRes = ((this.stats.avgRes+this.gameScore)/this.stats.games).toFoxed(0);
+		if (this.stats.games == 1) 
+			divider = 1;
+		else 
+			divider = 2;
+		this.stats.avgRes = parseInt(((this.stats.avgRes+this.gameScore)/divider).toFixed(0));
 	},
 	
 	EndGame: function() {
-		this._gameScore = 0;
+		this.gameScore = 0;
 	},
 	
 	Clear: function() {
 		$.removeSubCookie(this._cookieName, this.currentType);
-		this._gameScore = 0;
+		this.gameScore = 0;
 		this.stats.max = 0;
 		this.stats.games = 0;
 		this.stats.avgRes = 0;
 	},
-	
-/*	Clear: function() {
-		this.gameScore = 0;
-	},*/
 		
 	/**
 	 * Zapisuje statyski gier
@@ -154,7 +171,7 @@ gameStats = {
 			}
 		}
 		catch (exp) {
-			console.log("błąd odczytu statystyk");
+			//console.log("błąd odczytu statystyk");
 		}
 	}
 }
@@ -195,9 +212,9 @@ function InitGame() {
 		case boardSizeList.size20:
 			CreateBoard(boardSizeList.size20.x, boardSizeList.size20.y);
 			break;
-		case boardSizeList.size16:
+		case boardSizeList.size15:
 		default:
-			CreateBoard(boardSizeList.size16.x, boardSizeList.size16.y);
+			CreateBoard(boardSizeList.size15.x, boardSizeList.size15.y);
 			break;
 	}
 }
@@ -207,17 +224,17 @@ function InitGame() {
  * TODO: sprawdzić wiązanie zdarzenia onclick popprzez jquery.delegate()
  */
 function CreateBoard (sizeX, sizeY) {
-	boardSize.x = sizeX;
-	boardSize.y = sizeY;
+	gameOptions.boardSize.x = sizeX;
+	gameOptions.boardSize.y = sizeY;
 	// czyszczenie planszy
 	$("#boardArea").empty();
 
 	boardTable = document.createElement("table");
 	boardTable.setAttribute("id", "boardTable");
-	for(i = 0; i < boardSize.y; i++) {
+	for(i = 0; i < gameOptions.boardSize.y; i++) {
 		row = document.createElement("tr");
 		row.setAttribute("id", "row" + i);
-		for(j = 0; j < boardSize.x; j ++) {
+		for(j = 0; j < gameOptions.boardSize.x; j ++) {
 			field = document.createElement("td");
 			field.setAttribute("id", "field-" + i + "-" + j);
 			// losowanie koloru tla
@@ -240,7 +257,11 @@ function CreateBoard (sizeX, sizeY) {
  * @param bool ended Wskazuje czy gra się skończyła (true) czy została przerwana (false)
  */
 function EndGame(ended) {
+	
     if (ended || confirm("Czy chcesz zakończyć aktualną grę?")) {
+    	if (ended) {	
+    		alert("No more moves.\nGame over!\nYour score is " + gameStats.gameScore);
+    	}
 		gameStats.Update();
 
 		// Kasuje punktację aktualnie zaznaczonych elementów
@@ -255,13 +276,6 @@ function EndGame(ended) {
 }
 
 /**
- * Zmianie typ gry
- */
-function ChangeGameType() {
-	
-}
-
-/**
  * Zaznacza klikniety element i elementy sasiednie o identycznym kolorze
  * @param Event evn
  */
@@ -273,7 +287,7 @@ function selectSimilarFields(evn) {
 		evt.target=evt.srcElement; //extend obj with custom e.target prop
 	}
 
-	// krok 1: sprawdzenie czy nie klikamy na zaznaczony obszar - jesli tak to usuwamy go
+	// krok 1: sprawdzenie czy nie klikamy na zaznaczony obszar - jeśli tak to usuwamy go
 	selectedClassName = jQuery.trim(evt.target.getAttribute("class"));
 
 	if (selectedClassName.indexOf("emptyField") !== -1) {
@@ -282,8 +296,7 @@ function selectSimilarFields(evn) {
 	}
 	else if (selectedClassName.indexOf("selected") !== -1 || selectedClassName.indexOf("emptyField") !== -1) {
 		removeSelected(evt.target, selectedClassName.slice(0,selectedClassName.indexOf(" ")));
- 		if (isFinish()) {
-			alert("No more moves.\nGame over!");
+ 		if (hasAnyMove()) {
 			EndGame(true);
 		}
 	}
@@ -362,7 +375,7 @@ function ShowScoreValue() {
  */
 function CountTotalScore() {
 //	totalScoreValue += selectedScore;
-	gameStats.gameScore = selectedScore;
+	gameStats.gameScore += selectedScore;
 	$("#totalScoreValue").text(gameStats.gameScore);
 }
 
@@ -395,7 +408,7 @@ function findSimilar(selElement, selClassName, licznik) {
 			case 1:
 				newPosX = parseInt(posX) + 1;
 				licznik++;
-				if (newPosX >= boardSize.x) continue;
+				if (newPosX >= gameOptions.boardSize.x) continue;
 				break;
 			case 2:
 				newPosX = posX;
@@ -407,7 +420,7 @@ function findSimilar(selElement, selClassName, licznik) {
 				newPosX = posX;
 				newPosY = parseInt(posY) + 1;
 				licznik++;
-				if (newPosX >= boardSize.x) continue;
+				if (newPosX >= gameOptions.boardSize.x) continue;
 				break;
 		}
 		var nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
@@ -434,7 +447,7 @@ function findSimilar(selElement, selClassName, licznik) {
 function removeSelected(elObj, classNameToRemove) {
 	SaveGameState();
 
-	// porządkowanie tablicy zaznaczonych elementów - zaczynam od najniżej połóżonych
+	// porządkowanie tablicy zaznaczonych elementów - zaczynam od najniżej położonych
 	selectedFields.sort(function(a, b) {
 		// Funkcja pomocnicza do sortowania elementów w tablicy selectedElements
 		aId = a.getAttribute("id");
@@ -458,7 +471,9 @@ function removeSelected(elObj, classNameToRemove) {
 		var upperField = null;
 		var removedField = null;
 
-		if (posY == boardSize.y-1) {
+		if (posY == gameOptions.boardSize.y-1) {
+			// jeśli usuwa kulkę z dolnego wiersza ekranu do zakładam,
+			// że pojawi się pusta kolumna i trzeba będzie przesunąć kolumny
 			couldBeEmptyRow = true;
 		}
 
@@ -505,18 +520,23 @@ function removeSelected(elObj, classNameToRemove) {
 	if (couldBeEmptyRow) {
 		RemoveEmptyColumns();
 	}
+	
+	if (gameOptions.currentGameType == gameTypes.type2) {
+		// przesunięcie wierszy
+		RemoveEmptyFields();
+	}
 	CountTotalScore();
 	CountSelectedScore(true);
 }
 
 function RemoveEmptyColumns() {
-	for (var k = boardSize.x-1; k > 0; k--) {
-		var lastField = document.getElementById("field-" + (boardSize.y-1) + "-" + k);
+	for (var k = gameOptions.boardSize.x-1; k > 0; k--) {
+		var lastField = document.getElementById("field-" + (gameOptions.boardSize.y-1) + "-" + k);
 		if (lastField.getAttribute("class") == "emptyField") { // ostatni element w kolumnie jest pusty
 			// przesuniecie kolejnych kolumn
 			var moveDim = 1; // wymiar przesunięcia (reguluje ile kolumn jest pustych)
 			for (var j = k; j >= 1; j--) {
-				for(var c = 0; c < boardSize.y; c++) {
+				for(var c = 0; c < gameOptions.boardSize.y; c++) {
 					if (j-moveDim < 0) moveDim = j;
 					var fieldToMoveFrom = document.getElementById("field-" + c + "-" + (j-moveDim));
 					var fieldToMoveTo = document.getElementById("field-" + c + "-" + (j));
@@ -533,6 +553,36 @@ function RemoveEmptyColumns() {
 					j++;
 					moveDim++;
 				}
+			}
+		}
+	}
+}
+
+function RemoveEmptyFields() {
+	tmpX = null;
+	// zaczynamy od prawego górnego rogu
+	for (var y = 0; y < gameOptions.boardSize.y; y++) {
+		emptyField = null;
+		for (var x = gameOptions.boardSize.x-1; x >= 0; x--) {
+			field = $("#field-" + y + "-" + x).get(0);
+			// sprawdzenie czy pole jest puste
+			if (field!= undefined && field.getAttribute("class") == "emptyField" && emptyField == null) {
+				// jeśli tak, to zapamiętaj pierwszą znalezioną pustą pozycję
+				// potem w to miejsce wstawimy znalezioną kulę
+				emptyField = field;
+				tmpX = x;
+				continue;
+			}
+			// znalezione nie puste pole poprzedzone przez jakieś puste
+			else if(field.getAttribute("class") !== "emptyField" && emptyField != null) { 
+				// wstaw w to miejsce pole z kulą
+				emptyField.setAttribute("class", field.getAttribute("class"));
+				// skasuj info o purym polu (teraz jest pełne)
+				emptyField = null;
+				// wyczyś pole, z którego zabrałeś kulę
+				field.setAttribute("class", "emptyField");
+				// ustaw kursor iteracji na polu, w którym wstawiono kulę
+				if (x > 0) x = tmpX;
 			}
 		}
 	}
@@ -563,13 +613,13 @@ function deselectFields () {
  * Sprawdza czy gracz ma jeszcze jakieś opcje ruchu
  * @return bool
  */
-function isFinish() {
+function hasAnyMove() {
 	var initField;
 
 	checkedFields = new Array();
 
-	for (var x = boardSize.x-1; x >= 0; x++) {
-		for(var y = boardSize.y-1; y >=0; y++) {
+	for (var x = gameOptions.boardSize.x-1; x >= 0; x++) {
+		for(var y = gameOptions.boardSize.y-1; y >=0; y++) {
 			initField = document.getElementById("field-"+y+"-"+x);
 			if (initField.getAttribute("class") != 'emptyField') {
 				return !findMove(initField, initField.getAttribute("class"), 0);
@@ -605,7 +655,7 @@ function findMove(selElement, selClassName, licznik) {
 			case 1:
 				newPosX = parseInt(posX) + 1;
 				licznik++;
-				if (newPosX >= boardSize.x) continue;
+				if (newPosX >= gameOptions.boardSize.x) continue;
 				break;
 			case 2:
 				newPosX = posX;
@@ -617,7 +667,7 @@ function findMove(selElement, selClassName, licznik) {
 				newPosX = posX;
 				newPosY = parseInt(posY) + 1;
 				licznik++;
-				if (newPosX >= boardSize.x) continue;
+				if (newPosX >= gameOptions.boardSize.x) continue;
 				break;
 		}
 		nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
@@ -697,12 +747,16 @@ function ResetResults() {
 }
 
 function refreashBoard() {
-	document.getElementById("gameTypeName").innerHTML = gameStats.currentType;
-	document.getElementById("maxScoreValue").innerHTML = gameStats.stats.max;
-	document.getElementById("avgScoreValue").innerHTML = gameStats.stats.avgRes;
-	document.getElementById("playedGamesValue").innerHTML = gameStats.stats.games;
+	$("#gameTypeName").text(gameStats.currentType);
+	$("#maxScoreValue").text(gameStats.stats.max);
+	$("#avgScoreValue").text(gameStats.stats.avgRes);
+	$("#playedGamesValue").text(gameStats.stats.games);
+	$("#gameTypeValue").text(gameStats.currentType);
 }
 
+function saveOptions() {
+    
+}
 
 // inicjalizacja aplikacji
 $(window).load(function () {
@@ -710,16 +764,18 @@ $(window).load(function () {
 	InitEvents();
 	// odczytanie statystyk gry
 	gameStats.Read();
-	refreashBoard();
-	
-	RestoreSettings();
-	
+	gameOptions.Read();
+
+    RestoreSettings();
+
 	// inicjalizacja gry
 	InitGame();
+	refreashBoard();
 });
 
 // sprzątenie
 $(window).unload(function() {
 	gameStats.Save(); // zapisanie stanu gry
-	this.unwatch(currentGameType); // koniec reagowania na zmiany typu gry
+	gameOptions.Save(); // zapisanie opcji 
+	saveOptions();
 });

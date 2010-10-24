@@ -10,75 +10,73 @@
 	<script type="text/javascript" src="jquery.ezCookie_0.7.01.min.js"></script>
 	<script type="text/javascript" src="game-ui.js"></script>
 	<script type="text/javascript" src="game-core.js"></script>
-	<meta http-equiv='cache-control' content='no-cache'>
+	<meta http-equiv='cache-control' content='no-cache'/>
 </head>
 <body>
 	<div id="container">
-        <form>
-            <div id="header"><h1>Colored Beads</h1></div>
-            <div id="switchedPanel">
-				<div id="boardPanel">
-					<!-- obszar na planszę gry -->
-					<div id="boardArea">
-					</div>
-					<!-- narzędzia gry -->
-					<div style="float: left">
-						<input type="image" src="images/rewind_gray.png" id="undoBtn" alt="Undo move" title="Undo move"/><br/><br/>
-						<input type="image" src="images/reload.png" id="newGameBtn" alt="New game" title="New game"/><br/><br/>
-						<input type="image" src="images/spanner_48.png" id="optionsSwitchBtn" alt="Settings" title="Settings" style="width: 32px; height: 32px"/><br/><br/>
-						<input type="image" src="images/cup.png" id="resultsSwitchBtn" alt="Results" title="Show results"/><br/><br/>
-					</div>
-					<div style="clear: both;">
-						<span id="selectedScore" class="scoreStatsData">Selected score: <span id="scoreValue">0</span></span>
-						<span id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></span>
-					</div>
+		<div id="header"><h1>Colored Beads</h1></div>
+		<div id="switchedPanel">
+			<div id="boardPanel">
+				<div id="gameType" class="scoreStatsData" style="clear: both;">Game type: <span id="gameTypeValue"></span></div>
+				<!-- obszar na planszę gry -->
+				<div id="boardArea">
 				</div>
-				<div id="controlPanel" class="panel">
-					<div class="panelView">
-						<div class="panelContent">
-							<div id="options">
-								<p>
-									<label for="boardDimensionId">Board size:</label>
-									<select name="boardDimension" id="boardDimensionId">
-<!-- 										<option value="12">12x12</option>
-										<option value="16" selected="selected">12x16</option>
-										<option value="20">16x20</option>
- -->									</select>
-								</p>
-								<p>
-									<label for="gameTypeId">Game type:</label>
-									<select name="gameType" id="gameTypeId">
-									</select>
-								</p>
-							</div>
-						</div>
-						<div class="panelButtons">
-							<input type="button" value="Cancel" id="settingsCancelBtn" />
-							<input type="button" value="OK" id="settingOkBtn" />
+				<!-- narzędzia gry -->
+				<div style="float: left">
+					<input type="image" src="images/rewind_gray.png" id="undoBtn" alt="Undo move" title="Undo move"/><br/><br/>
+					<input type="image" src="images/reload.png" id="newGameBtn" alt="New game" title="New game"/><br/><br/>
+					<input type="image" src="images/spanner_48.png" id="optionsSwitchBtn" alt="Settings" title="Settings" style="width: 32px; height: 32px"/><br/><br/>
+					<input type="image" src="images/cup.png" id="resultsSwitchBtn" alt="Results" title="Show results"/><br/><br/>
+				</div>
+				<div style="clear: both;">
+					<span id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></span>
+					<span id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></span>
+				</div>
+			</div>
+			<!-- panel ustawień gry -->
+			<div id="controlPanel" class="panel">
+				<div class="panelView">
+					<div class="panelContent">
+						<div id="options">
+							<p>
+								<label for="boardDimensionId">Board size:</label>
+								<select name="boardDimension" id="boardDimensionId">
+								</select>
+							</p>
+							<div><label for="gameTypeId">Game type:</label></div>
+							<p>
+								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: standard" id="gmt1" />
+								<input type="image" src="images/empty.png" title="Choose a game type: dosuwanka" value="Dosuwanka" id="gmt2" />
+							</p>
 						</div>
 					</div>
-				</div>
-				<div id="scorePanel" class="panel">
-					<div class="panelView">
-						<div class="panelContent">
-							<div id="gameType">Game mode: <span id="gameTypeName">0</span></div>
-							<hr style="margin-bottom: 10px;"/>
-							<div id="maxScore" class="scoreStatsData"><img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />Best score: <span id="maxScoreValue">0</span></div>
-							<div id="playedGames" class="scoreStatsData">Games: <span id="playedGamesValue">0</span></div>
-							<div id="avgScore" class="scoreStatsData">Avarange score: <span id="avgScoreValue">0</span></div>
-						</div>
-						<div class="panelButtons">
-							<input type="button" value="Clear" id="scoreClearBtn" />
-							<input type="button" value="Close" id="scoreCloseBtn" />
-						</div>
+					<div class="panelButtons">
+						<input type="button" value="Cancel" id="settingsCancelBtn" />
+						<input type="button" value="OK" id="settingOkBtn" />
 					</div>
 				</div>
 			</div>
-            <div style="clear: both;"></div>
-            <div id="footer">
-                &copy; 2009 - 2010, Jarosław Wasilewski
-            </div>
-		</form>
+			<!-- panel wyników gry -->
+			<div id="scorePanel" class="panel">
+				<div class="panelView">
+					<div class="panelContent">
+						<div id="scoredGameType">Game mode: <span id="gameTypeName">0</span></div>
+						<hr style="margin-bottom: 10px;"/>
+						<div id="maxScore" class="scoreStatsData"><img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />Best score: <span id="maxScoreValue">0</span></div>
+						<div id="playedGames" class="scoreStatsData">Games: <span id="playedGamesValue">0</span></div>
+						<div id="avgScore" class="scoreStatsData">Avarange score: <span id="avgScoreValue">0</span></div>
+					</div>
+					<div class="panelButtons">
+						<input type="button" value="Clear" id="scoreClearBtn" style="float: left;" />
+						<input type="button" value="Close" id="scoreCloseBtn" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="clear: both;"></div>
+		<div id="footer">
+			&copy; 2009 - 2010, Jarosław Wasilewski
+		</div>
 	</div>
 </body>
 </html>
