@@ -2,14 +2,6 @@
  * Kolorowe Kulki
  * @author Jarosław Wasilewski
  * @version 2.1 beta1 
- *
- * 2.1
- * TODO: poprawić zapisywanie wyników w Operze i IE
- * TODO: use jNotify jQuery Plug-in as a repleacement of alert (http://www.givainc.com/labs/jnotify_jquery_plugin.htm)
- * 2.2
- * TODO: przeniesienie zapamiętywania ustawień na storage
- * TODO: dodanie w statystykach gier rozróżniania wielkości planszy
- * TODO: przepisanie storage.js jako plugin jQuery 
  */
 
 /**
@@ -64,7 +56,7 @@ var boardSizeList = {
  */
 var gameTypes = {
 	type1: "Standard",
-	type2: "Dosuwanka"
+	type2: "Compressive"
 };
 
 var gameOptions = {
