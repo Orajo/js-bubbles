@@ -4,20 +4,26 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>Colored Beads</title>
+	
 	<link rel="stylesheet" type="text/css" href="normal.css" />
+	<link rel="stylesheet" type="text/css" href="jquery.jnotify.css" />
 	<script type="text/javascript" src="jquery-1.4.2.min.js "></script>
 <!--	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js "></script> -->
-	<script type="text/javascript" src="jquery.ezCookie_0.7.01.min.js"></script>
-	<script type="text/javascript" src="game-ui.js"></script>
+	<script type="text/javascript" src="storage.js"></script>
+	<script type="text/javascript" src="jquery.tmpl.js"></script>
+	<script type="text/javascript" src="jquery.ezCookie.js"></script>
+	<script type="text/javascript" src="jquery.jnotify.jw.js"></script>
 	<script type="text/javascript" src="game-core.js"></script>
+	<script type="text/javascript" src="game-ui.js"></script>
 	<meta http-equiv='cache-control' content='no-cache'/>
 </head>
 <body>
+	<input type="button" onclick="EndGame(true)"/>
 	<div id="container">
 		<div id="header"><h1>Colored Beads</h1></div>
 		<div id="switchedPanel">
 			<div id="boardPanel">
-				<div id="gameType" class="scoreStatsData" style="clear: both;">Game type: <span id="gameTypeValue"></span></div>
+				<div id="gameTypeTitle" class="scoreStatsData" style="clear: both;">Game type: <span id="gameTypeValue"></span></div>
 				<!-- obszar na planszę gry -->
 				<div id="boardArea">
 				</div>
@@ -43,10 +49,13 @@
 								<select name="boardDimension" id="boardDimensionId">
 								</select>
 							</p>
-							<div><label for="gameTypeId">Game type:</label></div>
+							<div>Game type:</div>
 							<p>
 								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: standard" id="gmt1" />
 								<input type="image" src="images/empty.png" title="Choose a game type: dosuwanka" value="Dosuwanka" id="gmt2" />
+							</p>
+							<p style="clear: both;margin-bottom: 15px;">
+								<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
 							</p>
 						</div>
 					</div>
@@ -65,6 +74,23 @@
 						<div id="maxScore" class="scoreStatsData"><img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />Best score: <span id="maxScoreValue">0</span></div>
 						<div id="playedGames" class="scoreStatsData">Games: <span id="playedGamesValue">0</span></div>
 						<div id="avgScore" class="scoreStatsData">Avarange score: <span id="avgScoreValue">0</span></div>
+						<hr style="margin: 10px auto;"/>
+						<table id="resultsStats">
+							<tr id="resultsStatsHeader">
+								<th>Game type</th>
+								<th>Max result</th>
+								<th>Games</th>
+								<th>Avg result</th>
+							</tr>
+						</table>
+						<script id="resultsTable" type="text/x-jquery-tmpl">
+							<tr>
+								<td>${gameType}</td>
+								<td>${max}</td>
+								<td>${games}</td>
+								<td>${avg}</td>
+							</tr>
+						</script>
 					</div>
 					<div class="panelButtons">
 						<input type="button" value="Clear" id="scoreClearBtn" style="float: left;" />

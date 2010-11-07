@@ -48,11 +48,8 @@
 	height: 100%;
 }
 
-.panelView {
-}
-
 .panelContent {
-	position: absolute;
+	/* position: absolute; */
 	padding: 10px;
 }
 
@@ -161,6 +158,14 @@
 	color: white;	
 }
 
+#resultsStats {
+	font-size: smaller;	
+}
+
+#resultsStats td {
+	text-align: center;	
+}
+
 #selectedScore {
 	color: #cccccc;
 	text-align: center;
@@ -183,7 +188,7 @@
 	margin: 0;
 }
 
-#gameType {
+#gameTypeTitle {
 	margin-bottom: 10px;
 	font-weight: bold;
 	color: #cccccc;
