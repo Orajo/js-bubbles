@@ -12,8 +12,12 @@ h2 {
 	font-size: 1.2em;	
 }
 
-h2 {
+h3 {
 	font-size: 1.1em;	
+}
+
+p {
+	line-height: 130%;
 }
 
 #container {
@@ -25,11 +29,11 @@ h2 {
 	background-color: black;
 	color: white;
 	background-repeat: repeat;
-/*
-Default wallpaper http://www.crystalxp.net/galerie/en.id.5008-wallpaper-flammes-louix-wallpapers.htm
-by louix (http://www.crystalxp.net/forum/en/profil-102595.htm)
-*/
-	background-image: url("../images/wallpaper flamme.png");
+	background-image: url("../images/wallpaper flamme.png"); /* see Credits.txt */
+	/* CSS3 Shadow */
+	-moz-box-shadow: 5px 5px 10px #888;
+	-webkit-box-shadow: 5px 5px 10px #888;
+	box-shadow: 5px 5px 10px #888;
 }
 
 #container a, #container a:link, #container a:visited {
@@ -202,7 +206,7 @@ by louix (http://www.crystalxp.net/forum/en/profil-102595.htm)
 }
 
 #scoreValue {
-	color: red;
+	color: white;
 }
 
 #totalScore {
@@ -270,7 +274,12 @@ by louix (http://www.crystalxp.net/forum/en/profil-102595.htm)
 	background-position: 0 -80px;
 }
 
-#boardBkgUrl 
-{
+#boardBkgUrl {
     width: 100%;
+}
+
+#jsb_logo_icon {
+	float: left;
+	padding: 3px;
+	margin: 0 10px 10px 0;
 }

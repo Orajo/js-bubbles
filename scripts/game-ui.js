@@ -10,6 +10,8 @@ var boardPanelName = "boardPanel";
  */
 var selectedGameType = gameOptions.currentGameType;
 
+var selectedBoardSize = gameOptions.boardSize.y;
+
 /**
  * Pokazuje lub ukrywane dodatkowe panele na planszy.
  * Obecnie jest to panel opcji i panel wyników gry.
@@ -57,8 +59,11 @@ function InitEvents() {
 
 		gameOptions.EnableAudio = $("#canPlaySounds").attr("checked") ? true : false;
 
-		if (gameOptions.currentGameType !== selectedGameType) {
+		selectedBoardSize = parseInt($("#boardDimensionId").get(0).value);
+
+		if (gameOptions.currentGameType !== selectedGameType || selectedBoardSize != gameOptions.boardSize.y) {
 			if (gameStats.gameScore === 0 || confirm("Czy chcesz przerwać grę?")) {
+				gameOptions.ChangeBoardSize(selectedBoardSize);
 				gameOptions.ChangeGameType(selectedGameType);
 				InitBoard();
 			}

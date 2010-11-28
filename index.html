@@ -13,8 +13,9 @@
 	<script type="text/javascript" src="scripts/jquery.tmpl.js"></script>
 	<script type="text/javascript" src="scripts/jquery.ezCookie.js"></script>
 	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js"></script>
-	<script type="text/javascript" src="scripts/game-core.js"></script>
+	<script type="text/javascript" src="scripts/game-options.js"></script>
 	<script type="text/javascript" src="scripts/game-stats.js"></script>
+	<script type="text/javascript" src="scripts/game-core.js"></script>
 	<script type="text/javascript" src="scripts/game-ui.js"></script>
 	<meta http-equiv='cache-control' content='no-cache'/>
 </head>
@@ -138,14 +139,16 @@
 			<!-- panel pomocy -->
 			<div id="helpPanel" class="panel">
 				<div class="panelView">
-					<div class="panelContent">
+					<div class="panelContent"><img src="images/jsb_logo.png" id="jsb_logo_icon" />
 						<h1>JS Bubbles</h1>
-						<p>ver. <script type="text/javascript" language="javascript">document.write(gameVersion);</script></p>
+						<p>version: <script type="text/javascript" language="javascript">document.write(gameVersion);</script></p
+						<p style="margin-top: 20px; clear: both;">Author: <strong>Jarosław Wasilewski</strong></p>
 						
-						<p style="margin-top: 20px;">Author:</p>
-						<h2>Jarosław Wasilewski</h2>
-						e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a>
-						<p><a href="http://code.google.com/p/js-bubbles/">Project page</a></p>
+						<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
+
+						<p style="margin-top: 20px;">
+							<a href="http://code.google.com/p/js-bubbles/" target="_blank">Project page on Google Code</a>
+							<a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" border="0"/></p>
 					</div>
 					<div class="panelButtons">
 						<input type="button" value="Close" id="helpCloseBtn" />

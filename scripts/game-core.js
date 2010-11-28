@@ -6,7 +6,7 @@
 
 var gameTitle = "JS Bubbles";
 
-var gameVersion = "2.1 beta 2";
+var gameVersion = "2.1 beta 3";
 
 /**
  * Tablica na zaznaczone elementy
@@ -38,119 +38,6 @@ var selectedScore = 0;
  * Magazyn na dodatkowe kolumny kul w grach: type3
  */
 var newColumnStore = [];
-
-/**
- * Wielkości planszy
- */
-var boardSizeList = {
-	size12: {
-		text: "12 x 12",
-		x: 12,
-		y: 12
-	},
-	size15: {
-		text: "10 x 15",
-		x: 10,
-		y: 15
-	},
-	size20: {
-		text: "16 x 20",
-		x: 16,
-		y: 20
-	}
-};
-
-/**
- * Typy gier
- */
-var gameTypes = {
-	type1: "Standard",
-	type2: "Compressive",
-	type3: "Add balls",
-    type4: "Add balls and compress"
-};
-
-var gameOptions = {
-	// nazwa ciasteczka, przechowującego opcje
-	_cookieName: "jsb_opt",
-
-	// aktualny tryb gry
-	currentGameType: gameTypes.type1,
-
-	/**
-	* Aktualna wielkość planszy
-	*/
-	boardSize: {
-		x: boardSizeList.size15.x, // szerokość planszy
-		y: boardSizeList.size15.y  // wysokość planszy
-	},
-
-	/**
-	* Tryb zaznaczania i kasowania kul tym samym kliknięceim
-	*/
-	oneClickMode: false,
-
-	/**
-	* Play sound when remove balls
-	*/
-	enableAudio: false,
-
-	/**
-	* Adres URL tła strony
-	*/
-	boardBackground: "",
-
-	ChangeBoardBackground: function (url) {
-		gameOptions.boardBackground = url;
-		if (gameOptions.boardBackground !== "") {
-			$("#container").css("background-image", "url(\"" + gameOptions.boardBackground + "\")");
-		}
-	},
-
-	/**
-	* Metoda zmienia typ aktualnej gry
-	* @param string newGameType nazwa opisowa nowego typu gry
-	*/
-	ChangeGameType: function (newGameType) {
-		if (this.currentGameType !== newGameType) {
-			this.currentGameType = newGameType;
-			// gameStats.Save();
-			gameStats.currentType = this.currentGameType;
-			gameStats.stats = gameStats.statsArray[this.currentGameType];
-			// gameStats.Read();
-			refreashMessages();
-			if (this.currentGameType === gameTypes.type3 || this.currentGameType === gameTypes.type4) {
-				RenderStore();
-			}
-			else {
-				$("#storeArea").remove();
-			}
-		}
-	},
-
-	Save: function () {
-		$.setSubCookie(this._cookieName, "options", this);
-	},
-
-	Read: function () {
-		mo = $.subCookie(this._cookieName, "options");
-		try {
-			if (mo !== undefined) {
-				this.boardSize.x = mo.boardSize.x; // szerokość planszy
-				this.boardSize.y = mo.boardSize.y; // wysokość planszy
-				this.ChangeGameType(mo.currentGameType);
-				this.oneClickMode = mo.oneClickMode;
-				this.ChangeBoardBackground(mo.boardBackground);
-				this.enableAudio = mo.enableAudio;
-			}
-		}
-		catch (exp) {
-			this.boardSize.x = boardSizeList.size15.x; // szerokość planszy
-			this.boardSize.y = boardSizeList.size15.y; // wysokość planszy
-			this.ChangeGameType(gameTypes.type1);
-		}
-	}
-};
 
 /**
  * Zapewnienie zgodności IE z innymi przeglądarkami
@@ -189,34 +76,12 @@ function GetGameTitle() {
     return gameTitle + " (" + gameVersion + ") - current mode: " + gameOptions.currentGameType;
 }
 
-/**
- * Inicjalizuje planszę gry
- * @return void
- */
-function InitBoard() {
-	// odczyt rozmiaru planszy
-	boardDim = parseInt($("#boardDimensionId").get(0).value);
-	switch (boardDim) {
-		case boardSizeList.size12.y:
-			CreateBoard(boardSizeList.size12.x, boardSizeList.size12.y);
-			break;
-		case boardSizeList.size20.y:
-			CreateBoard(boardSizeList.size20.x, boardSizeList.size20.y);
-			break;
-		case boardSizeList.size15.y:
-		default:
-			CreateBoard(boardSizeList.size15.x, boardSizeList.size15.y);
-			break;
-	}
-}
 
 /**
  * Funkcja generuje planszę gry
  * TODO: sprawdzić wiązanie zdarzenia onclick popprzez jquery.delegate()
  */
-function CreateBoard (sizeX, sizeY) {
-	gameOptions.boardSize.x = sizeX;
-	gameOptions.boardSize.y = sizeY;
+function InitBoard () {
 	// czyszczenie planszy
 	$("#boardArea").empty();
 
@@ -739,6 +604,7 @@ function RenderStore() {
 		//storeTable.appendChild(row);
 		//document.getElementById("storeArea").appendChild(storeTable);
 	}
+	$("#storeArea").show();
 }
 
 /**
@@ -842,13 +708,13 @@ function testAudio() {
 // inicjalizacja aplikacji
 $(window).load(function () {
 
-	testAudio(); // zmianie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
-
-	InitEvents();
+	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
 	storage.Init();
 	// odczytanie statystyk gry
 	gameStats.Read();
 	gameOptions.Read();
+	// musi być po gameOptions.Read(), ponieważ odwołuje się do ustwień gry
+	InitEvents();
 
 	UpdateResultsTable();
 
