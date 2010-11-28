@@ -51,21 +51,27 @@ function InitEvents() {
 	$("#settingOkBtn").click(function () {
 		TogglePanel('controlPanel');
 
-		gameOptions.oneClickMode = $("#oneClickMode").attr("checked") ? true : false;
-		if (gameOptions.currentGameType !== selectedGameType 
-			&& (gameStats.gameScore === 0 || confirm("Czy chcesz przerwać grę?"))) {
-			gameOptions.ChangeGameType(selectedGameType);
-			InitBoard();
-		}
-		else {
-			// odtwarzanie w tym wypadku nie odtwarza poprzedniego stanu opcji oneClickMode, 
-			// ale tak ma być
-			RestoreSettings();
+		gameOptions.oneClickMode = $("#oneClickMode").attr("checked") ? false : true;
+
+		gameOptions.ChangeBoardBackground($("#boardBkgUrl").get(0).value);
+
+		gameOptions.EnableAudio = $("#canPlaySounds").attr("checked") ? true : false;
+
+		if (gameOptions.currentGameType !== selectedGameType) {
+			if (gameStats.gameScore === 0 || confirm("Czy chcesz przerwać grę?")) {
+				gameOptions.ChangeGameType(selectedGameType);
+				InitBoard();
+			}
+			else {
+				// odtwarzanie w tym wypadku nie odtwarza poprzedniego stanu opcji oneClickMode, 
+				// ale tak ma być
+				SetSettingsPanel();
+			}
 		}
 	});
 
 	$("#settingsCancelBtn").click(function () {
-		RestoreSettings();
+		SetSettingsPanel();
 		TogglePanel('controlPanel');
 	});
 
@@ -96,7 +102,17 @@ function InitEvents() {
 		ResetResults();
 		TogglePanel('scorePanel');
 	});
-
+	
+	// Panel pomocy
+	$("#helpSwitchBtn").click(function () {
+		TogglePanel('helpPanel');
+		return false;
+	});
+	
+	$("#helpCloseBtn").click(function () {
+		TogglePanel('helpPanel');
+	});
+	
 	// Koniec gry
 	$("#newGameBtn").click(function () {
 		EndGame();
@@ -114,7 +130,7 @@ function InitEvents() {
  * Przywraca w GUI ustawień aktualne wartości opcji gry.
  * Jest wywoływane przy okazji anulowania zmian oraz inicjalizacji gry.
  */
-function RestoreSettings() {
+function SetSettingsPanel() {
 
 	// ustawienie wskaźnika typu gry
 	$("#options input").removeClass("selected");
@@ -127,6 +143,7 @@ function RestoreSettings() {
 
 	// inicjalizacja listy rozmiarów planszy
 	$("#boardDimensionId").empty();
+	
 	// odczytanie wielkości planszy i ustawienie w opcjach
 	for (var sizeElement in boardSizeList) {
 		$("<option />", {
@@ -137,7 +154,13 @@ function RestoreSettings() {
 	}
 	
 	// inicjalizacja trybu zaznaczania
-	$("#oneClickMode").attr("checked", gameOptions.oneClickMode);
+	$("#oneClickMode").attr("checked", !gameOptions.oneClickMode);
+
+	// inicjalizacja tła gry
+	$("#boardBkgUrl").attr("value", gameOptions.boardBackground);
+
+	// inicjalizacja odtwarzania dźwięków.
+	$("#canPlaySounds").attr("checked", gameOptions.EnableAudio);
 }
 
 /**
@@ -145,9 +168,9 @@ function RestoreSettings() {
  */
 function UpdateResultsTable() {
 	$("tr#resultsStatsHeader ~ tr").remove();
-	resultData = new Array();
+	var resultData = new Array();
 	for(tmp in gameStats.statsArray) {
 		resultData.push(gameStats.statsArray[tmp]);	
 	}
-	$("#resultsTable").tmpl(resultData).appendTo("#resultsStats");	
+	$("#resultsTable").tmpl(resultData).appendTo("#resultsStats");
 }

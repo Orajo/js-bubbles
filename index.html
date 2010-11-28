@@ -1,38 +1,66 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Colored Beads</title>
+	<title>JS Bubbles</title>
 	
-	<link rel="stylesheet" type="text/css" href="normal.css" />
-	<link rel="stylesheet" type="text/css" href="jquery.jnotify.css" />
-	<script type="text/javascript" src="jquery-1.4.2.min.js "></script>
+	<link rel="stylesheet" type="text/css" href="css/normal.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.jnotify.css" />
+	<script type="text/javascript" src="scripts/jquery-1.4.2.js "></script>
 <!--	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js "></script> -->
-	<script type="text/javascript" src="storage.js"></script>
-	<script type="text/javascript" src="jquery.tmpl.js"></script>
-	<script type="text/javascript" src="jquery.ezCookie.js"></script>
-	<script type="text/javascript" src="jquery.jnotify.jw.js"></script>
-	<script type="text/javascript" src="game-core.js"></script>
-	<script type="text/javascript" src="game-ui.js"></script>
+	<script type="text/javascript" src="scripts/storage.js"></script>
+	<script type="text/javascript" src="scripts/jquery.tmpl.js"></script>
+	<script type="text/javascript" src="scripts/jquery.ezCookie.js"></script>
+	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js"></script>
+	<script type="text/javascript" src="scripts/game-core.js"></script>
+	<script type="text/javascript" src="scripts/game-stats.js"></script>
+	<script type="text/javascript" src="scripts/game-ui.js"></script>
 	<meta http-equiv='cache-control' content='no-cache'/>
 </head>
 <body>
+<!-- Test area -->
 	<input type="button" onclick="EndGame(true)" value="Test: End game"/>
+	<input type="button" onclick="RenderStore()" value="Test: new bolls"/>
+	<input type="button" onclick="TestSound()" value="Test: sound"/>
+<!-- End test area -->
+
+<!-- AddThis Button BEGIN -->
+	<script type="text/javascript">
+	var addthis_config =
+	{
+		ui_508_compliant: true
+	}
+	</script>
+
+	<div class="addthis_toolbox addthis_32x32_style addthis_default_style">
+		<a class="addthis_button_facebook"></a>
+		<a class="addthis_button_twitter"></a>
+		<a class="addthis_button_wykop"></a>
+		<a class="addthis_button_blip"></a>
+		<a class="addthis_button_email"></a>
+		<a class="addthis_button_favorites"></a>
+		<a class="addthis_button_compact"></a>
+	</div>
+	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4cf044e41b9057da"></script>
+<!-- AddThis Button END -->
+
 	<div id="container">
-		<div id="header"><h1>JS Bubbles (2.1 alpha)</h1></div>
+		<div id="header"><h1>JS Bubbles</h1></div>
 		<div id="switchedPanel">
 			<div id="boardPanel">
 				<div id="gameTypeTitle" class="scoreStatsData" style="clear: both;">Game type: <span id="gameTypeValue"></span></div>
+				<!-- obszar na magazy kul (zależnie od typu gry) -->
+				<div id="storeArea"></div>
 				<!-- obszar na planszę gry -->
-				<div id="boardArea">
-				</div>
+				<div id="boardArea"></div>
 				<!-- narzędzia gry -->
-				<div style="float: left">
+				<div style="float: left; text-align: center;">
 					<input type="image" src="images/rewind_gray.png" id="undoBtn" alt="Undo move" title="Undo move"/><br/><br/>
 					<input type="image" src="images/reload.png" id="newGameBtn" alt="New game" title="New game"/><br/><br/>
-					<input type="image" src="images/spanner_48.png" id="optionsSwitchBtn" alt="Settings" title="Settings" style="width: 32px; height: 32px"/><br/><br/>
+					<input type="image" src="images/spanner_48.png" id="optionsSwitchBtn" alt="Settings" title="Settings"/><br/><br/>
 					<input type="image" src="images/cup.png" id="resultsSwitchBtn" alt="Results" title="Show results"/><br/><br/>
+					<input type="image" src="images/help.png" id="helpSwitchBtn" alt="Help" title="Show help"/><br/><br/>
 				</div>
 				<div style="clear: both;">
 					<span id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></span>
@@ -51,12 +79,21 @@
 							</p>
 							<div>Game type:</div>
 							<p>
-								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gmt1" />
-								<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gmt2" />
+								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gmt1" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gmt2" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gmt3" class="gameTypeIcon" />
+                                <input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gmt4" class="gameTypeIcon" />
 							</p>
-							<p style="clear: both;margin-bottom: 15px;">
+							<p style="clear: both;">
 								<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
 							</p>
+                            <p>
+                                <label for="boardBkgUrl">Backgroud image address</label><br />
+                                <input type="text" id="boardBkgUrl" />
+                            </p>
+                            <p>
+                                <label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
+                            </p>						
 						</div>
 					</div>
 					<div class="panelButtons">
@@ -98,11 +135,32 @@
 					</div>
 				</div>
 			</div>
+			<!-- panel pomocy -->
+			<div id="helpPanel" class="panel">
+				<div class="panelView">
+					<div class="panelContent">
+						<h1>JS Bubbles</h1>
+						<p>ver. <script type="text/javascript" language="javascript">document.write(gameVersion);</script></p>
+						
+						<p style="margin-top: 20px;">Author:</p>
+						<h2>Jarosław Wasilewski</h2>
+						e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a>
+						<p><a href="http://code.google.com/p/js-bubbles/">Project page</a></p>
+					</div>
+					<div class="panelButtons">
+						<input type="button" value="Close" id="helpCloseBtn" />
+					</div>
+				</div>
+			</div>
 		</div>
 		<div style="clear: both;"></div>
 		<div id="footer">
 			&copy; 2009 - 2010, Jarosław Wasilewski
 		</div>
 	</div>
+	<audio id="audio_bang" preload="auto">
+		<source src="bomb-02.mp3" /> 
+		<source src="bomb-02.wav" /> 
+	</audio>
 </body>
 </html>

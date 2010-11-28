@@ -4,6 +4,18 @@
 	font-family: sans-serif;
 }
 
+h1 {
+	font-size: 1.5em;	
+}
+
+h2 {
+	font-size: 1.2em;	
+}
+
+h2 {
+	font-size: 1.1em;	
+}
+
 #container {
 	margin: 20px auto;
 	overflow: hidden;
@@ -12,6 +24,12 @@
 	display: table;
 	background-color: black;
 	color: white;
+	background-repeat: repeat;
+/*
+Default wallpaper http://www.crystalxp.net/galerie/en.id.5008-wallpaper-flammes-louix-wallpapers.htm
+by louix (http://www.crystalxp.net/forum/en/profil-102595.htm)
+*/
+	background-image: url("../images/wallpaper flamme.png");
 }
 
 #container a, #container a:link, #container a:visited {
@@ -81,7 +99,12 @@
 	left: 100%;
 }
 
-#boardArea {
+#helpPanel {
+	background-color: #223C71;
+	left: 100%;
+}
+
+#boardArea, #storeArea {
 	border: 2px solid #fff;
 	padding: 2px;
 	margin: 0 5px 10px 0;
@@ -89,12 +112,17 @@
 	float: left;
 }
 
-#boardTable {
+#boardTable, #storeTable {
 	background-color: white;
 	border-collapse: collapse;
+/*
+	filter: alpha(opacity=90);
+	-moz-opacity: 0.90;
+	opacity: 0.90;
+*/
 }
 
-#boardTable td {
+#boardTable td, #storeTable td {
 	width: 16px;
 	height: 17px;
 	font-size: 8px;
@@ -113,7 +141,7 @@
 }
 
 .color1 {
-	background: url("images/red_24.png") no-repeat;
+	background: url("../images/red_24.png") no-repeat;
 }
 
 .color1.selected {
@@ -121,7 +149,7 @@
 }
 
 .color2 {
-	background: url("images/green_24.png") no-repeat;
+	background: url("../images/green_24.png") no-repeat;
 }
 
 .color2.selected {
@@ -129,7 +157,7 @@
 }
 
 .color3 {
-	background: url("images/blue_24.png") no-repeat;
+	background: url("../images/blue_24.png") no-repeat;
 }
 
 .color3.selected {
@@ -137,7 +165,7 @@
 }
 
 .color4 {
-	background: url("images/yellow_24.png") no-repeat;
+	background: url("../images/yellow_24.png") no-repeat;
 }
 
 .color4.selected {
@@ -145,7 +173,7 @@
 }
 
 .emptyField {
-	background-color: white;
+	background-color: transparent;
 }
 
 .scoreStatsData {
@@ -209,23 +237,40 @@
 }
 
 #gmt1 {
-	background-image:url("images/gametype-1.png");
+	background-image:url("../images/gametype-1.png");
 }
 
 #gmt2 {
-	background-image:url("images/gametype-2.png");
+	background-image:url("../images/gametype-2.png");
 }
 
-#gmt1, #gmt2 {
+#gmt2 {
+	background-image:url("../images/gametype-2.png");
+}
+
+#gmt3 {
+	background-image:url("../images/gametype-3.png");
+}
+
+#gmt4 {
+	background-image:url("../images/gametype-4.png");
+}
+
+.gameTypeIcon {
 	background-repeat:no-repeat;
 	display:block;
 	height:70px;
 	width:70px;
 	float: left;
-	margin-right: 10px;
+	margin: 0 10px 10px 0;
 	outline: none;
 }
 
-#gmt1:hover, #gmt2:hover, #gmt1:active, #gmt2:active, #gmt1.selected, #gmt2.selected {
+.gameTypeIcon:hover, .gameTypeIcon:active, .gameTypeIcon.selected {
 	background-position: 0 -80px;
+}
+
+#boardBkgUrl 
+{
+    width: 100%;
 }
