@@ -4,6 +4,10 @@
 	font-family: sans-serif;
 }
 
+body {
+	padding: 20px;
+}
+
 h1 {
 	font-size: 1.5em;	
 }
@@ -18,6 +22,10 @@ h3 {
 
 p {
 	line-height: 130%;
+}
+
+ul {
+	margin-left: 20px;
 }
 
 #container {
@@ -132,16 +140,6 @@ p {
 	font-size: 8px;
 	padding: 1px;
 	background-position: 50% 50%;
-}
-
-#optionsSwitch {
-	text-decoration: none;
-	font-size: smaller;
-	outline-style: none;
-}
-
-#optionsSwitch img {
-	border: 0;
 }
 
 .color1 {

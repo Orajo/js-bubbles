@@ -6,7 +6,7 @@
 
 var gameTitle = "JS Bubbles";
 
-var gameVersion = "2.1 beta 3";
+var gameVersion = "2.1 beta 4";
 
 /**
  * Tablica na zaznaczone elementy
@@ -708,7 +708,7 @@ function testAudio() {
 // inicjalizacja aplikacji
 $(window).load(function () {
 
-	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
+//	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
 	storage.Init();
 	// odczytanie statystyk gry
 	gameStats.Read();
