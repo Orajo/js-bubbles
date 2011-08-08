@@ -1,0 +1,166 @@
+﻿* {
+	font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
+}
+
+body {
+	background-image: none;
+}
+
+h1 {
+	font-weight: normal;
+	font-family: "Segoe Light", Segoe UI, Segoe, Helvetica, Arial, Sans-Serif;
+	font-size: 1.5em;
+}
+
+/*
+.menuBlock {
+	color: white;
+	margin: 20px;
+	padding: 10px;
+	background-color: black;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.menuBlock a {
+	color: white;
+}
+*/
+
+#appContainer {
+	background: black;
+	color: white;
+	border: 2px solid #000;
+}
+
+#appContainer a, #appContainer a:link, #appContainer a:visited {
+	color: white;
+	text-decoration: none;
+}
+
+#appContainer a:active, #appContainer a:hover
+{
+	text-decoration: underline;
+}
+
+#appContainer > h1 {
+	font-size: 1.2em;
+    text-align: left;
+	display: table-row;
+}
+#appContainer > h1 span {
+	padding: 5px 5px;
+	display: table-cell;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+#selectedScore {
+	font-weight: normal;
+}
+
+#totalScore {
+	font-weight: normal;
+}
+
+#gameTypeTitle {
+	font-weight: normal;
+}
+
+.panel 
+{
+	background-color: #3399FF;
+}
+
+.panel h1 
+{
+	font-size: xx-large;
+/*	overflow: hidden;
+	white-space: nowrap;
+	position: relative;
+*/
+}
+
+
+#boardPanel {
+	background-color: Black;
+}
+
+#boardArea
+{
+	clip: rect(0, 250px, 0, 0);
+	overflow: hidden;
+}
+
+#boardArea, #storeArea {
+	border: none;
+	background-color: White;
+}
+
+#boardTable 
+{
+	padding: 2px;
+}
+
+#appContainer .panelView h1 a, #appContainer .panelView h1 a:link, #appContainer .panelView h1 a:visited, #appContainer .panelView h1 a:active
+{
+	font-size: xx-large;
+	color: lightgray;
+	text-decoration: none;
+}
+
+.panelReturn 
+{
+	float: left;
+    position: absolute;
+}
+
+.panelContent {
+	padding: 0;
+}
+#controlPanel .panelContent {
+	margin-left: 40px;
+}
+
+.panelButtons 
+{
+	border-top: 1px solid white;
+	background-color: Black;
+    text-align: center;
+}
+
+.panelButtons input 
+{
+	border: none;
+	padding: 2px 3px;
+}
+
+#gmt1 {
+	background-image:url("../../images/themes/metro/gametype-1.png");
+}
+
+#gmt2 {
+	background-image:url("../../images/themes/metro/gametype-2.png");
+}
+
+#gmt3 {
+	background-image:url("../../images/themes/metro/gametype-3.png");
+}
+
+#gmt4 {
+	background-image:url("../../images/themes/metro/gametype-4.png");
+}
+
+.gameTypeIcon {
+	background-repeat:no-repeat;
+	display:block;
+	height:70px;
+	width:70px;
+	float: left;
+	margin: 0 10px 10px 0;
+	outline: none;
+}
+
+.gameTypeIcon:hover, .gameTypeIcon:active, .gameTypeIcon.selected {
+	background-position: 0 -80px;
+}

@@ -20,13 +20,24 @@
 	<script type="text/javascript" src="scripts/game-ui.js"></script>
 	<meta http-equiv='cache-control' content='no-cache'/>
 	<script type="text/javascript" >
-		function loadCss (fileName) {
+
+		$(document).ready(function () {
+			var currentTheme = $.cookie('theme');
+			if (currentTheme != undefined) {
+				loadCss(currentTheme, false);
+			}
+		});
+
+		function loadCss(fileName, save) {
 			if (fileName !== "") {
-				htmldef = '<link rel="stylesheet" type="text/css" id="themeCss" href="css/themes/theme_flame.css" />';
+				htmldef = '<link rel="stylesheet" type="text/css" id="themeCss" href="css/themes/' + fileName + '" />';
 				$("head").append(htmldef);
 			}
 			else {
 				$("head link#themeCss").remove();
+			}
+			if (save) {
+				$.setCookie('theme', fileName);
 			}
 		}
 	</script>
@@ -40,28 +51,19 @@
 		<input type="button" onclick="TestSound()" value="Sound"/>
 		<input type="button" onclick="loadCss('')" value="Theme 0" />
 		<input type="button" onclick="loadCss('theme_flame.css')" value="Theme 1" />
+		<input type="button" onclick="loadCss('theme_metro.css')" value="Theme 2" />
 	</form>
 <!-- End test area -->
-
-<!-- AddThis Button BEGIN -->
-	<script type="text/javascript">
-	var addthis_config =
-	{
-		ui_508_compliant: true
-	}
-	</script>
+<!--
 	<div id="socialTools" style="float: left; width: 30%;">
-
-		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4cf044e41b9057da"></script>
-	<!-- AddThis Button END -->
 		<div class="menuBlock">
 			<p><strong>Player tools:</strong></p>
 			<ul>
 				<li><a href="http://code.google.com/p/js-bubbles/issues/entry">Send an issue</a></li>
 			</ul>
-			<div><a href="#" onclick="loadCss('')" class="themeSwitcher" id="standardTheme">Standard theme</a></div>
-			<div><a href="#" onclick="loadCss('theme_flame.css')" class="themeSwitcher" id="flameTheme">Flame theme</a></div>
-			
+			<div><a href="#" onclick="loadCss('', true)" class="themeSwitcher" id="standardTheme">Standard theme</a></div>
+			<div><a href="#" onclick="loadCss('theme_flame.css', true)" class="themeSwitcher" id="flameTheme">Flame theme</a></div>
+			<div><a href="#" onclick="loadCss('theme_metro.css', true)" class="themeSwitcher" id="metroTheme">Metro theme</a></div>
 			<div class="addthis_toolbox addthis_32x32_style addthis_default_style">
 				<a class="addthis_button_facebook"></a>
 				<a class="addthis_button_twitter"></a>
@@ -82,126 +84,133 @@
 			</ul>
 		</div>
 	</div>
-	<div id="container">
-		<div id="header"><h1>JS Bubbles</h1></div>
-		<div id="switchedPanel">
-			<div id="boardPanel">
-				<div id="gameTypeTitle" class="scoreStatsData" style="clear: both;">Game type: <span id="gameTypeValue"></span></div>
-				<!-- obszar na magazy kul (zależnie od typu gry) -->
-				<div id="storeArea"></div>
-				<!-- obszar na planszę gry -->
-				<div id="boardArea"></div>
-				<!-- narzędzia gry -->
-				<div style="float: left; text-align: center;" id="optionsSwitch">
-					<input type="image" src="images/rewind_gray.png" id="undoBtn" alt="Undo move" title="Undo move"/><br/><br/>
-					<input type="image" src="images/reload.png" id="newGameBtn" alt="New game" title="New game"/><br/><br/>
-					<input type="image" src="images/spanner_48.png" id="optionsSwitchBtn" alt="Settings" title="Settings"/><br/><br/>
-					<input type="image" src="images/cup.png" id="resultsSwitchBtn" alt="Results" title="Show results"/><br/><br/>
-					<input type="image" src="images/help.png" id="helpSwitchBtn" alt="Help" title="Show help"/><br/><br/>
-				</div>
-				<div style="clear: both;">
-					<span id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></span>
-					<span id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></span>
-				</div>
-			</div>
-			<!-- panel ustawień gry -->
-			<div id="controlPanel" class="panel">
-				<div class="panelView">
-					<div class="panelContent">
-						<div id="options">
-							<p>
-								<label for="boardDimensionId">Board size:</label>
-								<select name="boardDimension" id="boardDimensionId">
-								</select>
-							</p>
-							<div>Game type:</div>
-							<p>
-								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gmt1" class="gameTypeIcon" />
-								<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gmt2" class="gameTypeIcon" />
-								<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gmt3" class="gameTypeIcon" />
-                                <input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gmt4" class="gameTypeIcon" />
-							</p>
-							<p style="clear: both;">
-								<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
-							</p>
-                            <p>
-                                <label for="boardBkgUrl">Backgroud image address</label><br />
-                                <input type="text" id="boardBkgUrl" />
-                            </p>
-							<!--<p>
-                                <label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
-                            </p> -->
-						</div>
-					</div>
-					<div class="panelButtons">
-						<input type="button" value="Cancel" id="settingsCancelBtn" />
-						<input type="button" value="OK" id="settingOkBtn" />
+-->
+	<!-- GAME AREA -->
+	<div id="appContainer">
+		<h1><span>JS Bubbles</span></h1>
+		<div id="boardPanel" class="panel">
+			<div class="panelView">
+				<div class="panelContent">
+					<h1 id="gameTypeTitle"  class="scoreStatsData">Game: <span id="gameTypeValue"></h1>
+					<!-- obszar na magazy kul (zależnie od typu gry) -->
+					<div id="storeArea"></div>
+					<!-- obszar na planszę gry -->
+					<div id="boardArea"></div>
+					<div>
+						<span id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></span>
+						<span id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></span>
 					</div>
 				</div>
 			</div>
-			<!-- panel wyników gry -->
-			<div id="scorePanel" class="panel">
-				<div class="panelView">
-					<div class="panelContent">
-						<div id="scoredGameType">Game mode: <span id="gameTypeName">0</span></div>
-						<hr style="margin-bottom: 10px;"/>
-						<div id="maxScore" class="scoreStatsData"><img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />Best score: <span id="maxScoreValue">0</span></div>
-						<div id="playedGames" class="scoreStatsData">Games: <span id="playedGamesValue">0</span></div>
-						<div id="avgScore" class="scoreStatsData">Avarange score: <span id="avgScoreValue">0</span></div>
-						<hr style="margin: 10px auto;"/>
-						<table id="resultsStats">
-							<tr id="resultsStatsHeader">
-								<th>Game type</th>
-								<th>Max result</th>
-								<th>Games</th>
-								<th>Avg result</th>
-							</tr>
-						</table>
-						<script id="resultsTable" type="text/x-jquery-tmpl">
-							<tr>
-								<td>${gameType}</td>
-								<td>${max}</td>
-								<td>${games}</td>
-								<td>${avg}</td>
-							</tr>
-						</script>
-					</div>
-					<div class="panelButtons">
-						<input type="button" value="Clear" id="scoreClearBtn" style="float: left;" />
-						<input type="button" value="Close" id="scoreCloseBtn" />
-					</div>
-				</div>
-			</div>
-			<!-- panel pomocy -->
-			<div id="helpPanel" class="panel">
-				<div class="panelView">
-					<div class="panelContent"><img src="images/jsb_logo.png" id="jsb_logo_icon" />
-						<h1>JS Bubbles</h1>
-						<p>version: <script type="text/javascript" language="javascript">document.write(gameVersion);</script></p
-						<p style="margin-top: 20px; clear: both;">Author: <strong>Jarosław Wasilewski</strong></p>
-						
-						<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
-
-						<p style="margin-top: 20px;">
-							<a href="http://code.google.com/p/js-bubbles/" target="_blank">Project page on Google Code</a>
-							<a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" border="0"/></a></p>
-					</div>
-					<div class="panelButtons">
-						<input type="button" value="Close" id="helpCloseBtn" />
-					</div>
-				</div>
+			<!-- narzędzia gry -->
+			<div class="panelButtons">
+				<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo move" title="Undo move"/>
+				<input type="image" src="images/themes/metro/NewGame.png" id="newGameBtn" alt="New game" title="New game"/>
+				<input type="image" src="images/themes/metro/Settings.png" id="optionsSwitchBtn" alt="Settings" title="Settings"/>
+				<input type="image" src="images/themes/metro/TopScores.png" id="resultsSwitchBtn" alt="Results" title="Show results"/>
+				<input type="image" src="images/themes/metro/About.png" id="helpSwitchBtn" alt="About JSBubbles" title="About JSBubbles"/>
 			</div>
 		</div>
-		<div style="clear: both;"></div>
+		<!-- panel ustawień gry -->
+		<div id="controlPanel" class="panel">
+			<div class="panelView">
+				<div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" id="closeBtn" /></div>
+				<div class="panelContent">
+					<h1>Settings</h1>
+					<div id="options">
+						<p>
+							<label for="boardDimensionId">Board size:</label>
+							<select name="boardDimension" id="boardDimensionId">
+							</select>
+						</p>
+						<p>Game type:</p>
+						<div>
+							<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gmt1" class="gameTypeIcon" />
+							<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gmt2" class="gameTypeIcon" />
+							<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gmt3" class="gameTypeIcon" />
+							<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gmt4" class="gameTypeIcon" />
+						</div>
+						<p style="clear: both;">
+							<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
+						</p>
+						<p style="display: none;">
+							<label for="boardBkgUrl">Backgroud image address</label><br />
+							<input type="text" id="boardBkgUrl" />
+						</p>
+						<!--<p>
+							<label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
+						</p> -->
+					</div>
+				</div>
+			</div>
+			<div class="panelButtons">
+				<input type="image" src="images/themes/metro/Cancel.png" title="Cancel" value="Cancel" id="settingsCancelBtn" />
+				<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close" id="settingsOkBtn"/>
+			</div>
+		</div>
+		<!-- panel wyników gry -->
+		<div id="scorePanel" class="panel">
+			<div class="panelView">
+				<h1>Scores</h1>
+				<div class="panelContent">
+					<div id="scoredGameType">Game mode: <span id="gameTypeName">0</span></div>
+					<hr style="margin-bottom: 10px;"/>
+					<div id="maxScore" class="scoreStatsData"><img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />Best score: <span id="maxScoreValue">0</span></div>
+					<div id="playedGames" class="scoreStatsData">Games: <span id="playedGamesValue">0</span></div>
+					<div id="avgScore" class="scoreStatsData">Avarange score: <span id="avgScoreValue">0</span></div>
+					<hr style="margin: 10px auto;"/>
+					<table id="resultsStats">
+						<tr id="resultsStatsHeader">
+							<th>Game type</th>
+							<th>Max result</th>
+							<th>Games</th>
+							<th>Avg result</th>
+						</tr>
+					</table>
+					<script id="resultsTable" type="text/x-jquery-tmpl">
+						<tr>
+							<td>${gameType}</td>
+							<td>${max}</td>
+							<td>${games}</td>
+							<td>${avg}</td>
+						</tr>
+					</script>
+				</div>
+			</div>
+			<div class="panelButtons">
+				<input type="image" src="images/themes/metro/Remove.png" title="Clear results" value="Clear" id="scoreClearBtn" />
+			</div>
+		</div>
+		<!-- panel pomocy -->
+		<div id="helpPanel" class="panel">
+			<div class="panelView">
+				<h1>About game</h1>
+				<div class="panelContent"><img src="images/jsb_logo.png" id="jsb_logo_icon" alt="JSBubbles Logo" />
+					<h1>JS Bubbles</h1>
+					<p>version: <script type="text/javascript" language="javascript">document.write(gameVersion);</script></p
+					<p style="margin-top: 20px; clear: both;">Author: <strong>Jarosław Wasilewski</strong></p>
+						
+					<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
+
+					<p style="margin-top: 20px;">
+						<a href="http://code.google.com/p/js-bubbles/" target="_blank">Project page on Google Code</a>
+						<a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" border="0"/></a></p>
+				</div>
+			</div>
+			<div class="panelButtons"></div>
+		</div>
+	</div>
+<!--		<div style="clear: both;"></div>
 		<div id="footer">
 			&copy; 2009 - 2010, Jarosław Wasilewski
 		</div>
-	</div>
+-->
 	<audio id="audio_bang" preload="auto">
 		<source src="bomb-02.mp3" /> 
 		<source src="bomb-02.wav" /> 
 	</audio>
 
+	<!-- END GAME AREA -->
 	<script type="text/javascript">
 
 		var _gaq = _gaq || [];

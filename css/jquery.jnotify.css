@@ -7,7 +7,6 @@
 
 .jnotify-container .jnotify-notification {
 	position: relative; 
-	border: 2px solid red;
 }
 
 .jnotify-container .jnotify-notification .jnotify-background {
@@ -16,10 +15,7 @@
 	left: 0; 
 	width: 100%; 
 	height: 100%;
-	background-color: black; 
-	filter: alpha(opacity=80); 
-	-moz-opacity: 0.80; 
-	opacity: 0.80; 
+	background-color: #3399FF;
 	z-index: 1; 
 }
 
@@ -32,8 +28,6 @@
 	top: 2px;
 	right: 5px;
 	padding: 0 5px;
-	font: bold 1.4em Arial,Helvetica,sans-serif;
-	line-height: 1em;
 	color: #567b1b;
 	text-decoration: none;
 	z-index: 3;
@@ -43,10 +37,9 @@
 .jnotify-container .jnotify-notification .jnotify-message {
 	position: relative; 
 	z-index: 2; 
-	padding: 20px;
+	padding: 5px;
 	text-align: center;
 	color: #fff;
-	font: bold 1.4em Arial,Helvetica,sans-serif;
 	line-height: 1.2em; 
 }
 

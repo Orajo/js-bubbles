@@ -12,33 +12,22 @@ var selectedGameType = gameOptions.currentGameType;
 
 var selectedBoardSize = gameOptions.boardSize.y;
 
+var toggled = -1;
+
 /**
  * Pokazuje lub ukrywane dodatkowe panele na planszy.
  * Obecnie jest to panel opcji i panel wyników gry.
  */
 function TogglePanel(panelName) {
-	var toggled = 0;
-	try {
-		toggled = $('#' + panelName).data("visible");
+	// otwarcie wybranego panelu
+	if (panelName > -1) {
+		$('#panels').animate({ left: panelName * -250 }, 1000);
+		toggled = panelName;
 	}
-	catch (err) {
-		toggled = 0;
-	}
-	if (toggled === 1) {
-		$('#' + panelName).animate({left: '100%'}, 1000);
-/*		$('#' + boardPanelName).animate({
-			left: '0',
-			}, 1000
-		); */
-		$('#' + panelName).data("visible", 0);
-	}
+	// zamknięcie otwartych paneli
 	else {
-		$('#' + panelName).animate({left: '0'}, 1000);
-/*		$('#' + boardPanelName).animate({
-			left: '-308',
-			}, 1000
-		); */
-		$('#' + panelName).data("visible", 1);
+		$('#panels').animate({ left: 250}, 1000);
+		toggled = -1;
 	}
 }
 
@@ -46,11 +35,12 @@ function InitEvents() {
 
 	// Panel opcji
 	$("#optionsSwitchBtn").click(function () {
-		TogglePanel('controlPanel');
+		//TogglePanel('controlPanel');
+		TogglePanel(0);
 		return false;
 	});
 
-	$("#settingOkBtn").click(function () {
+	$("#settingsOkBtn").click(function () {
 		TogglePanel('controlPanel');
 
 		gameOptions.oneClickMode = $("#oneClickMode").attr("checked") ? false : true;
@@ -62,7 +52,7 @@ function InitEvents() {
 		selectedBoardSize = parseInt($("#boardDimensionId").get(0).value);
 
 		if (gameOptions.currentGameType !== selectedGameType || selectedBoardSize != gameOptions.boardSize.y) {
-			if (gameStats.gameScore === 0 || confirm("Czy chcesz przerwać grę?")) {
+			if (gameStats.gameScore === 0 || confirm("Are you sure you want to start new game?")) {
 				gameOptions.ChangeBoardSize(selectedBoardSize);
 				gameOptions.ChangeGameType(selectedGameType);
 				InitBoard();
@@ -77,7 +67,8 @@ function InitEvents() {
 
 	$("#settingsCancelBtn").click(function () {
 		SetSettingsPanel();
-		TogglePanel('controlPanel');
+		//TogglePanel('controlPanel');
+		TogglePanel(0);
 	});
 
 	// wybranie trybu gry
@@ -95,27 +86,32 @@ function InitEvents() {
 	
 	// Panel statystyk gier
 	$("#resultsSwitchBtn").click(function () {
-		TogglePanel('scorePanel');
+		//TogglePanel('scorePanel');
+		TogglePanel(1);
 		return false;
 	});
 
 	$("#scoreCloseBtn").click(function () {
-		TogglePanel('scorePanel');
+		//TogglePanel('scorePanel');
+		TogglePanel(1);
 	});
 
 	$("#scoreClearBtn").click(function () {
 		ResetResults();
-		TogglePanel('scorePanel');
+		//TogglePanel('scorePanel');
+		TogglePanel(1);
 	});
 	
 	// Panel pomocy
 	$("#helpSwitchBtn").click(function () {
-		TogglePanel('helpPanel');
+		//TogglePanel('helpPanel');
+		TogglePanel(2);
 		return false;
 	});
 	
 	$("#helpCloseBtn").click(function () {
-		TogglePanel('helpPanel');
+		//TogglePanel('helpPanel');
+		TogglePanel(2);
 	});
 	
 	// Koniec gry
@@ -128,6 +124,11 @@ function InitEvents() {
 	$("#undoBtn").click(function () {
 		UndoMove();
 		return false;
+	});
+
+	// zamknięcie dowolnego panela
+	$("#closeBtn").click(function () {
+		TogglePanel(-1);
 	});
 }
 

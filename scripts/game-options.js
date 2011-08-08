@@ -59,10 +59,20 @@ var gameOptions = {
 	*/
 	boardBackground: "",
 
+	/**
+	* Temat
+	*/
+	theme: "metro",
+
+	/**
+	* Domyślny temat
+	*/
+	_defaultTheme: "metro",
+
 	ChangeBoardBackground: function (url) {
 		gameOptions.boardBackground = url;
 		if (gameOptions.boardBackground !== "") {
-			$("#container").css("background-image", "url(\"" + gameOptions.boardBackground + "\")");
+			$("#appContainer").css("background-image", "url(\"" + gameOptions.boardBackground + "\")");
 		}
 	},
 
@@ -119,6 +129,12 @@ var gameOptions = {
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);
 				this.enableAudio = mo.enableAudio;
+				if (mo.theme == indefined) {
+					this.theme = _defaultTheme
+				}
+				else {
+					this.theme = mo.theme;
+				}
 			}
 		}
 		catch (exp) {

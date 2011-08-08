@@ -21,7 +21,7 @@ ul {
 	color: white;
 }
 
-#container {
+#appContainer {
 	border: 2px solid #aaa;
 	/* background-color: black; */
 	background-color: transparent;

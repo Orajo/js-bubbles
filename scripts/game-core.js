@@ -6,7 +6,7 @@
 
 var gameTitle = "JS Bubbles";
 
-var gameVersion = "2.1 beta 4";
+var gameVersion = "2.1 beta 5";
 
 /**
  * Tablica na zaznaczone elementy
@@ -114,9 +114,9 @@ function InitBoard () {
  */
 function EndGame(ended) {
 	
-    if (ended || confirm("Czy chcesz zakończyć aktualną grę?")) {
+    if (ended || confirm("Do ypu want to end game?")) {
     	if (ended) {
-    		$.jnotify("Game over!<br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, {parentElement: "#switchedPanel", delay: 4000, slideSpeed: 1000,
+    		$.jnotify("<strong>Game over!</strong><br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, { parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
     				  remove: function () {
     				  	refreashMessages();
     				  	InitBoard();
@@ -658,7 +658,7 @@ function UndoMove() {
  */
 function EnableUndo() {
     $("#undoBtn").disabled = false;
-    $('#undoBtn').attr('src', "images/rewind.png");
+    $('#undoBtn').attr('src', "images/themes/" + gameOptions.theme + "/Undo.png");
 }
 
 /**
@@ -667,7 +667,7 @@ function EnableUndo() {
 function DisableUndo() {
     lastBoardState = null;
     $("#undoBtn").disabled = true;
-    $('#undoBtn').attr('src', "images/rewind_gray.png");
+    $('#undoBtn').attr('src', "images/themes/" + gameOptions.theme + "/UndoDisabled.png");
 }
 
 function ResetResults() {
