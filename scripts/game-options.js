@@ -129,7 +129,7 @@ var gameOptions = {
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);
 				this.enableAudio = mo.enableAudio;
-				if (mo.theme == indefined) {
+				if (mo.theme == undefined) {
 					this.theme = _defaultTheme
 				}
 				else {

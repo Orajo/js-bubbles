@@ -28,30 +28,29 @@ h1 {
 }
 */
 
-#appContainer {
-	background: black;
+#viewPort {
+	background-color: black;
 	color: white;
-	border: 2px solid #000;
 }
 
-#appContainer a, #appContainer a:link, #appContainer a:visited {
+#viewPort a, #viewPort a:link, #viewPort a:visited {
 	color: white;
 	text-decoration: none;
 }
 
-#appContainer a:active, #appContainer a:hover
+#viewPort a:active, #viewPort a:hover
 {
 	text-decoration: underline;
 }
 
-#appContainer > h1 {
+#viewPort > h1 {
 	font-size: 1.2em;
     text-align: left;
-	display: table-row;
 }
-#appContainer > h1 span {
+
+#viewPort > h1 span {
 	padding: 5px 5px;
-	display: table-cell;
+	display: block;
 	border-bottom: 1px solid #FFFFFF;
 }
 
@@ -81,15 +80,12 @@ h1 {
 */
 }
 
-
 #boardPanel {
 	background-color: Black;
 }
 
-#boardArea
-{
-	clip: rect(0, 250px, 0, 0);
-	overflow: hidden;
+#gameArea {
+    margin: 0 auto;
 }
 
 #boardArea, #storeArea {
@@ -118,7 +114,8 @@ h1 {
 .panelContent {
 	padding: 0;
 }
-#controlPanel .panelContent {
+
+#controlPanel .panelContent, #scorePanel .panelContent, #helpPanel .panelContent {
 	margin-left: 40px;
 }
 

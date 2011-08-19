@@ -21,12 +21,12 @@ var toggled = -1;
 function TogglePanel(panelName) {
 	// otwarcie wybranego panelu
 	if (panelName > -1) {
-		$('#panels').animate({ left: panelName * -250 }, 1000);
+		$('#appContainer').animate({ left: (panelName + 1) * -270 }, 1000);
 		toggled = panelName;
 	}
 	// zamknięcie otwartych paneli
 	else {
-		$('#panels').animate({ left: 250}, 1000);
+		$('#appContainer').animate({ left: 0 }, 1000);
 		toggled = -1;
 	}
 }
@@ -127,7 +127,7 @@ function InitEvents() {
 	});
 
 	// zamknięcie dowolnego panela
-	$("#closeBtn").click(function () {
+	$(".panelReturn input").click(function () {
 		TogglePanel(-1);
 	});
 }

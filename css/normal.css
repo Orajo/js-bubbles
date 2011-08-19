@@ -16,11 +16,22 @@ p {
 	line-height: 130%;
 }
 
-#appContainer {
+#viewPort 
+{
 	margin: 20px auto;
+	width: 270px;	
 	overflow: hidden;
-	display: table;
+	position: relative;
+	border: 1px solid black;
+	height: 485px;
+}
+
+#appContainer
+{
+	width: 1080px;
 	height: 445px;
+	overflow: visible;
+	position: absolute;
 }
 
 .panel 
@@ -28,9 +39,8 @@ p {
 	width: 260px;
 	padding: 0 5px 5px 5px;
 	height: inherit;
-    display: block;
-    float: left;
     position: relative;
+    float: left;
 }
 
 .panelButtons {

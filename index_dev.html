@@ -86,19 +86,22 @@
 	</div>
 -->
 	<!-- GAME AREA -->
-	<div id="appContainer">
+	<div id="viewPort">
 		<h1><span>JS Bubbles</span></h1>
+	<div id="appContainer">
 		<div id="boardPanel" class="panel">
 			<div class="panelView">
 				<div class="panelContent">
 					<h1 id="gameTypeTitle"  class="scoreStatsData">Game: <span id="gameTypeValue"></h1>
 					<!-- obszar na magazy kul (zależnie od typu gry) -->
-					<div id="storeArea"></div>
-					<!-- obszar na planszę gry -->
-					<div id="boardArea"></div>
-					<div>
-						<span id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></span>
-						<span id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></span>
+					<div id="gameArea">
+						<div id="storeArea"></div>
+						<!-- obszar na planszę gry -->
+						<div id="boardArea"></div>
+						<div>
+						  <span id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></span>
+						  <span id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -114,7 +117,7 @@
 		<!-- panel ustawień gry -->
 		<div id="controlPanel" class="panel">
 			<div class="panelView">
-				<div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" id="closeBtn" /></div>
+				<div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" /></div>
 				<div class="panelContent">
 					<h1>Settings</h1>
 					<div id="options">
@@ -151,8 +154,9 @@
 		<!-- panel wyników gry -->
 		<div id="scorePanel" class="panel">
 			<div class="panelView">
-				<h1>Scores</h1>
+				<div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" /></div>
 				<div class="panelContent">
+					<h1>Scores</h1>
 					<div id="scoredGameType">Game mode: <span id="gameTypeName">0</span></div>
 					<hr style="margin-bottom: 10px;"/>
 					<div id="maxScore" class="scoreStatsData"><img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />Best score: <span id="maxScoreValue">0</span></div>
@@ -184,7 +188,7 @@
 		<!-- panel pomocy -->
 		<div id="helpPanel" class="panel">
 			<div class="panelView">
-				<h1>About game</h1>
+				<div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" /></div>
 				<div class="panelContent"><img src="images/jsb_logo.png" id="jsb_logo_icon" alt="JSBubbles Logo" />
 					<h1>JS Bubbles</h1>
 					<p>version: <script type="text/javascript" language="javascript">document.write(gameVersion);</script></p
@@ -200,6 +204,7 @@
 			<div class="panelButtons"></div>
 		</div>
 	</div>
+	</div>
 <!--		<div style="clear: both;"></div>
 		<div id="footer">
 			&copy; 2009 - 2010, Jarosław Wasilewski
@@ -211,18 +216,5 @@
 	</audio>
 
 	<!-- END GAME AREA -->
-	<script type="text/javascript">
-
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-19953870-1']);
-		_gaq.push(['_trackPageview']);
-
-		(function () {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
-
-</script>
 </body>
 </html>
