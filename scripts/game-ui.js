@@ -5,29 +5,41 @@
 var boardPanelName = "boardPanel";
 
 /**
- * tymczasowe pole do przechowywania zaznaczonego typy gry.
+ * Tymczasowe pole do przechowywania zaznaczonego typy gry.
  * Dzięki niemu można ten wybór anulować.
  */
 var selectedGameType = gameOptions.currentGameType;
 
 var selectedBoardSize = gameOptions.boardSize.y;
 
+/**
+ * Numer panelu, który jest aktualnie wydoczny.
+ * -1 - oznacza wszystkie panele schowane.
+ */
 var toggled = -1;
 
 /**
  * Pokazuje lub ukrywane dodatkowe panele na planszy.
  * Obecnie jest to panel opcji i panel wyników gry.
  */
-function TogglePanel(panelName) {
+function TogglePanel(panelName, onPanelChange, onPanelClose) {
+	if (!onPanelChange) onPanelChange = null;
+	if (!onPanelClose) onPanelClose = null;
+
 	// otwarcie wybranego panelu
 	if (panelName > -1) {
-		$('#appContainer').animate({ left: (panelName + 1) * -270 }, 1000);
+		$('#appContainer').animate({ left: (panelName + 1) * -280 }, 1000, function() {
+			if( $.isFunction(onPanelChange) ) onPanelChange.apply(toggled);
+		});
 		toggled = panelName;
+		$("#panelTitle h1").animate({ right: (panelName + 1) * 300 }, 1000);
 	}
 	// zamknięcie otwartych paneli
 	else {
-		$('#appContainer').animate({ left: 0 }, 1000);
-		toggled = -1;
+		$('#appContainer').animate({ left: 0 }, 1000, function() {
+			toggled = -1;
+			if( $.isFunction(onPanelClose) ) onPanelClose.apply(toggled);
+		});
 	}
 }
 
@@ -58,17 +70,20 @@ function InitEvents() {
 				InitBoard();
 			}
 			else {
-				// odtwarzanie w tym wypadku nie odtwarza poprzedniego stanu opcji oneClickMode, 
+				// odtwarzanie w tym wypadku nie odtwarza poprzedniego stanu opcji oneClickMode,
 				// ale tak ma być
 				SetSettingsPanel();
 			}
 		}
+		GetUserName();
+		gameOptions.Save(); // zapisanie opcji
+		storage.Save(true);
 	});
 
 	$("#settingsCancelBtn").click(function () {
 		SetSettingsPanel();
 		//TogglePanel('controlPanel');
-		TogglePanel(0);
+		TogglePanel(-1);
 	});
 
 	// wybranie trybu gry
@@ -83,7 +98,7 @@ function InitEvents() {
 		}
 		return true;
 	});
-	
+
 	// Panel statystyk gier
 	$("#resultsSwitchBtn").click(function () {
 		//TogglePanel('scorePanel');
@@ -91,29 +106,20 @@ function InitEvents() {
 		return false;
 	});
 
-	$("#scoreCloseBtn").click(function () {
-		//TogglePanel('scorePanel');
-		TogglePanel(1);
-	});
-
 	$("#scoreClearBtn").click(function () {
 		ResetResults();
+		UpdateResultsTable();
 		//TogglePanel('scorePanel');
-		TogglePanel(1);
+		//TogglePanel(1);
 	});
-	
+
 	// Panel pomocy
 	$("#helpSwitchBtn").click(function () {
 		//TogglePanel('helpPanel');
 		TogglePanel(2);
 		return false;
 	});
-	
-	$("#helpCloseBtn").click(function () {
-		//TogglePanel('helpPanel');
-		TogglePanel(2);
-	});
-	
+
 	// Koniec gry
 	$("#newGameBtn").click(function () {
 		EndGame();
@@ -127,7 +133,7 @@ function InitEvents() {
 	});
 
 	// zamknięcie dowolnego panela
-	$(".panelReturn input").click(function () {
+	$(".returnBtn").click(function () {
 		TogglePanel(-1);
 	});
 }
@@ -149,7 +155,7 @@ function SetSettingsPanel() {
 
 	// inicjalizacja listy rozmiarów planszy
 	$("#boardDimensionId").empty();
-	
+
 	// odczytanie wielkości planszy i ustawienie w opcjach
 	for (var sizeElement in boardSizeList) {
 		$("<option />", {
@@ -158,7 +164,7 @@ function SetSettingsPanel() {
 			text: boardSizeList[sizeElement].text
 		}).appendTo("#boardDimensionId");
 	}
-	
+
 	// inicjalizacja trybu zaznaczania
 	$("#oneClickMode").attr("checked", !gameOptions.oneClickMode);
 
@@ -175,8 +181,36 @@ function SetSettingsPanel() {
 function UpdateResultsTable() {
 	$("tr#resultsStatsHeader ~ tr").remove();
 	var resultData = new Array();
-	for(tmp in gameStats.statsArray) {
-		resultData.push(gameStats.statsArray[tmp]);	
+	for(var tmp in gameStats.statsArray) {
+		resultData.push(gameStats.statsArray[tmp]);
 	}
 	$("#resultsTable").tmpl(resultData).appendTo("#resultsStats");
+}
+
+function GetUserName() {
+	// sprawdzenie czy użytkownik podał swoją nazwę. Jeśli nie to pytamu
+	while (IsNullOrEmpty(gameOptions.playerName)) {
+		gameOptions.playerName = prompt("Podaj swój nick:");
+		// TODO obsługa anulowania (zwraca null)
+		if (gameOptions.playerName === null) {
+			//storage.saveType == 'cookie';
+			// break;
+		}
+	}
+	storage.Set("player", gameOptions.playerName);
+	// zapisanie w ciachu strony - w celu późniejszego inicjowania magazynu
+	$.setCookie('jsb-player', gameOptions.playerName);
+}
+
+function loadCss(fileName, save) {
+	if (fileName !== "") {
+		htmldef = '<link rel="stylesheet" type="text/css" id="themeCss" href="css/themes/' + fileName + '" />';
+		$("head").append(htmldef);
+	}
+	else {
+		$("head link#themeCss").remove();
+	}
+	if (save) {
+		$.setCookie('theme', fileName);
+	}
 }

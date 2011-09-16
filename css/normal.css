@@ -8,36 +8,32 @@ body {
 	padding: 20px;
 }
 
-h1 {
-	font-size: 1.5em;
-}
-
 p {
 	line-height: 130%;
 }
 
-#viewPort 
+#viewPort
 {
 	margin: 20px auto;
-	width: 270px;	
+	width: 280px;
 	overflow: hidden;
 	position: relative;
 	border: 1px solid black;
-	height: 485px;
+	height: 490px;
 }
 
 #appContainer
 {
-	width: 1080px;
-	height: 445px;
+	width: 1120px;
+	height: 450px;
 	overflow: visible;
 	position: absolute;
 }
 
-.panel 
+.panel
 {
 	width: 260px;
-	padding: 0 5px 5px 5px;
+	padding: 0 10px 10px;
 	height: inherit;
     position: relative;
     float: left;
@@ -47,7 +43,7 @@ p {
     bottom: 0;
     height: 48px;
     left: 0;
-    padding: 5px 0;
+    padding: 10px 0;
     position: absolute;
     width: 100%;
 }
@@ -66,9 +62,10 @@ p {
 #storeArea
 {
 	float: left;
+	display: none;
 }
 
-.panelView 
+.panelView
 {
 	overflow: auto;
 }
@@ -132,15 +129,16 @@ p {
 }
 
 .scoreStatsData span {
-	color: white;	
+	color: white;
+	font-weight: bold;
 }
 
 #resultsStats {
-	font-size: smaller;	
+	font-size: smaller;
 }
 
 #resultsStats td {
-	text-align: center;	
+	text-align: center;
 }
 
 #selectedScore {
@@ -153,13 +151,7 @@ p {
 /*	float: right;*/
 }
 
-#gameTypeTitle {
-	margin-bottom: 10px;
-	font-weight: bold;
-	color: #cccccc;
-}
-
-#playedGames, #avgScore {
+#playedGames, #avgScore, #maxScore {
 	margin-left: 37px;
 }
 

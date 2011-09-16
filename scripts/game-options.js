@@ -97,7 +97,7 @@ var gameOptions = {
 
 	/**
 	* Metoda zmienia typ aktualnej gry
-	* @param string newGameType nazwa opisowa nowego typu gry
+	* @param newGameType string nazwa opisowa nowego typu gry
 	*/
 	ChangeGameType: function (newGameType) {
 		if (this.currentGameType !== newGameType) {
@@ -117,14 +117,14 @@ var gameOptions = {
 	},
 
 	Save: function () {
-		$.setSubCookie(this._cookieName, "options", this);
+		storage.Set(this._cookieName, this);
 	},
 
 	Read: function () {
-		var mo = $.subCookie(this._cookieName, "options");
+		mo = storage.Get(this._cookieName);
 		try {
 			if (mo !== undefined) {
-				this.ChangeBoardSize(mo.boardSize.y);
+				this.ChangeBoardSize(parseInt(mo.boardSize.y));
 				this.ChangeGameType(mo.currentGameType);
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);

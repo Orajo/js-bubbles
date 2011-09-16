@@ -44,7 +44,7 @@ h1 {
 }
 
 #viewPort > h1 {
-	font-size: 1.2em;
+    font-size: 1.2em;
     text-align: left;
 }
 
@@ -64,20 +64,7 @@ h1 {
 
 #gameTypeTitle {
 	font-weight: normal;
-}
-
-.panel 
-{
-	background-color: #3399FF;
-}
-
-.panel h1 
-{
-	font-size: xx-large;
-/*	overflow: hidden;
-	white-space: nowrap;
-	position: relative;
-*/
+	color: gray;
 }
 
 #boardPanel {
@@ -93,45 +80,37 @@ h1 {
 	background-color: White;
 }
 
-#boardTable 
+#boardTable
 {
 	padding: 2px;
 }
 
-#appContainer .panelView h1 a, #appContainer .panelView h1 a:link, #appContainer .panelView h1 a:visited, #appContainer .panelView h1 a:active
+h1.panelTitle
 {
 	font-size: xx-large;
-	color: lightgray;
-	text-decoration: none;
-}
-
-.panelReturn 
-{
-	float: left;
-    position: absolute;
+	overflow: hidden;
+	white-space: nowrap;
+	margin-bottom: 10px;
 }
 
 .panelContent {
 	padding: 0;
 }
 
-#controlPanel .panelContent, #scorePanel .panelContent, #helpPanel .panelContent {
-	margin-left: 40px;
-}
-
-.panelButtons 
+.panelButtons
 {
 	border-top: 1px solid white;
 	background-color: Black;
     text-align: center;
 }
 
-.panelButtons input 
+.panelButtons input
 {
 	border: none;
 	padding: 2px 3px;
 }
 
+/* Ikony poszczególnych typów gier*/
 #gmt1 {
 	background-image:url("../../images/themes/metro/gametype-1.png");
 }
@@ -160,4 +139,29 @@ h1 {
 
 .gameTypeIcon:hover, .gameTypeIcon:active, .gameTypeIcon.selected {
 	background-position: 0 -80px;
+}
+
+/* kulki */
+.color1 {
+	background: url("../../images/themes/metro/red_ball.png") no-repeat;
+/*	background-color: #FF358B;
+	background-image: none;*/
+}
+
+.color2 {
+	background: url("../../images/themes/metro/green_ball.png") no-repeat;
+/*	background-color: #AEEE00;
+	background-image: none;*/
+}
+
+.color3 {
+	background: url("../../images/themes/metro/blue_ball.png") no-repeat;
+/*	background-color: #01B0F0;
+	background-image: none;*/
+}
+
+.color4 {
+	background: url("../../images/themes/metro/yellow_ball.png") no-repeat;
+/*	background-color: yellow;
+	background-image: none;*/
 }

@@ -1,13 +1,17 @@
 2.1
-poprawiæ zapisywanie wyników w Operze i IE (http://msdn.microsoft.com/en-us/library/cc836459%28VS.85%29.aspx)
+poprawiÄ‡ zapisywanie wynikÃ³w w Operze i IE (http://msdn.microsoft.com/en-us/library/cc836459%28VS.85%29.aspx)
 + zmiana nazwy na JS Bubbles
 + dodanie 4 trybu gry (funkcjonalnie jako 2+3)
 + dodanie opcji tapety gry
 
-2.2
-przeniesienie zapamiêtywania ustawieñ na storage
-dodanie w statystykach gier rozró¿niania wielkoœci planszy
-przepisanie storage.js jako plugin jQuery 
-+/- dodanie dŸwiêków niszczenia kulek
-	- wybraæ i dopracowaæ dŸwiêk
+3.0
++ przeniesienie zapamiÄ™tywania ustawieÅ„ na storage
+dodanie w statystykach gier rozrÃ³Å¼niania wielkoÅ›ci planszy
+przepisanie storage.js jako plugin jQuery
++/- dodanie dÅºwiÄ™kÃ³w niszczenia kulek
+	- wybraÄ‡ i dopracowaÄ‡ dÅºwiÄ™k
 dodanie animacji np. wybuchu (canvas??)
+dodanie importowanie starych wynikÃ³w, zapisanych w ciachu\
+dodanie handlera ciach do storage
+poprawienie procesu rejestracji uÅ¼ytniwka
+dodanie placeholderÃ³w z globalnymi statystykami gier

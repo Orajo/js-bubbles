@@ -6,7 +6,7 @@
 
 var gameTitle = "JS Bubbles";
 
-var gameVersion = "2.1 beta 5";
+var gameVersion = "3.0 alpha 1";
 
 /**
  * Tablica na zaznaczone elementy
@@ -35,47 +35,24 @@ var lastGameScore = null;
 var selectedScore = 0;
 
 /**
+ * Wskazuje czy jest to pierwsze uruchomienie gry.
+ * jest ti wykrywane na podstawie obecności ciacha z nazwą gracza
+ */
+var firstStart = false;
+
+/**
+ * Nazwa garacza
+ */
+var playerName = "";
+
+/**
  * Magazyn na dodatkowe kolumny kul w grach: type3
  */
 var newColumnStore = [];
 
-/**
- * Zapewnienie zgodności IE z innymi przeglądarkami
- */
-if (!Array.prototype.some) {
-	Array.prototype.some = function(fnc) {
-		for (i=0; i < this.length; i++) {
-			if (fnc(this[i], i, this)) {
-				return true;
-			}
-		}
-		return false;
-	}
-}
-
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function(elt /*, from*/) {
-		var len = this.length >>> 0;
-	
-		var from = Number(arguments[1]) || 0;
-		from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-		if (from < 0) {
-			from += len;
-		}
-		
-		for (; from < len; from++) {
-			if (from in this && this[from] === elt) {
-				return from;
-			}
-		}
-		return -1;
-	}
-}
-
 function GetGameTitle() {
     return gameTitle + " (" + gameVersion + ") - current mode: " + gameOptions.currentGameType;
 }
-
 
 /**
  * Funkcja generuje planszę gry
@@ -85,13 +62,13 @@ function InitBoard () {
 	// czyszczenie planszy
 	$("#boardArea").empty();
 
-	boardTable = document.createElement("table");
+	var boardTable = document.createElement("table");
 	boardTable.setAttribute("id", "boardTable");
 	for(i = 0; i < gameOptions.boardSize.y; i++) {
-		row = document.createElement("tr");
+		var row = document.createElement("tr");
 		row.setAttribute("id", "row" + i);
-		for(j = 0; j < gameOptions.boardSize.x; j ++) {
-			field = document.createElement("td");
+		for(var j = 0; j < gameOptions.boardSize.x; j ++) {
+			var field = document.createElement("td");
 			field.setAttribute("id", "field-" + i + "-" + j);
 			// losowanie koloru tla
 			field.setAttribute("class", "color" + Math.floor(Math.random() * 4+1));
@@ -110,34 +87,45 @@ function InitBoard () {
 
 /**
  * Kończy grę.
- * @param bool ended Wskazuje czy gra się skończyła (true) czy została przerwana (false)
+ * @param ended bool Wskazuje czy gra się skończyła (true) czy została przerwana (false)
  */
 function EndGame(ended) {
-	
-    if (ended || confirm("Do ypu want to end game?")) {
+    if (ended || confirm("Do you want to finish the game?")) {
     	if (ended) {
-    		$.jnotify("<strong>Game over!</strong><br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, { parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
+    		$.jnotify("<strong>Game over!</strong><br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
     				  remove: function () {
     				  	refreashMessages();
     				  	InitBoard();
     				  }
     		});
-    		//alert("No more moves.\nGame over!\nYour score is " + gameStats.gameScore);
     	}
 		gameStats.Update();
 
-		UpdateResultsTable();		
+		UpdateResultsTable();
 		// Kasuje punktację aktualnie zaznaczonych elementów
 		gameStats.EndGame();
 		$("#totalScoreValue").text(gameStats.gameScore);
 		// blokada cofania ruchu
 		DisableUndo();
+
+		gameStats.Save(); // zapisanie stanu gry
+		if (IsNullOrEmpty(gameStats.playerName)) {
+			GetUserName();
+		}
+		if (storage.Save(true)) {
+			$.jnotify("Data saved!", {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
+		}
+		else {
+			$.jnotify("<strong>Data not saved!</strong>", {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
+		}
+
 	}
 }
 
 /**
  * Zaznacza klikniety element i elementy sasiednie o identycznym kolorze
- * @param Event evn
+ * @param evn Event
+ * @return bool
  */
 function selectSimilarFields(evn) {
 
@@ -148,8 +136,8 @@ function selectSimilarFields(evn) {
 	}
 
 	// krok 1: sprawdzenie czy nie klikamy na zaznaczony obszar - jeśli tak to usuwamy go
-	selectedClassName = jQuery.trim(evt.target.getAttribute("class"));
-	
+	var selectedClassName = jQuery.trim(evt.target.getAttribute("class"));
+
 	if (selectedClassName.indexOf("emptyField") !== -1) {
 		deselectFields();
 		return false;
@@ -166,7 +154,7 @@ function selectSimilarFields(evn) {
 		// krok 3: zaznaczanie nowego miejsca
 		findSimilar(evt.target, selectedClassName, 0);
 		CountSelectedScore(false);
-		if (gameOptions.oneClickMode) { // in oneClickMode remove selected bools now 
+		if (gameOptions.oneClickMode) { // in oneClickMode remove selected bools now
 			selectSimilarFields(evn);
 		}
 	}
@@ -199,7 +187,7 @@ function CountSelectedScore(reset) {
 }
 
 /**
- * Kasuje punktację aktualnie zaznacoznych elementów
+ * Kasuje punktację aktualnie zaznaczonych elementów
  */
 function ResetSelectedScores() {
 	selectedScore = 0;
@@ -288,7 +276,7 @@ function findSimilar(selElement, selClassName, licznik) {
 		}
 		var nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
 		if (nextSibling !== null && selectedFields.indexOf(nextSibling) == -1) {
-			nextSiblingClassName = jQuery.trim(nextSibling.getAttribute("class"));
+			var nextSiblingClassName = jQuery.trim(nextSibling.getAttribute("class"));
 			if (nextSibling !== undefined && (nextSiblingClassName == selClassName)) {
 				findSimilar(nextSibling, selClassName, 0);
 			}
@@ -313,8 +301,8 @@ function removeSelected(elObj, classNameToRemove) {
 	// porządkowanie tablicy zaznaczonych elementów - zaczynam od najniżej położonych
 	selectedFields.sort(function(a, b) {
 		// Funkcja pomocnicza do sortowania elementów w tablicy selectedElements
-		aId = a.getAttribute("id");
-		bId = b.getAttribute("id");
+		var aId = a.getAttribute("id");
+		var bId = b.getAttribute("id");
 		if (aId < bId)
 			return 1;
 		if (aId > bId)
@@ -379,18 +367,13 @@ function removeSelected(elObj, classNameToRemove) {
 	}
 	while(selectedFields.length > 0);
 
-	BangSoundPlay();
+//	BangSoundPlay();
 
 	// usuwanie pustych kolumn i przesuwanie pozostałych po lewej stronie
 	if (couldBeEmptyRow) {
 		if (RemoveEmptyColumns() // jeśli przesunął jakies kolumny i w związku z tym zostały puste kolumny
 			&& (gameTypes.type3 === this.gameOptions.currentGameType || gameTypes.type4 === this.gameOptions.currentGameType)) { // i pasuje typ gry
 			do {
-				// dodanie nowej kolumny
-//				if (newColumnStore.length === 0) {
-//					RenderStore();
-					// dodanie tej kolumny do planszy
-//				}
 				// przepisanie tej kolumny do pierwszej zwolnionej
 				for(var i = gameOptions.boardSize.y; i > 0; i--) {
 					if (newColumnStore[gameOptions.boardSize.y - i] === undefined) {
@@ -450,10 +433,10 @@ function RemoveEmptyColumns() {
 }
 
 function RemoveEmptyFields() {
-	tmpX = null;
+	var tmpX = null;
 	// zaczynamy od prawego górnego rogu
 	for (var y = 0; y < gameOptions.boardSize.y; y++) {
-		emptyField = null;
+		var emptyField = null;
 		for (var x = gameOptions.boardSize.x-1; x >= 0; x--) {
 			field = $("#field-" + y + "-" + x).get(0);
 			// sprawdzenie czy pole jest puste
@@ -465,7 +448,7 @@ function RemoveEmptyFields() {
 				continue;
 			}
 			// znalezione nie puste pole poprzedzone przez jakieś puste
-			else if(field.getAttribute("class") !== "emptyField" && emptyField != null) { 
+			else if(field.getAttribute("class") !== "emptyField" && emptyField != null) {
 				// wstaw w to miejsce pole z kulą
 				emptyField.setAttribute("class", field.getAttribute("class"));
 				// skasuj info o purym polu (teraz jest pełne)
@@ -486,7 +469,7 @@ function RemoveEmptyFields() {
  * @return Array tablica z usuniętym elementem fieldToRemove
  */
 function cleanSelectedFields(fldsList, fieldToRemove) {
-	retVal = new Array();
+	var retVal = new Array();
 	for(var i = 0; i < fldsList.length; i++) {
 		if (fldsList[i] !== fieldToRemove) {
 			retVal.unshift(fldsList[i]);
@@ -585,11 +568,15 @@ function findMove(selElement, selClassName, licznik) {
  * Dotyczy gry w trybie 3 i 4.
  */
 function RenderStore() {
-	newColumnStore = generateNewBools();
+	newColumnStore = generateNewBools(); // zmienna globalna! nie dodawać var!!! bo wpada w nieskończoną pętlę
+
+	if ($("#storeArea").css('display') === 'none') {
+		$("#storeArea").css('display', 'block');
+	}
 	// czyszczenie planszy
 	$("#storeArea").empty();
 
-	$("<table id=\"storeTable\"></table>").appendTo("#storeArea");
+	$("#storeArea").append("<table id=\"storeTable\"></table>");
     //storeTable = document.createElement("table");
 	//storeTable.setAttribute("id", "storeTable");
     for(var i = 0; i < gameOptions.boardSize.y; i++) {
@@ -612,9 +599,9 @@ function RenderStore() {
 */
 function generateNewBools() {
     // losowanie ilości kól (<= wysokość planszy)
-    newBoolsNumber = Math.floor(Math.random() * gameOptions.boardSize.y + 1);
+    var newBoolsNumber = Math.floor(Math.random() * gameOptions.boardSize.y + 1);
     // losowanie kolorów
-    newBools = [];
+    var newBools = [];
     for (i = 0; i < newBoolsNumber; i++) {
         newBools.push(Math.floor(Math.random() * 4 + 1));
     }
@@ -681,10 +668,14 @@ function ResetResults() {
 
 function refreashMessages() {
 	$("#gameTypeName").text(gameStats.currentType);
-	$("#maxScoreValue").text(gameStats.stats.max);
-	$("#avgScoreValue").text(gameStats.stats.avg);
-	$("#playedGamesValue").text(gameStats.stats.games);
+	if (gameStats.stats != undefined) {
+		$("#maxScoreValue").text(gameStats.stats.max);
+		$("#avgScoreValue").text(gameStats.stats.avg);
+		$("#playedGamesValue").text(gameStats.stats.games);
+	}
 	$("#gameTypeValue").text(gameStats.currentType);
+	$("#gameTypeValue").attr("title", gameStats.currentType);
+	$("#playerNameValue").text(gameStats.playerName);
 	document.title = GetGameTitle();
 }
 
@@ -704,14 +695,24 @@ function testAudio() {
 	}
 }
 
-
 // inicjalizacja aplikacji
 $(window).load(function () {
 
+	var currentTheme = $.cookie('theme');
+	if (currentTheme != undefined) {
+		loadCss(currentTheme, false);
+	}
+	// sparwdzenie czy jest to pierwsze uruchomienie
+	playerName = $.cookie('jsb-player');
+	if (IsNullOrEmpty(playerName)) {
+		firstStart = true;
+	}
+
 //	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
-	storage.Init();
+	storage.Init(playerName);
 	// odczytanie statystyk gry
 	gameStats.Read();
+	gameStats.playerName = playerName;
 	gameOptions.Read();
 	// musi być po gameOptions.Read(), ponieważ odwołuje się do ustwień gry
 	InitEvents();
@@ -723,11 +724,19 @@ $(window).load(function () {
 	// inicjalizacja gry
 	InitBoard();
 	refreashMessages();
+
+	// inicjowanie personalizacji
+	if (firstStart) {
+		GetUserName();
+		TogglePanel(0, function() {
+			$.jnotify("It seems that this is your first time with JS Bubbles.<br /> Maybe you should start from learning the game options?<p class=\"add-info\">Click anywhere to close.</p>", {parentElement: "#controlPanel", delay: 5000, slideSpeed: 2000});
+		});
+	}
 });
 
 // sprzątenie
 $(window).unload(function() {
-	gameStats.Save(); // zapisanie stanu gry
-	gameOptions.Save(); // zapisanie opcji 
-	storage.Save(); // zapisanie zawartości magaznu danych
+//	gameStats.Save(); // zapisanie stanu gry
+//	gameOptions.Save(); // zapisanie opcji
+//	storage.Save(); // zapisanie zawartości magaznu danych
 });

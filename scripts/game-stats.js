@@ -1,3 +1,5 @@
+/// <reference path="jquery-1.6.2-vsdoc.js" />
+
 /**
  * Statystyki pojedynczej gry.
  * Kontener obiektu ułatwia zapisanie wyników w ciasteczku
@@ -12,134 +14,114 @@ function GameStatistics(name) {
 			this.max = score;
 		}
 		this.games++;
-		if (this.games == 1) 
-			divider = 1;
-		else 
-			divider = 2;
+		var divider = this.games == 1 ? 1 : 2;
 		this.avg = parseInt(((this.avg + score) / divider).toFixed(0));
 	};
-	this.ToString = function() {
-		return this.gameType + ":" + this.max + ":" + this.games + ":"+ this.avg;
-	}
 }
-
-/**
- * Generuje szkielet obiektu statystyk na podstawie danych odczytanych z ciasteczka 
- */
-GameStatistics.FromString = function (value) {
-	try {
-		var parts = value.split(":");
-		if (parts.length == 4 && parts[0].length > 0) {
-			_tmpIbj = new GameStatistics(parts[0])
-			_tmpIbj.max = parseInt(parts[1]);
-			_tmpIbj.games = parseInt(parts[2]);
-			_tmpIbj.avg = parseInt(parts[3]);
-			return _tmpIbj;
-		}
-	}
-	catch(e) {}
-	return false;
-}
-
 
 /**
  * Obiekt zapisuje statystyki wszystkich gier
  */
-var gameStats = {
+function GameStats() {
+
+	// nazwa gracza
+	this.playerName = "";
 
 	// łączna punktacja bieżącej gry
-	gameScore: 0,
+	this.gameScore = 0;
 
 	// nazwa ciasteczka, przechowującego wyniki
-	_cookieName: "jsb_stats",
+	this._cookieName = "jsb_stats";
 
 	// aktualny tryb gry
-	currentType: gameOptions.currentGameType,
-	
+	this.currentType = gameOptions.currentGameType;
+
 	// wskazuje czy dane statystyczne gier zmianiły się i czy wymagają zapisania
-	wasChanged: false,
-	
+	this._wasChanged = false;
+
 	// zmienna pomocnicza przechowuje statystyki bieżącej gry
-	stats: null,
-	
+	this.stats = new GameStatistics("");
+
 	// Lista danych statystycznych różnych gier
-	statsArray: new Array(),
-	
-	EndGame: function() {
+	this.statsArray = new Object();
+
+	// określenie listy typów gry i aktualnego typu
+	if (this.statsArray === null || this.statsArray === undefined) {
+		this.statsArray = new Object();
+	}
+	for (var gtype in gameTypes) {
+		this.statsArray[gameTypes[gtype]] = new GameStatistics(gameTypes[gtype]);
+		if (gameTypes[gtype] === this.currentType) {
+			this.stats = this.statsArray[gameTypes[gtype]];
+		}
+	}
+
+	this.EndGame = function () {
 		this.gameScore = 0;
-	},
-	
-	Clear: function() {
+	};
+
+	this.Clear = function () {
 		storage.Delete(this._cookieName);
 		this.gameScore = 0;
 		this.stats = new GameStatistics("");
-		this.wasChanged = true;
+		this._wasChanged = true;
+		// na wypadek gdyby statystyki gier nie zostały wcześniej zainicjowane
+		if (this.statsArray == null || this.statsArray === undefined) {
+			this.statsArray = new Object();
+		}
 		this.statsArray[this.currentType] = this.stats;
 	},
-	
-	Update: function() {
+
+	this.Update = function () {
 		this.stats.Update(this.gameScore);
-		this.wasChanged = true;
+		this._wasChanged = true;
 	},
-	
+
 	/**
-	 * Zapisuje statyski gier
-	 * Zapisuje: 
-	 * 	- najlepszy wynik, z podziałem na typy
-	 *  - ilość gier, z podziałem na typy
-	 *  - średni wynik, z podziałem na typy
-	 */
-	Save: function (){
-		if (this.stats.gameType !== "" && this.wasChanged) { // przy starcie gry pole puste
-			var a1 = [];
-			for(var tmpVar in this.statsArray) {
-				if (typeof this.statsArray[tmpVar] === "object") {
-					a1.push(this.statsArray[tmpVar].ToString());
-				}
-			}
-			var savedStats = a1.join(";");
-			storage.Set(this._cookieName, savedStats);
-			this.wasChanged = false;
+	* Zapisuje statyski gier
+	* Zapisuje:
+	* 	- najlepszy wynik, z podziałem na typy
+	*  - ilość gier, z podziałem na typy
+	*  - średni wynik, z podziałem na typy
+	*/
+	this.Save = function () {
+		if (this.stats != undefined && this.stats.gameType !== "" && this._wasChanged) { // przy starcie gry pole puste
+			storage.Set(this._cookieName, this.statsArray);
+			this._wasChanged = false;
 		}
 	},
-	
-	Read: function() {
-		if (this.statsArray.length == 0) {
-			var tmpArray = [];
-			var savedStats = storage.Get(this._cookieName);
-			if (typeof savedStats === "string") {
-				var statsList = savedStats.split(";");
-				// tymczasowa lista zapisanych statystyk 
-				for(var i=0; i < statsList.length; i++) {
-					var tmpObj = GameStatistics.FromString(statsList[i]);
-					if (tmpObj !== false && typeof tmpObj === "object") {
-						tmpArray.push(tmpObj);
-					}
-				}
-			}
 
+	/**
+         * Odczytuje z magazynu i ustawia informacje o statusykach gry
+	 */
+	this.Read = function () {
+		if (this.statsArray === null || this.statsArray === undefined) {
+			this.statsArray = new Object();
+		}
+
+		var savedStats = storage.Get(this._cookieName);
+		if (savedStats != null) {
 			// zestawienie z listą aktualnie dostępnych gier
-			for(var gtype in gameTypes) {	
- 				if (tmpArray.some(function(element, index, array) {
-								   if (element.gameType == gameTypes[gtype]) {
-											gameStats.statsArray[gameTypes[gtype]] = element;
-											if (gameTypes[gtype] === gameStats.currentType) {
-												gameStats.stats = gameStats.statsArray[gameTypes[gtype]];
-											}
-											return true;
-									   }
-									   return false;
-								   }))
-				{
-					continue; // następny krok pętli
+			for (var gtype in gameTypes) {
+				if (savedStats[gameTypes[gtype]] != undefined) {
+					var gameDesc = gameTypes[gtype];
+					this.statsArray[gameDesc] = new GameStatistics(gameDesc);
+					this.statsArray[gameDesc].games = parseInt(savedStats[gameDesc].games);
+					this.statsArray[gameDesc].max = parseInt(savedStats[gameDesc].max);
+					this.statsArray[gameDesc].avg = parseInt(savedStats[gameDesc].avg);
+					if (gameTypes[gtype] === gameStats.currentType) {
+						gameStats.stats = gameStats.statsArray[gameTypes[gtype]];
+					}
+					continue;
 				}
 				// alternatywa - nie znalazł jakiegoś aktualnie istniejącego typu gry w zapisanych statystykach
- 				this.statsArray[gameTypes[gtype]] = new GameStatistics(gameTypes[gtype]);
+				this.statsArray[gameTypes[gtype]] = new GameStatistics(gameTypes[gtype]);
 				if (gameTypes[gtype] === this.currentType) {
 					this.stats = this.statsArray[gameTypes[gtype]];
 				}
-			}			
+			}
 		}
 	}
 }
 
+var gameStats = new GameStats();
