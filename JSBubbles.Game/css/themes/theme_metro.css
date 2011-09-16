@@ -1,4 +1,4 @@
-﻿* {
+* {
 	font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
 }
 
@@ -8,7 +8,7 @@ body {
 
 h1 {
 	font-weight: normal;
-	font-family: "Segoe Light", Segoe UI, Segoe, Helvetica, Arial, Sans-Serif;
+	font-family: "Segoe Light", "Segoe UI", Segoe, Helvetica, Arial, Sans-Serif;
 	font-size: 1.5em;
 }
 

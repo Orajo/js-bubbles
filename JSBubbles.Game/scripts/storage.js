@@ -34,7 +34,7 @@ var storage = {
 				// test zapisywania wynik�w na serwerze
 				$.ajax({
 					type: "POST",
-					url: "index.php",
+					url: "JSBubbles.ServerSide/index.php",
 					data: retVal,
 					async: false,
 					success: function (msg) {
