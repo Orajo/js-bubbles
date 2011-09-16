@@ -4,6 +4,30 @@
 	font-family: sans-serif;
 }
 
+body {
+	padding: 20px;
+}
+
+h1 {
+	font-size: 1.5em;	
+}
+
+h2 {
+	font-size: 1.2em;	
+}
+
+h3 {
+	font-size: 1.1em;	
+}
+
+p {
+	line-height: 130%;
+}
+
+ul {
+	margin-left: 20px;
+}
+
 #container {
 	margin: 20px auto;
 	overflow: hidden;
@@ -12,6 +36,12 @@
 	display: table;
 	background-color: black;
 	color: white;
+	background-repeat: repeat;
+	background-image: url("../images/wallpaper flamme.png"); /* see Credits.txt */
+	/* CSS3 Shadow */
+	-moz-box-shadow: 5px 5px 10px #888;
+	-webkit-box-shadow: 5px 5px 10px #888;
+	box-shadow: 5px 5px 10px #888;
 }
 
 #container a, #container a:link, #container a:visited {
@@ -44,15 +74,12 @@
 .panel {
 	position: absolute;
 	top: 0;
- 	width: 100%;
+	width: 100%;
 	height: 100%;
 }
 
-.panelView {
-}
-
 .panelContent {
-	position: absolute;
+	/* position: absolute; */
 	padding: 10px;
 }
 
@@ -70,6 +97,10 @@
 	padding: 2px 3px;
 }
 
+#options p {
+	margin-bottom: 15px;
+}
+
 #scorePanel {
 	background-color: #641442;
 	left: 100%;
@@ -80,7 +111,12 @@
 	left: 100%;
 }
 
-#boardArea {
+#helpPanel {
+	background-color: #223C71;
+	left: 100%;
+}
+
+#boardArea, #storeArea {
 	border: 2px solid #fff;
 	padding: 2px;
 	margin: 0 5px 10px 0;
@@ -88,12 +124,17 @@
 	float: left;
 }
 
-#boardTable {
-    background-color: white;
-    border-collapse: collapse;
+#boardTable, #storeTable {
+	background-color: white;
+	border-collapse: collapse;
+/*
+	filter: alpha(opacity=90);
+	-moz-opacity: 0.90;
+	opacity: 0.90;
+*/
 }
 
-#boardTable td {
+#boardTable td, #storeTable td {
 	width: 16px;
 	height: 17px;
 	font-size: 8px;
@@ -101,18 +142,8 @@
 	background-position: 50% 50%;
 }
 
-#optionsSwitch {
-	text-decoration: none;
-	font-size: smaller;
-	outline-style: none;
-}
-
-#optionsSwitch img {
-	border: 0;
-}
-
 .color1 {
-	background: url("images/red_24.png") no-repeat;
+	background: url("../images/red_24.png") no-repeat;
 }
 
 .color1.selected {
@@ -120,7 +151,7 @@
 }
 
 .color2 {
-	background: url("images/green_24.png") no-repeat;
+	background: url("../images/green_24.png") no-repeat;
 }
 
 .color2.selected {
@@ -128,7 +159,7 @@
 }
 
 .color3 {
-	background: url("images/blue_24.png") no-repeat;
+	background: url("../images/blue_24.png") no-repeat;
 }
 
 .color3.selected {
@@ -136,7 +167,7 @@
 }
 
 .color4 {
-	background: url("images/yellow_24.png") no-repeat;
+	background: url("../images/yellow_24.png") no-repeat;
 }
 
 .color4.selected {
@@ -144,33 +175,40 @@
 }
 
 .emptyField {
-	background-color: white;
+	background-color: transparent;
 }
 
 .scoreStatsData {
 	padding: 0 10px 5px 0;
+	font-size: 0.8em;
+	font-weight: bold;
+}
+
+.scoreStatsData span {
+	color: white;	
+}
+
+#resultsStats {
+	font-size: smaller;	
+}
+
+#resultsStats td {
+	text-align: center;	
 }
 
 #selectedScore {
-	font-size: 0.8em;
+	color: #cccccc;
 	text-align: center;
-	font-weight: bold;
 	padding-bottom: 10px;
 	float: left;
 }
 
 #scoreValue {
-/*	position: absolute;
-	top: 0;
-	right: 0;
-	display: none;
-	background-color: white;
-	overflow:visible;
-*/
-	color: red;
+	color: white;
 }
 
 #totalScore {
+	color: #cccccc;
 	float: right;
 	font-size: 0.8em;
 }
@@ -180,9 +218,10 @@
 	margin: 0;
 }
 
-#gameType {
+#gameTypeTitle {
 	margin-bottom: 10px;
 	font-weight: bold;
+	color: #cccccc;
 }
 
 #playedGames, #avgScore {
@@ -197,4 +236,48 @@
 	font-size: smaller;
 	padding: 5px;
 	color: #CCE6FF;
+}
+
+#gmt1 {
+	background-image:url("../images/gametype-1.png");
+}
+
+#gmt2 {
+	background-image:url("../images/gametype-2.png");
+}
+
+#gmt2 {
+	background-image:url("../images/gametype-2.png");
+}
+
+#gmt3 {
+	background-image:url("../images/gametype-3.png");
+}
+
+#gmt4 {
+	background-image:url("../images/gametype-4.png");
+}
+
+.gameTypeIcon {
+	background-repeat:no-repeat;
+	display:block;
+	height:70px;
+	width:70px;
+	float: left;
+	margin: 0 10px 10px 0;
+	outline: none;
+}
+
+.gameTypeIcon:hover, .gameTypeIcon:active, .gameTypeIcon.selected {
+	background-position: 0 -80px;
+}
+
+#boardBkgUrl {
+    width: 100%;
+}
+
+#jsb_logo_icon {
+	float: left;
+	padding: 3px;
+	margin: 0 10px 10px 0;
 }
