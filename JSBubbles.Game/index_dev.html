@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>JS Bubbles</title>
+	<link rel="stylesheet" type="text/css" href="css/normal.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery.jnotify.css" />
+	<link rel="stylesheet" type="text/css" href="css/themes.css" />
+	<script type="text/javascript" src="scripts/game-common.js"></script>
+	<script type="text/javascript" src="scripts/jquery-1.6.2.js"></script>
+	<!--	<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js "></script> -->
+	<script type="text/javascript" src="scripts/storage.js"></script>
+	<script type="text/javascript" src="scripts/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="scripts/jquery.ezCookie.js"></script>
+	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js"></script>
+	<script type="text/javascript" src="scripts/game-options.js"></script>
+	<script type="text/javascript" src="scripts/game-stats.js"></script>
+	<script type="text/javascript" src="scripts/game-core.js"></script>
+	<script type="text/javascript" src="scripts/game-ui.js"></script>
+	<meta http-equiv='cache-control' content='no-cache' />
+</head>
+<body>
+	<!-- Test area -->
+	<form id="testArea" action="index.html" style="border: 1px solid black; margin: 10px;
+	padding: 5px;">
+	<label>Test tools:</label>
+	<input type="button" onclick="EndGame(true)" value="End game" />
+	<input type="button" onclick="RenderStore()" value="New bolls" />
+	<input type="button" onclick="TestSound()" value="Sound" />
+	<input type="button" onclick="loadCss('')" value="Theme 0" />
+	<input type="button" onclick="loadCss('theme_flame.css', true)" value="Theme 1" />
+	<input type="button" onclick="loadCss('theme_metro.css', true)" value="Theme 2" />
+	</form>
+	<!-- End test area -->
+	<!--
+	<div id="socialTools" style="float: left; width: 30%;">
+		<div class="menuBlock">
+			<p><strong>Player tools:</strong></p>
+			<ul>
+				<li><a href="http://code.google.com/p/js-bubbles/issues/entry">Send an issue</a></li>
+			</ul>
+			<div><a href="#" onclick="loadCss('', true)" class="themeSwitcher" id="standardTheme">Standard theme</a></div>
+			<div><a href="#" onclick="loadCss('theme_flame.css', true)" class="themeSwitcher" id="flameTheme">Flame theme</a></div>
+			<div><a href="#" onclick="loadCss('theme_metro.css', true)" class="themeSwitcher" id="metroTheme">Metro theme</a></div>
+			<div class="addthis_toolbox addthis_32x32_style addthis_default_style">
+				<a class="addthis_button_facebook"></a>
+				<a class="addthis_button_twitter"></a>
+				<a class="addthis_button_wykop"></a>
+				<a class="addthis_button_blip"></a>
+				<a class="addthis_button_email"></a>
+				<a class="addthis_button_favorites"></a>
+				<a class="addthis_button_compact"></a>
+			</div>
+		</div>
+	</div>
+	<div id="PlayerTools" style="float: right; width: 30%;">
+		<div id="playAlso" class="menuBlock" style="margin-left: 50px;"><strong>Play also:</strong>
+			<ul>
+				<li><a href="http://grenlibre.fr/demo/same/">The same game</a></li>
+				<li><a href="http://www.yvoschaap.com/chainrxn/">Chain Reaction</a></li>
+				<li><a href="http://dougx.net/plunder/index.php">GALACTIC PLUNDER</a></li>
+			</ul>
+		</div>
+	</div>
+-->
+	<!-- GAME AREA -->
+	<div id="viewPort">
+		<h1>
+			<span>JS Bubbles</span></h1>
+		<div id="appContainer">
+			<div id="boardPanel" class="panel">
+				<div class="panelView">
+					<div class="panelContent">
+						<h1 id="gameTypeTitle" class="scoreStatsData panelTitle">
+							Game: <span id="gameTypeValue"></span>
+						</h1>
+						<!-- obszar na magazy kul (zależnie od typu gry) -->
+						<div id="gameArea">
+							<div id="storeArea">
+							</div>
+							<!-- obszar na planszę gry -->
+							<div id="boardArea">
+							</div>
+							<p id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></p>
+							<p id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></p>
+						</div>
+					</div>
+				</div>
+				<!-- narzędzia gry -->
+				<div class="panelButtons">
+					<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo move"
+						title="Undo move" />
+					<input type="image" src="images/themes/metro/NewGame.png" id="newGameBtn" alt="New game"
+						title="New game" />
+					<input type="image" src="images/themes/metro/Settings.png" id="optionsSwitchBtn"
+						alt="Settings" title="Settings" />
+					<input type="image" src="images/themes/metro/TopScores.png" id="resultsSwitchBtn"
+						alt="Results" title="Show results" />
+					<input type="image" src="images/themes/metro/About.png" id="helpSwitchBtn" alt="About JSBubbles"
+						title="About JSBubbles" />
+				</div>
+			</div>
+			<!-- panel ustawień gry -->
+			<div id="controlPanel" class="panel">
+				<div class="panelView">
+					<!-- <div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" /></div> -->
+					<div class="panelContent">
+						<h1 class="panelTitle">Settings</h1>
+						<div id="options">
+							<p>
+								<label for="boardDimensionId">
+									Board size:</label>
+								<select name="boardDimension" id="boardDimensionId">
+								</select>
+							</p>
+							<p>
+								Game type:</p>
+							<div>
+								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard"
+									id="gmt1" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Compressive"
+									value="Compressive" id="gmt2" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Add balls"
+									value="Add balls" id="gmt3" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress"
+									value="Add balls and compress" id="gmt4" class="gameTypeIcon" />
+							</div>
+							<p style="clear: both;">
+								<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
+							</p>
+							<p style="display: none;">
+								<label for="boardBkgUrl">
+									Backgroud image address</label><br />
+								<input type="text" id="boardBkgUrl" />
+							</p>
+							<!--<p>
+							<label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
+						</p> -->
+						</div>
+					</div>
+				</div>
+				<div class="panelButtons">
+					<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return"
+						id="settingsCancelBtn" />
+					<!-- <input type="image" src="images/themes/metro/Cancel.png" title="Cancel" value="Cancel" id="settingsCancelBtn" /> -->
+					<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close"
+						id="settingsOkBtn" />
+				</div>
+			</div>
+			<!-- panel wyników gry -->
+			<div id="scorePanel" class="panel">
+				<div class="panelView">
+					<!-- <div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" /></div> -->
+					<div class="panelContent">
+						<h1 class="panelTitle">Scores</h1>
+						<div id="scoredGameType">
+							Game mode: <span id="gameTypeName">0</span></div>
+						<hr style="margin-bottom: 10px;" />
+						<div id="playerName" class="scoreStatsData">
+							<img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />You: <span id="playerNameValue"></span></div>
+						<div id="maxScore" class="scoreStatsData">
+							Best score: <span id="maxScoreValue">0</span></div>
+						<div id="playedGames" class="scoreStatsData">
+							Games: <span id="playedGamesValue">0</span></div>
+						<div id="avgScore" class="scoreStatsData">
+							Avarange score: <span id="avgScoreValue">0</span></div>
+						<hr style="margin: 10px auto;" />
+						<table id="resultsStats">
+							<tr id="resultsStatsHeader">
+								<th>
+									Game type
+								</th>
+								<th>
+									Max result
+								</th>
+								<th>
+									Games
+								</th>
+								<th>
+									Avg result
+								</th>
+							</tr>
+						</table>
+						<script id="resultsTable" type="text/x-jquery-tmpl">
+						<tr>
+							<td>${gameType}</td>
+							<td>${max}</td>
+							<td>${games}</td>
+							<td>${avg}</td>
+						</tr>
+						</script>
+					</div>
+				</div>
+				<div class="panelButtons">
+					<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return"
+						class="returnBtn" />
+					<input type="image" src="images/themes/metro/Remove.png" title="Clear results" value="Clear"
+						id="scoreClearBtn" />
+				</div>
+			</div>
+			<!-- panel pomocy -->
+			<div id="helpPanel" class="panel">
+				<div class="panelView">
+					<!-- <div class="panelReturn"><input type="image" src="images/themes/metro/ReturnMini.png" value="Return" title="Return" /></div> -->
+					<div class="panelContent">
+						<img src="images/jsb_logo.png" id="jsb_logo_icon" alt="JSBubbles Logo" />
+						<h1 class="panelTitle">
+							JS Bubbles</h1>
+						<p>
+							version:
+							<script type="text/javascript" language="javascript">								document.write(gameVersion);</script>
+						</p>
+						<p style="margin-top: 20px; clear: both;">
+							Author: <strong>Jarosław Wasilewski</strong></p>
+						<p>
+							e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
+						<p style="margin-top: 20px;">
+							<a href="http://code.google.com/p/js-bubbles/" target="_blank">Project page on Google
+								Code</a> <a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank">
+									<img src="images/twitter.png" alt="Follow me on Twitter" border="0" /></a></p>
+					</div>
+				</div>
+				<div class="panelButtons">
+					<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return"
+						class="returnBtn" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--		<div style="clear: both;"></div>
+		<div id="footer">
+			&copy; 2009 - 2010, Jarosław Wasilewski
+		</div>
+-->
+<!-- <audio id="audio_bang" preload="auto">
+		<source src="bomb-02.mp3" />
+		<source src="bomb-02.wav" />
+	</audio>
+-->
+	<!-- END GAME AREA -->
+</body>
+</html>

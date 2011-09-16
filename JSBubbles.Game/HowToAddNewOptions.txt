@@ -1,0 +1,6 @@
+﻿1. Dodaj nową właściwość do klasy gameOptions.
+2. Dodaj obsługę w grze :)
+3. Dodaj odczytywanie tej własicowści do metody Read(), w sekcji: if (mo !== undefined) ..., np.: this.enableAudio = mo.enableAudio;. Opcjonalnie w sekcji catch(). 
+4. Dodaj GUI do panelu opcji gry.
+5. Dodaj obsługę tego GUI w game_ui.js, metodzie: $("#settingOkBtn").click(...
+6. Dodaj obsługę resetowania GUI w game_ui.js, w metodzie SetSettingsPanel.

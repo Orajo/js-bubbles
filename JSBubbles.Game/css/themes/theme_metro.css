@@ -1,0 +1,167 @@
+﻿* {
+	font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
+}
+
+body {
+	background-image: none;
+}
+
+h1 {
+	font-weight: normal;
+	font-family: "Segoe Light", Segoe UI, Segoe, Helvetica, Arial, Sans-Serif;
+	font-size: 1.5em;
+}
+
+/*
+.menuBlock {
+	color: white;
+	margin: 20px;
+	padding: 10px;
+	background-color: black;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.menuBlock a {
+	color: white;
+}
+*/
+
+#viewPort {
+	background-color: black;
+	color: white;
+}
+
+#viewPort a, #viewPort a:link, #viewPort a:visited {
+	color: white;
+	text-decoration: none;
+}
+
+#viewPort a:active, #viewPort a:hover
+{
+	text-decoration: underline;
+}
+
+#viewPort > h1 {
+    font-size: 1.2em;
+    text-align: left;
+}
+
+#viewPort > h1 span {
+	padding: 5px 5px;
+	display: block;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+#selectedScore {
+	font-weight: normal;
+}
+
+#totalScore {
+	font-weight: normal;
+}
+
+#gameTypeTitle {
+	font-weight: normal;
+	color: gray;
+}
+
+#boardPanel {
+	background-color: Black;
+}
+
+#gameArea {
+    margin: 0 auto;
+}
+
+#boardArea, #storeArea {
+	border: none;
+	background-color: White;
+}
+
+#boardTable
+{
+	padding: 2px;
+}
+
+h1.panelTitle
+{
+	font-size: xx-large;
+	overflow: hidden;
+	white-space: nowrap;
+	margin-bottom: 10px;
+}
+
+.panelContent {
+	padding: 0;
+}
+
+.panelButtons
+{
+	border-top: 1px solid white;
+	background-color: Black;
+    text-align: center;
+}
+
+.panelButtons input
+{
+	border: none;
+	padding: 2px 3px;
+}
+
+/* Ikony poszczególnych typów gier*/
+#gmt1 {
+	background-image:url("../../images/themes/metro/gametype-1.png");
+}
+
+#gmt2 {
+	background-image:url("../../images/themes/metro/gametype-2.png");
+}
+
+#gmt3 {
+	background-image:url("../../images/themes/metro/gametype-3.png");
+}
+
+#gmt4 {
+	background-image:url("../../images/themes/metro/gametype-4.png");
+}
+
+.gameTypeIcon {
+	background-repeat:no-repeat;
+	display:block;
+	height:70px;
+	width:70px;
+	float: left;
+	margin: 0 10px 10px 0;
+	outline: none;
+}
+
+.gameTypeIcon:hover, .gameTypeIcon:active, .gameTypeIcon.selected {
+	background-position: 0 -80px;
+}
+
+/* kulki */
+.color1 {
+	background: url("../../images/themes/metro/red_ball.png") no-repeat;
+/*	background-color: #FF358B;
+	background-image: none;*/
+}
+
+.color2 {
+	background: url("../../images/themes/metro/green_ball.png") no-repeat;
+/*	background-color: #AEEE00;
+	background-image: none;*/
+}
+
+.color3 {
+	background: url("../../images/themes/metro/blue_ball.png") no-repeat;
+/*	background-color: #01B0F0;
+	background-image: none;*/
+}
+
+.color4 {
+	background: url("../../images/themes/metro/yellow_ball.png") no-repeat;
+/*	background-color: yellow;
+	background-image: none;*/
+}

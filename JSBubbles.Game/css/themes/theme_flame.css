@@ -1,0 +1,47 @@
+﻿body {
+	background-image: url("../../images/wallpaper flamme.png");
+}
+
+ul {
+	margin: 10px 0 10px 20px;
+}
+
+.menuBlock {
+	color: white;
+	margin: 20px;
+	padding: 10px;
+	border: 2px solid #73A8EC;
+	background-color: black;
+	-moz-box-shadow: 5px 5px 10px #333;
+	-webkit-box-shadow: 5px 5px 10px #333;
+	box-shadow: 5px 5px 10px #333;
+}
+
+.menuBlock a {
+	color: white;
+}
+
+#appContainer {
+	border: 2px solid #aaa;
+	/* background-color: black; */
+	background-color: transparent;
+	color: white;
+	background-repeat: repeat;
+	/* background-image: url("../../images/wallpaper flamme.png");*/ /* see Credits.txt */
+	/* CSS3 Shadow */
+	-moz-box-shadow: 5px 5px 10px #333;
+	-webkit-box-shadow: 5px 5px 10px #333;
+	box-shadow: 5px 5px 10px #333;
+}
+
+#header {
+	border-bottom: 2px solid #aaa;
+}
+
+#boardPanel, #storeTable, #boardTable {
+	background-color: transparent;
+}
+
+#footer {
+	border-top: 2px solid #aaa;
+}
