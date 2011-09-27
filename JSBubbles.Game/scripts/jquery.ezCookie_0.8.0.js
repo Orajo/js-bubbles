@@ -15,9 +15,14 @@
     secure : false,
     path : '/'
   }
+  
+  // Retain backwards compatibility
+  $.cookie = function(cookieName) {
+    return $.getCookie(cookieName);
+  }
 
   // Returns the cookie or null if it does not exist.
-  $.cookie = function(cookieName) {
+  $.getCookie = function(cookieName) {
     var value = null;
     if(document.cookie && document.cookie != ''){
       var cookies = document.cookie.split(';');
@@ -39,7 +44,11 @@
   }
   
   $.subCookie = function(cookie,key){
-  	var cookie = $.cookie(cookie);
+      return $.getSubCookie(cookie,key);
+  }
+  
+  $.getSubCookie = function(cookie,key){
+    var cookie = $.getCookie(cookie);
     if(!cookie || typeof cookie != 'object'){return null;}
 	return cookie[key];
   }
@@ -50,7 +59,7 @@
     var options = typeof options != 'undefined' ? $.extend(dOptions, options) : dOptions;
     // Set cookie attributes based on options
     var path = '; path=' + (options.path);
-    var domain = '; domain=' + (options.domain);
+    var domain = options.domain ? '; domain=' + (options.domain) : '';
     var secure = options.secure ? '; secure' : '';
 	if (cookieValue && (typeof cookieValue == 'function' || typeof cookieValue == 'object')) {
 		cookieValue = JSON.stringify(cookieValue);
@@ -71,22 +80,24 @@
   
   $.setSubCookie = function(cookie,key,value,options){
   	var options = typeof options != 'undefined' ? $.extend(dOptions, options) : dOptions;
-	var existingCookie = $.cookie(cookie);
+	var existingCookie = $.getCookie(cookie);
 	var cookieObject = existingCookie && typeof existingCookie == 'object' ? existingCookie : {};
 	cookieObject[key] = value;
 	$.setCookie(cookie,cookieObject,options);
   }
   
   $.removeSubCookie = function(cookie,key){
-  	var cookieObject = $.cookie(cookie);
+  	var cookieObject = $.getCookie(cookie);
 	if(cookieObject && typeof cookieObject == 'object' && typeof cookieObject[key] != 'undefined'){
 		delete cookieObject[key];
 		$.setCookie(cookie,cookieObject);
 	}
   }
 
-  $.removeCookie = function(cookie){
-    $.setCookie(cookie,'',{expires:-1});
+  $.removeCookie = function(cookie,options){
+    if($.getCookie(cookie)){
+      $.setCookie(cookie,'',{expires:-1},options);
+    }
   }
 
   $.clearCookie = function(cookie){

@@ -7,11 +7,14 @@ poprawić zapisywanie wyników w Operze i IE (http://msdn.microsoft.com/en-us/li
 3.0
 + przeniesienie zapamiętywania ustawień na storage
 dodanie w statystykach gier rozróżniania wielkości planszy
-przepisanie storage.js jako plugin jQuery
 +/- dodanie dźwięków niszczenia kulek
 	- wybrać i dopracować dźwięk
-dodanie animacji np. wybuchu (canvas??)
-dodanie importowanie starych wyników, zapisanych w ciachu\
-dodanie handlera ciach do storage
-poprawienie procesu rejestracji użytniwka
++ dodanie importowanie starych wyników, zapisanych w ciachu\
++ dodanie handlera ciach do storage
+poprawienie procesu rejestracji użytkownika
 dodanie placeholderów z globalnymi statystykami gier
+dodanie komentarzy http://disqus.com/
+
+3.1
+przepisanie storage.js jako plugin jQuery
+dodanie animacji np. wybuchu (canvas??)

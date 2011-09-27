@@ -31,6 +31,8 @@
 	$.jnotify.version = "1.2.00";
 
 	var $jnotify, queue = [], count = 0, playing = false, paused = false, queuedId, queuedNote,
+		_parentElement = "",	// last container name; used to reinitialize $jnotify var
+
 		// define default settings
 		defaults = {
 			// define core settings
@@ -62,7 +64,6 @@
 			                                            //   count     - the number of items left in queue
 			                                            //   callback  - a function you must execute once your transition has executed
 			                                            //   options   - the options used for this jnotify instance
-
 		};
 
 	// override the defaults
@@ -129,10 +130,11 @@
 		this.options = options;
 
 		// if the container doesn't exist, create it
-		if( !$jnotify ){
+		if( !$jnotify || options.parentElement != _parentElement){
 			// we want to use one single container, so always use the default container class
 			$jnotify = $('<div class="' + defaults.classContainer + '" />').appendTo(options.parentElement);
 			if( $.isFunction(options.init) ) options.init.apply(self, [$jnotify]);
+			_parentElement = options.parentElement;
 		}
 
 		// create the notification

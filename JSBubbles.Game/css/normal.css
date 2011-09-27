@@ -1,75 +1,3 @@
-* {
-	margin: 0;
-	padding: 0;
-	font-family: sans-serif;
-}
-
-body {
-	padding: 20px;
-}
-
-p {
-	line-height: 130%;
-}
-
-#viewPort
-{
-	margin: 20px auto;
-	width: 280px;
-	overflow: hidden;
-	position: relative;
-	border: 1px solid black;
-	height: 490px;
-}
-
-#appContainer
-{
-	width: 1120px;
-	height: 450px;
-	overflow: visible;
-	position: absolute;
-}
-
-.panel
-{
-	width: 260px;
-	padding: 0 10px 10px;
-	height: inherit;
-    position: relative;
-    float: left;
-}
-
-.panelButtons {
-    bottom: 0;
-    height: 48px;
-    left: 0;
-    padding: 10px 0;
-    position: absolute;
-    width: 100%;
-}
-
-#options p {
-	margin-bottom: 15px;
-}
-
-#boardArea, #storeArea {
-	border: 2px solid #fff;
-	padding: 2px;
-	margin: 0 5px 10px 0;
-	display: table;
-}
-
-#storeArea
-{
-	float: left;
-	display: none;
-}
-
-.panelView
-{
-	overflow: auto;
-}
-
 #boardTable, #storeTable {
 	background-color: white;
 	border-collapse: collapse;
@@ -86,42 +14,6 @@ p {
 	font-size: 8px;
 	padding: 1px;
 	background-position: 50% 50%;
-}
-
-.color1 {
-	background: url("../images/red_24.png") no-repeat;
-}
-
-.color1.selected {
-	background-color: #F89090;
-}
-
-.color2 {
-	background: url("../images/green_24.png") no-repeat;
-}
-
-.color2.selected {
-	background-color: #BFF95A;
-}
-
-.color3 {
-	background: url("../images/blue_24.png") no-repeat;
-}
-
-.color3.selected {
-	background-color: #AAD4FF;
-}
-
-.color4 {
-	background: url("../images/yellow_24.png") no-repeat;
-}
-
-.color4.selected {
-	background-color: #FBFB53;
-}
-
-.emptyField {
-	background-color: transparent;
 }
 
 .scoreStatsData {
@@ -143,12 +35,10 @@ p {
 
 #selectedScore {
 	color: #cccccc;
-/*	float: left; */
 }
 
 #totalScore {
 	color: #cccccc;
-/*	float: right;*/
 }
 
 #playedGames, #avgScore, #maxScore {
@@ -157,10 +47,4 @@ p {
 
 #boardBkgUrl {
     width: 100%;
-}
-
-#jsb_logo_icon {
-	float: left;
-	padding: 3px;
-	margin: 0 10px 10px 0;
 }

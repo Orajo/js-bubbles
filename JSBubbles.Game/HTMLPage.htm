@@ -3,11 +3,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
+	<script type="text/javascript">
+		function changeAction(f) {
+			var index = document.getElementById('mode').selectedIndex;
+			var mode = document.getElementById('mode')[index].value;
+			f.action = "../JSBubbles.ServerSide/index.php?action=" + mode + '&amp;sid=' + document.getElementById('sid').text
+		}
+	</script>
 </head>
 <body>
-<form action="index.php" method="post">
-	<p>
-		<input id="gamer" name="gamer" type="text" value="jarek" /></p>
+	<form action="../JSBubbles.ServerSide/index.php?action=save&amp;sid=0" method="post">
+		Tryb: <select name="action" id="mode">
+			<option value="save">save</option>
+			<option value="getData">getData</option>
+			<option value="stats">stats</option>
+		</select>
+	<p>SID:
+		<input id="sid" name="sid" type="text" value="0" /></p>
+	<p>Gamer:
+		<input id="gamer" name="player" type="text" value="jarek" /></p>
 	<p>
 		Stats: <textarea id="jsb_stats" cols="40" rows="4" name="jsb_stats"></textarea></p>
 	<p>

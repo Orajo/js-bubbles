@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Nazwa panelu z planszą gry.
  * Nazwa jest wykorzystywana do przełączania paneli.
@@ -28,15 +30,15 @@ function TogglePanel(panelName, onPanelChange, onPanelClose) {
 
 	// otwarcie wybranego panelu
 	if (panelName > -1) {
-		$('#appContainer').animate({ left: (panelName + 1) * -280 }, 1000, function() {
+		$('#appContainer').animate({left: (panelName + 1) * -280}, 1000, function() {
 			if( $.isFunction(onPanelChange) ) onPanelChange.apply(toggled);
 		});
 		toggled = panelName;
-		$("#panelTitle h1").animate({ right: (panelName + 1) * 300 }, 1000);
+		$("#panelTitle h1").animate({right: (panelName + 1) * 300}, 1000);
 	}
 	// zamknięcie otwartych paneli
 	else {
-		$('#appContainer').animate({ left: 0 }, 1000, function() {
+		$('#appContainer').animate({left: 0}, 1000, function() {
 			toggled = -1;
 			if( $.isFunction(onPanelClose) ) onPanelClose.apply(toggled);
 		});
@@ -107,10 +109,14 @@ function InitEvents() {
 	});
 
 	$("#scoreClearBtn").click(function () {
-		ResetResults();
-		UpdateResultsTable();
-		//TogglePanel('scorePanel');
-		//TogglePanel(1);
+		if (confirm("Are you sure you want to clear results?")) {
+			gameStats.Clear();
+			refreashMessages();
+			UpdateResultsTable();
+			//TogglePanel(1);
+			return true;
+		}
+		return false;
 	});
 
 	// Panel pomocy
@@ -135,6 +141,16 @@ function InitEvents() {
 	// zamknięcie dowolnego panela
 	$(".returnBtn").click(function () {
 		TogglePanel(-1);
+	});
+
+	//przycisk zmiany gracza
+	$("#playerIdChange").click(function(){
+		var newName = window.prompt("Login as new user");
+		if (newName != null) {
+			gameOptions.playerName = newName;
+			gameOptions.Save();
+			storage.Save(true);
+		}
 	});
 }
 
@@ -193,18 +209,17 @@ function GetUserName() {
 		gameOptions.playerName = prompt("Podaj swój nick:");
 		// TODO obsługa anulowania (zwraca null)
 		if (gameOptions.playerName === null) {
-			//storage.saveType == 'cookie';
-			// break;
+			// przestawiamy magazyn na ciasteczka
+			storage.saveType == 'cookie';
+			break;
 		}
 	}
 	storage.Set("player", gameOptions.playerName);
-	// zapisanie w ciachu strony - w celu późniejszego inicjowania magazynu
-	$.setCookie('jsb-player', gameOptions.playerName);
 }
 
 function loadCss(fileName, save) {
 	if (fileName !== "") {
-		htmldef = '<link rel="stylesheet" type="text/css" id="themeCss" href="css/themes/' + fileName + '" />';
+		var htmldef = '<link rel="stylesheet" type="text/css" id="themeCss" href="css/themes/' + fileName + '" />';
 		$("head").append(htmldef);
 	}
 	else {
@@ -213,4 +228,28 @@ function loadCss(fileName, save) {
 	if (save) {
 		$.setCookie('theme', fileName);
 	}
+}
+
+function LoadTopTen() {
+	$.get('../JSBubbles.ServerSide/index.php', {action: 'stats'}, function(data){
+		var resultData = new Array();
+		for(var tmp in data) {
+			resultData.push(data[tmp]);
+		}
+		$("tr#topTenStatsHader ~ tr").remove();
+		$("#topTenStatsScript").tmpl(resultData).appendTo("#topTenStats");
+	}, 'json');
+}
+
+function refreashMessages() {
+	$("#gameTypeName").text(gameStats.currentType);
+	if (gameStats.stats != undefined) {
+		$("#maxScoreValue").text(gameStats.stats.max);
+		$("#avgScoreValue").text(gameStats.stats.avg);
+		$("#playedGamesValue").text(gameStats.stats.games);
+	}
+	$("#gameTypeValue").text(gameStats.currentType);
+	$("#gameTypeValue").attr("title", gameStats.currentType);
+	$("#playerNameValue").text(gameOptions.playerName);
+	document.title = GetGameTitle();
 }

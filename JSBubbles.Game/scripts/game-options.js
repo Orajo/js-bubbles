@@ -1,4 +1,6 @@
-﻿/**
+"use strict";
+
+/**
 * Wielkości planszy
 */
 var boardSizeList = {
@@ -35,6 +37,11 @@ var gameOptions = {
 
 	// aktualny tryb gry
 	currentGameType: gameTypes.type1,
+
+	/**
+	 * Nazwa gracza
+	 */
+	playerName: "",
 
 	/**
 	* Aktualna wielkość planszy
@@ -121,14 +128,15 @@ var gameOptions = {
 	},
 
 	Read: function () {
-		mo = storage.Get(this._cookieName);
 		try {
+			var mo = storage.Get(this._cookieName);
 			if (mo !== undefined) {
 				this.ChangeBoardSize(parseInt(mo.boardSize.y));
 				this.ChangeGameType(mo.currentGameType);
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);
 				this.enableAudio = mo.enableAudio;
+				this.playerName = mo.playerName;
 				if (mo.theme == undefined) {
 					this.theme = _defaultTheme
 				}

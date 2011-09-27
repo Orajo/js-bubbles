@@ -1,8 +1,10 @@
-﻿/**
+/**
  * Kolorowe Kulki
  * @author Jarosław Wasilewski
  * @version 2.1 beta 2
  */
+
+"use strict";
 
 var gameTitle = "JS Bubbles";
 
@@ -58,13 +60,13 @@ function GetGameTitle() {
  * Funkcja generuje planszę gry
  * TODO: sprawdzić wiązanie zdarzenia onclick popprzez jquery.delegate()
  */
-function InitBoard () {
+function InitBoard() {
 	// czyszczenie planszy
 	$("#boardArea").empty();
 
 	var boardTable = document.createElement("table");
 	boardTable.setAttribute("id", "boardTable");
-	for(i = 0; i < gameOptions.boardSize.y; i++) {
+	for(var i = 0; i < gameOptions.boardSize.y; i++) {
 		var row = document.createElement("tr");
 		row.setAttribute("id", "row" + i);
 		for(var j = 0; j < gameOptions.boardSize.x; j ++) {
@@ -87,6 +89,7 @@ function InitBoard () {
 
 /**
  * Kończy grę.
+ *
  * @param ended bool Wskazuje czy gra się skończyła (true) czy została przerwana (false)
  */
 function EndGame(ended) {
@@ -95,7 +98,7 @@ function EndGame(ended) {
     		$.jnotify("<strong>Game over!</strong><br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
     				  remove: function () {
     				  	refreashMessages();
-    				  	InitBoard();
+    				  	//InitBoard();
     				  }
     		});
     	}
@@ -165,13 +168,13 @@ function selectSimilarFields(evn) {
  * Ustawia bieżące zaznaczenie oraz oblicza ilość punktów tego zaznaczenia
  * Punkty są naliczane jako SUMA(i*2), gdzie i to numer zaznaczonego elemetu zaczynając od 0
  *
- * @param bool reset Wskazuje czy wyczyścić punktację ruchu
+ * @param reset bool Wskazuje czy wyczyścić punktację ruchu
  * @return void
  */
 function CountSelectedScore(reset) {
 	selectedScore = 0;
 	if (reset === false && selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
-		for(i = 0; i < selectedFields.length; i++) {
+		for(var i = 0; i < selectedFields.length; i++) {
 			//zaznacza element -> dodanie klasy "selected"
 			$(selectedFields[i]).addClass("selected");
 			selectedScore += i * 2;
@@ -202,7 +205,7 @@ function ShowScoreValue() {
 	var left = 0;
 
 	if (selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
-		for(i = 0; i < selectedFields.length; i++) {
+		for(var i = 0; i < selectedFields.length; i++) {
 			//zaznacza element -> dodanie klasy "selected"
 			var position = $(selectedFields[i]).offset();
 			if (left === 0 || position.left < left) {
@@ -232,9 +235,9 @@ function CountTotalScore() {
 
 /**
  * Wyszukuje elementy sąsiednie do wskazanego elementu planszy
- * @param TD Element selElement
- * @param String selClassName nazwa klasy CSS, która posiada wskazany element
- * @param int licznik licznik pomocniczy do obsługi rekurencji
+ * @param selElement TD Element selElement
+ * @param selClassName String nazwa klasy CSS, która posiada wskazany element
+ * @param licznik int licznik pomocniczy do obsługi rekurencji
  * @return void
  */
 function findSimilar(selElement, selClassName, licznik) {
@@ -372,7 +375,7 @@ function removeSelected(elObj, classNameToRemove) {
 	// usuwanie pustych kolumn i przesuwanie pozostałych po lewej stronie
 	if (couldBeEmptyRow) {
 		if (RemoveEmptyColumns() // jeśli przesunął jakies kolumny i w związku z tym zostały puste kolumny
-			&& (gameTypes.type3 === this.gameOptions.currentGameType || gameTypes.type4 === this.gameOptions.currentGameType)) { // i pasuje typ gry
+			&& (gameTypes.type3 === gameOptions.currentGameType || gameTypes.type4 === gameOptions.currentGameType)) { // i pasuje typ gry
 			do {
 				// przepisanie tej kolumny do pierwszej zwolnionej
 				for(var i = gameOptions.boardSize.y; i > 0; i--) {
@@ -438,7 +441,7 @@ function RemoveEmptyFields() {
 	for (var y = 0; y < gameOptions.boardSize.y; y++) {
 		var emptyField = null;
 		for (var x = gameOptions.boardSize.x-1; x >= 0; x--) {
-			field = $("#field-" + y + "-" + x).get(0);
+			var field = $("#field-" + y + "-" + x).get(0);
 			// sprawdzenie czy pole jest puste
 			if (field!= undefined && field.getAttribute("class") == "emptyField" && emptyField == null) {
 				// jeśli tak, to zapamiętaj pierwszą znalezioną pustą pozycję
@@ -464,8 +467,9 @@ function RemoveEmptyFields() {
 
 /**
  * Usuwa z tablicy zaznaczonych elementów wskazany element
- * @param Array fldsList
- * @param TD Element fieldToRemove
+ *
+ * @param fldsList Array
+ * @param fieldToRemove TD Element
  * @return Array tablica z usuniętym elementem fieldToRemove
  */
 function cleanSelectedFields(fldsList, fieldToRemove) {
@@ -506,9 +510,9 @@ function hasAnyMove() {
 
 /**
  * Wyszukuje elementy sąsiednie do wskazanego elementu planszy
- * @param TD Element selElement
- * @param String selClassName nazwa klasy CSS, która posiada wskazany element
- * @param int licznik licznik pomocniczy do obsługi rekurencji
+ * @param selElement TD Element
+ * @param selClassName String nazwa klasy CSS, która posiada wskazany element
+ * @param licznik int licznik pomocniczy do obsługi rekurencji
  * @return void
  */
 function findMove(selElement, selClassName, licznik) {
@@ -602,7 +606,7 @@ function generateNewBools() {
     var newBoolsNumber = Math.floor(Math.random() * gameOptions.boardSize.y + 1);
     // losowanie kolorów
     var newBools = [];
-    for (i = 0; i < newBoolsNumber; i++) {
+    for (var i = 0; i < newBoolsNumber; i++) {
         newBools.push(Math.floor(Math.random() * 4 + 1));
     }
     return newBools;
@@ -666,34 +670,21 @@ function ResetResults() {
 	return false;
 }
 
-function refreashMessages() {
-	$("#gameTypeName").text(gameStats.currentType);
-	if (gameStats.stats != undefined) {
-		$("#maxScoreValue").text(gameStats.stats.max);
-		$("#avgScoreValue").text(gameStats.stats.avg);
-		$("#playedGamesValue").text(gameStats.stats.games);
-	}
-	$("#gameTypeValue").text(gameStats.currentType);
-	$("#gameTypeValue").attr("title", gameStats.currentType);
-	$("#playerNameValue").text(gameStats.playerName);
-	document.title = GetGameTitle();
-}
-
-var audioBang = null;
-function BangSoundPlay() {
-	if (gameOptions.EnableAudio && audioBang != null) {
-		audioBang.pause();
-		audioBang.play();
-	}
-}
-
-function testAudio() {
-	var audio = document.createElement('audio');
-	if (audio.play) {
-		gameOptions.EnableAudio = true;
-		audioBang = document.getElementById("audio_bang");
-	}
-}
+//var audioBang = null;
+//function BangSoundPlay() {
+//	if (gameOptions.EnableAudio && audioBang != null) {
+//		audioBang.pause();
+//		audioBang.play();
+//	}
+//}
+//
+//function testAudio() {
+//	var audio = document.createElement('audio');
+//	if (audio.play) {
+//		gameOptions.EnableAudio = true;
+//		audioBang = document.getElementById("audio_bang");
+//	}
+//}
 
 // inicjalizacja aplikacji
 $(window).load(function () {
@@ -702,14 +693,10 @@ $(window).load(function () {
 	if (currentTheme != undefined) {
 		loadCss(currentTheme, false);
 	}
-	// sparwdzenie czy jest to pierwsze uruchomienie
-	playerName = $.cookie('jsb-player');
-	if (IsNullOrEmpty(playerName)) {
-		firstStart = true;
-	}
 
 //	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
-	storage.Init(playerName);
+	storage.saveType = 'ajax';
+	var firstStart = !(storage.Init("../JSBubbles.ServerSide/index.php"));
 	// odczytanie statystyk gry
 	gameStats.Read();
 	gameStats.playerName = playerName;
@@ -717,26 +704,110 @@ $(window).load(function () {
 	// musi być po gameOptions.Read(), ponieważ odwołuje się do ustwień gry
 	InitEvents();
 
-	UpdateResultsTable();
-
-	SetSettingsPanel();
-
 	// inicjalizacja gry
 	InitBoard();
-	refreashMessages();
+
+	LoadTopTen();
+	// odświeża statystyki ogólne co 10 min.
+	setInterval("LoadTopTen()", 60000);
 
 	// inicjowanie personalizacji
 	if (firstStart) {
+		// sprawdzenie czy jest konfiguracja i stan ze starej wersji gry
+		ReadUncientStorage();
+
+		// pobranie nazwy gracza
 		GetUserName();
+		gameOptions.Save();
 		TogglePanel(0, function() {
 			$.jnotify("It seems that this is your first time with JS Bubbles.<br /> Maybe you should start from learning the game options?<p class=\"add-info\">Click anywhere to close.</p>", {parentElement: "#controlPanel", delay: 5000, slideSpeed: 2000});
 		});
 	}
+	else {
+		// else ponieważ ReadUncientStorage też to wykonuje
+		SetSettingsPanel();
+	}
+
+	refreashMessages();
+	UpdateResultsTable();
 });
 
-// sprzątenie
-$(window).unload(function() {
-//	gameStats.Save(); // zapisanie stanu gry
-//	gameOptions.Save(); // zapisanie opcji
-//	storage.Save(); // zapisanie zawartości magaznu danych
-});
+/**
+ * Ładuje stara wersję (2.x) konfiguracji i wyników z ciasteczka i zapisuje
+ * do aktualnego storage.
+ *
+ * return void;
+ */
+function ReadUncientStorage() {
+	var settings = new Array();
+	// odczt danych z ciach
+	var elements = $.getCookie("storage");
+	var pair;
+	if (elements !== null && elements.length > 0) {
+		pair = elements.split("/#/");
+		if (pair.length > 0) {// rozparsowaniu zapisu zserializowanego do obiektów GameStatistics
+			var statsList = pair[1].split(";");
+			var tmpArray = new Array();
+
+		// tymczasowa lista zapisanych statystyk
+			for(var i=0; i < statsList.length; i++) {
+				var tmpObj;
+				try {
+					var parts = statsList[i].split(":");
+					if (parts.length == 4 && parts[0].length > 0) {
+						var _tmpIbj = new GameStatistics(parts[0])
+						_tmpIbj.max = parseInt(parts[1]);
+						_tmpIbj.games = parseInt(parts[2]);
+						_tmpIbj.avg = parseInt(parts[3]);
+						tmpObj = _tmpIbj;
+					}
+				}
+				catch(e) {}
+				if (tmpObj !== false && typeof tmpObj === "object") {
+					tmpArray.push(tmpObj);
+				}
+			}
+			// zestawienie z listą aktualnie dostępnych gier
+			for(var gtype in gameTypes) {
+				if (tmpArray.some(function(element, index, array) {
+					   if (element.gameType == gameTypes[gtype]) {
+								gameStats.statsArray[gameTypes[gtype]] = element;
+								if (gameTypes[gtype] === gameStats.currentType) {
+									gameStats.stats = gameStats.statsArray[gameTypes[gtype]];
+								}
+								return true;
+						   }
+						   return false;
+					   }))
+				{
+					continue; // następny krok pętli
+				}
+				// alternatywa - nie znalazł jakiegoś aktualnie istniejącego typu gry w zapisanych statystykach
+				gameStats.statsArray[gameTypes[gtype]] = new GameStatistics(gameTypes[gtype]);
+				if (gameTypes[gtype] === gameStats.currentType) {
+					gameStats.stats = gameStats.statsArray[gameTypes[gtype]];
+				}
+			}
+		}
+	}
+
+	// odczyt opcji gry
+	var mo = $.subCookie(gameOptions._cookieName, "options");
+	try {
+		if (mo !== undefined) {
+			gameOptions.ChangeBoardSize(mo.boardSize.y);
+			gameOptions.ChangeGameType(mo.currentGameType);
+			gameOptions.oneClickMode = mo.oneClickMode;
+			gameOptions.ChangeBoardBackground(mo.boardBackground);
+			gameOptions.enableAudio = mo.enableAudio;
+		}
+	}
+	catch (exp) {
+	}
+
+	// zapisanie w nowej technologii
+	SetSettingsPanel();
+	gameOptions.Save();
+	gameStats.Save();
+	storage.Save(false);
+}

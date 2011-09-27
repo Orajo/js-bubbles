@@ -1,4 +1,5 @@
 /// <reference path="jquery-1.6.2-vsdoc.js" />
+"use strict";
 
 /**
  * Statystyki pojedynczej gry.
@@ -23,9 +24,6 @@ function GameStatistics(name) {
  * Obiekt zapisuje statystyki wszystkich gier
  */
 function GameStats() {
-
-	// nazwa gracza
-	this.playerName = "";
 
 	// łączna punktacja bieżącej gry
 	this.gameScore = 0;
@@ -61,15 +59,10 @@ function GameStats() {
 	};
 
 	this.Clear = function () {
-		storage.Delete(this._cookieName);
-		this.gameScore = 0;
-		this.stats = new GameStatistics("");
+		this.constructor();
 		this._wasChanged = true;
-		// na wypadek gdyby statystyki gier nie zostały wcześniej zainicjowane
-		if (this.statsArray == null || this.statsArray === undefined) {
-			this.statsArray = new Object();
-		}
-		this.statsArray[this.currentType] = this.stats;
+		this.Save();
+		storage.Save();
 	},
 
 	this.Update = function () {

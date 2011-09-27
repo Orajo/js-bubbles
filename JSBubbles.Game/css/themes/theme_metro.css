@@ -1,15 +1,24 @@
 * {
-	font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
+	margin: 0;
+	padding: 0;
+	font-family: "Segoe UI Light", Helvetica, Arial, Sans-Serif;
 }
 
 body {
 	background-image: none;
+	background-color: #294790;
+	color: white;
+	padding: 20px;
 }
 
 h1 {
 	font-weight: normal;
-	font-family: "Segoe Light", "Segoe UI", Segoe, Helvetica, Arial, Sans-Serif;
-	font-size: 1.5em;
+	font-family: "Segoe UI Light", "Segoe Light", Segoe, Helvetica, Arial, Sans-Serif;
+	font-size: 50px;
+}
+
+p {
+	line-height: 130%;
 }
 
 /*
@@ -28,7 +37,14 @@ h1 {
 }
 */
 
-#viewPort {
+#viewPort
+{
+	margin: 20px auto;
+	width: 280px;
+	overflow: hidden;
+	position: relative;
+	border: 1px solid black;
+	height: 490px;
 	background-color: black;
 	color: white;
 }
@@ -54,6 +70,23 @@ h1 {
 	border-bottom: 1px solid #FFFFFF;
 }
 
+#appContainer
+{
+	width: 1120px;
+	height: 450px;
+	overflow: visible;
+	position: absolute;
+}
+
+.panel
+{
+	width: 260px;
+	padding: 0 10px 10px;
+	height: inherit;
+    position: relative;
+    float: left;
+}
+
 #selectedScore {
 	font-weight: normal;
 }
@@ -76,8 +109,17 @@ h1 {
 }
 
 #boardArea, #storeArea {
-	border: none;
 	background-color: White;
+	border: 2px solid #fff;
+	padding: 2px;
+	margin: 0 5px 10px 0;
+	display: table;
+}
+
+#storeArea
+{
+	float: left;
+	display: none;
 }
 
 #boardTable
@@ -93,12 +135,22 @@ h1.panelTitle
 	margin-bottom: 10px;
 }
 
+.panelView
+{
+	overflow: auto;
+}
+
 .panelContent {
 	padding: 0;
 }
 
-.panelButtons
-{
+.panelButtons {
+    bottom: 0;
+    height: 48px;
+    left: 0;
+    padding: 10px 0;
+    position: absolute;
+    width: 100%;
 	border-top: 1px solid white;
 	background-color: Black;
     text-align: center;
@@ -108,6 +160,10 @@ h1.panelTitle
 {
 	border: none;
 	padding: 2px 3px;
+}
+
+#options p {
+	margin-bottom: 15px;
 }
 
 /* Ikony poszczególnych typów gier*/
@@ -148,10 +204,18 @@ h1.panelTitle
 	background-image: none;*/
 }
 
+.color1.selected {
+	background-color: #F89090;
+}
+
 .color2 {
 	background: url("../../images/themes/metro/green_ball.png") no-repeat;
 /*	background-color: #AEEE00;
 	background-image: none;*/
+}
+
+.color2.selected {
+	background-color: #BFF95A;
 }
 
 .color3 {
@@ -160,8 +224,26 @@ h1.panelTitle
 	background-image: none;*/
 }
 
+.color3.selected {
+	background-color: #AAD4FF;
+}
+
 .color4 {
 	background: url("../../images/themes/metro/yellow_ball.png") no-repeat;
 /*	background-color: yellow;
 	background-image: none;*/
+}
+
+.color4.selected {
+	background-color: #FBFB53;
+}
+
+.emptyField {
+	background-color: transparent;
+}
+
+#jsb_logo_icon {
+	float: left;
+	padding: 3px;
+	margin: 0 10px 10px 0;
 }

@@ -1,8 +1,22 @@
+"use strict";
+
 var storage = {
 	// przechowuje dane do zapisania
 	db: new Object(),
 
 	saveType: "ajax",
+
+	/**
+	 * Identyfikator rekordu bufora danych.
+	 * W prkatyce reprezentuje ID głownego klucza danych na serwerze
+	 * - pozwala powiązać go z id danych na serwerze
+	 */
+	storeId: 0,
+
+	/**
+	 * Adres części serwerowej
+	 */
+	serverUrl: '',
 
 	Get: function (key) {
 		if (this.db[key] !== undefined) {
@@ -23,22 +37,40 @@ var storage = {
 		delete this.db[key];
 	},
 
+	/**
+	 * Zapisuje zawartość bufora danych.
+	 * Po stronie serwerowej aplikacja powinna zwrócić ID zapisanych danych.
+	 * To ID zostanie zapisane lokalnie (w ciasteczku) jako identyfikator sesji całego storage.
+	 *
+	 * @param clearAfterSave bool w trybie ajax czyści bufor po zapisaniu danych.
+	 * @return bool Status powodzenia zapisania danych.
+	 */
 	Save: function (clearAfterSave) {
 		var successStatus = false;
 		if (this.saveType == "ajax") {
-			retVal = new Object();
-			for(key in this.db) {
+			var retVal = new Object();
+			for(var key in this.db) {
 				retVal[key] = serialize(this.db[key]);
 			}
 			try {
-				// test zapisywania wynik�w na serwerze
+				var storageObj = this;
+				// test zapisywania wyników na serwerze
 				$.ajax({
 					type: "POST",
-					url: "JSBubbles.ServerSide/index.php",
+					url: this.serverUrl + "?action=save&sid=" + this.storeId,
 					data: retVal,
 					async: false,
 					success: function (msg) {
-						successStatus = (msg == 'Data saved');
+						var sid = parseInt(msg);
+						if (!isNaN(sid)) {
+							successStatus = true;
+							storageObj.storeId = sid;
+							if (clearAfterSave) {
+								storageObj.db = new Object();
+							}
+							$.setCookie("jsb_store_id", sid);
+							console.info("Save satus: " + successStatus.toString());
+						}
 					},
 					error : function (xhr, msg, errorThrown) {
 						if (console && console.error) {
@@ -56,31 +88,49 @@ var storage = {
 			}
 		}
 		else if (this.saveType == "cookie") {
-			serializable = [];
+/*			serializable = [];
 			for (element in this.db) {
 				if (typeof this.db[element] === "string") { // for IE, becouse iterates also through added functions
 					serializable.push(element + "=" + this.db[element]);
 				}
 			}
 			retVal = serializable.join("/##/");
-			$.setCookie("storage", retVal);
-			delete serializable;
+*/
+			$.setCookie("storage", this.db);
+			//			delete serializable;
 			successStatus = true;
-		}
-		if (clearAfterSave) {
-			this.db = new Object();
 		}
 		return successStatus;
 	},
 
-	Init: function (playerName) {
+	/**
+	 * Inicjalizuje bufor storage odczytując niezbędne dane z serwera
+	 * Jeśli w lokalnym ciasteczku nie ma zapipsanego sklucza storage storeId to uznaje, że jest to pierwsze uruchomienie i zwraca false;
+	 *
+	 * @param serverUrl string adres do części serwerowej odbierającej dane
+	 * @return bool true jeśli inicjalizacja odczytała poprawnie dane z serwera; false jeśli nie (np. pierwsze uruchomienie)
+	 */
+	Init: function (serverUrl) {
+		this.serverUrl = serverUrl;
+
+		// sprawdzenie czy jest to pierwsze uruchomienie
+		if (this.storeId <=0) {
+			var sid = $.cookie('jsb_store_id');
+			sid = parseInt(sid);
+			if (!isNaN(sid)) {
+				this.storeId = sid;
+			}
+			else {
+				return false;
+			}
+		}
 
 		if (this.saveType == "ajax") {
-			storageObj = this;
+			var storageObj = this;
 			$.ajax({
 				type: "GET",
-				url: "index.php",
-				data: "player=" + playerName,
+				url: this.serverUrl,
+				data: "action=getData&sid=" + this.storeId,
 				dataType: "json",
 				async: false,
 				success: function (msg) {
@@ -88,28 +138,29 @@ var storage = {
 						for (var item in msg) {
 							storageObj.Set(item, msg[item]);
 						}
+						return true;
 					}
+					return false;
 				},
-				error : function (xhr, msg, errorThrown) {
+				error: function (xhr, msg, errorThrown) {
 					if (console && console.error) {
 						console.error('Error:' + msg + " exception: " + errorThrown.toString());
 					}
-				},
+					throw Exception ("Storage initialization error");
+				}
 			});
 		}
 		else if (this.saveType == "cookie") {
-			serializable = $.cookie("storage");
-			if (serializable !== null && serializable.length > 0) {
-				elements = serializable.split("/##/");
-				if (elements !== null && elements.length > 0) {
-					for (i = 0; i < elements.length; i++) {
-						pair = elements[i].split("=");
-						this.Set(pair[0], pair[1]);
-					}
+			var msg = $.getCookie("storage");
+			if (msg != undefined && msg != null && typeof msg === "object") {
+				for (var item in msg) {
+					this.Set(item, msg[item]);
 				}
+				return true;
 			}
-			delete serializable;
 		}
+		// ze względu na funkcje wewnętrzne Ajax trzeba ponownie sparwdzić warunek - jest to najpewniejsza metoda.
+		return this.storeId > 0;
 	}
 }
 
@@ -126,7 +177,7 @@ function serialize(_obj) {
 		// gives us exactly what we want
 		case 'number':
 		case 'boolean':
-//		case 'function':
+			//		case 'function':
 			return _obj;
 			break;
 
@@ -140,7 +191,9 @@ function serialize(_obj) {
 			if (_obj.constructor === Array || typeof _obj.callee !== 'undefined') {
 				str = '[';
 				var i, len = _obj.length;
-				for (i = 0; i < len - 1; i++) { str += serialize(_obj[i]) + ','; }
+				for (i = 0; i < len - 1; i++) {
+					str += serialize(_obj[i]) + ',';
+				}
 				str += serialize(_obj[i]) + ']';
 			}
 			else {
