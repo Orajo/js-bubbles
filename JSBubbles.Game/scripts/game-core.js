@@ -689,10 +689,10 @@ function ResetResults() {
 // inicjalizacja aplikacji
 $(window).load(function () {
 
-	var currentTheme = $.cookie('theme');
-	if (currentTheme != undefined) {
-		loadCss(currentTheme, false);
-	}
+//	var currentTheme = $.cookie('theme');
+//	if (currentTheme != undefined) {
+//		loadCss(currentTheme, false);
+//	}
 
 //	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
 	storage.saveType = 'ajax';
@@ -730,6 +730,8 @@ $(window).load(function () {
 
 	refreashMessages();
 	UpdateResultsTable();
+	// podświetlenie pierwszej opcji menu (tytuł gry)
+	toggleHighlight($("#boardPanelSwitchBtn").get(0));
 });
 
 /**

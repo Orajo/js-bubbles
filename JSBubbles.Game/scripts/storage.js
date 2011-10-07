@@ -87,17 +87,13 @@ var storage = {
 				successStatus = false;
 			}
 		}
-		else if (this.saveType == "cookie") {
-/*			serializable = [];
-			for (element in this.db) {
-				if (typeof this.db[element] === "string") { // for IE, becouse iterates also through added functions
-					serializable.push(element + "=" + this.db[element]);
-				}
+		else if (this.saveType == "local") {
+			if(window.localStorage){
+				localStorage.setItem("storage", this.db);
 			}
-			retVal = serializable.join("/##/");
-*/
-			$.setCookie("storage", this.db);
-			//			delete serializable;
+			else {
+				$.setCookie("storage", this.db);
+			}
 			successStatus = true;
 		}
 		return successStatus;
@@ -150,8 +146,14 @@ var storage = {
 				}
 			});
 		}
-		else if (this.saveType == "cookie") {
-			var msg = $.getCookie("storage");
+		else if (this.saveType == "local") {
+			var msg;
+			if(window.localStorage){
+				msg = localStorage.getItem("storage", this.db);
+			}
+			else {
+				msg = $.getCookie("storage");
+			}
 			if (msg != undefined && msg != null && typeof msg === "object") {
 				for (var item in msg) {
 					this.Set(item, msg[item]);

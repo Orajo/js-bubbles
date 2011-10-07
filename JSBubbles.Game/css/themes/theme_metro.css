@@ -1,51 +1,71 @@
-* {
+/* Alternatywne czcionki do Segoe */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300);
+
+/* GENERAL */
+body, div, p, table, td, ul, ol, h1, h2 {
 	margin: 0;
 	padding: 0;
-	font-family: "Segoe UI Light", Helvetica, Arial, Sans-Serif;
+	font-family: "Segoe UI", "Segoe UI Light", "Open Sans", Helvetica, Arial, Sans-Serif;
 }
 
 body {
 	background-image: none;
 	background-color: #294790;
 	color: white;
-	padding: 20px;
+	padding: 20px 50px;
+	font-family: "Segoe UI Light", "Open Sans", Helvetica, Arial, Sans-Serif;
 }
 
-h1 {
+h1, h2 {
 	font-weight: normal;
-	font-family: "Segoe UI Light", "Segoe Light", Segoe, Helvetica, Arial, Sans-Serif;
-	font-size: 50px;
+	font-family: "Segoe UI Light", "Open Sans", Helvetica, Arial, Sans-Serif;
+	margin: 10px 0;
 }
 
 p {
 	line-height: 130%;
 }
 
-/*
-.menuBlock {
-	color: white;
-	margin: 20px;
-	padding: 10px;
-	background-color: black;
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
+/* HEADER */
+#gameTitle {
+	font-size: 50px;
+	margin: 0;
 }
 
-.menuBlock a {
-	color: white;
+#jsbLogoIcon {
+	float: right;
 }
-*/
 
+ul#gameTopMenu {
+	list-style: none;
+	font-size: 28px;
+	margin-bottom: 20px;
+	font-family: "Segoe UI Light", "Segoe Light", Segoe, "Open Sans", Helvetica, Arial, Sans-Serif;
+}
+
+ul#gameTopMenu li {
+	display: inline-block;
+	margin-right: 35px;
+	cursor: pointer;
+	color: #ccc;
+}
+
+ul#gameTopMenu li.selected {
+	color: white;
+	font-weight: 800;
+}
+/* END HEADER */
+
+/* PAGE MAIN CONTENT */
 #viewPort
 {
-	margin: 20px auto;
-	width: 280px;
+	width: 100%;
+	max-width: 1800px;
+	min-width: 800px;
 	overflow: hidden;
 	position: relative;
-	border: 1px solid black;
-	height: 490px;
-	background-color: black;
+/*	outline: 1px solid red;*/
+	height: 470px;
 	color: white;
 }
 
@@ -59,53 +79,71 @@ p {
 	text-decoration: underline;
 }
 
-#viewPort > h1 {
-    font-size: 1.2em;
-    text-align: left;
-}
-
-#viewPort > h1 span {
-	padding: 5px 5px;
-	display: block;
-	border-bottom: 1px solid #FFFFFF;
-}
-
 #appContainer
 {
-	width: 1120px;
+	width: 10000px;
 	height: 450px;
 	overflow: visible;
 	position: absolute;
 }
+/* END MAIN CONTENT */
 
-.panel
+.panelsArea
 {
-	width: 260px;
-	padding: 0 10px 10px;
-	height: inherit;
+	width: 1100px;
+	height: 450px;
     position: relative;
     float: left;
 }
 
+.panel {
+	background-color: Black;
+    position: relative;
+    width: 300px;
+	margin: 0 20px 20px 0;
+    padding: 10px;
+	float: left;
+	min-height: 120px;
+	overflow: auto;
+}
+
+#disqusPanel {
+	background-color: #ddd;
+	width: 500px;
+	margin-top: 30px;
+	padding: 10px 20px;
+	color: black;
+}
+
+#disqusPanel div, #disqusPanel p, #disqusPanel a {
+	font-family: "Segoe UI Semibold", Verdana, Tahoma, Helvetica, Arial, Sans-Serif;
+}
+
+#boardPanel, #controlPanel, #helpPanel, #scorePanel {
+	height: 100%
+}
+
+#controlPanel {
+	width: 350px;
+}
+
+#gameArea {
+	width: 100%;
+}
+
 #selectedScore {
 	font-weight: normal;
+	color: #cccccc;
 }
 
 #totalScore {
 	font-weight: normal;
+	color: #cccccc;
 }
 
 #gameTypeTitle {
 	font-weight: normal;
 	color: gray;
-}
-
-#boardPanel {
-	background-color: Black;
-}
-
-#gameArea {
-    margin: 0 auto;
 }
 
 #boardArea, #storeArea {
@@ -122,12 +160,30 @@ p {
 	display: none;
 }
 
+#boardTable, #storeTable {
+	background-color: white;
+	border-collapse: collapse;
+/*
+	filter: alpha(opacity=90);
+	-moz-opacity: 0.90;
+	opacity: 0.90;
+*/
+}
+
+#boardTable td, #storeTable td {
+	width: 16px;
+	height: 17px;
+	font-size: 8px;
+	padding: 1px;
+	background-position: 50% 50%;
+}
+
 #boardTable
 {
 	padding: 2px;
 }
 
-h1.panelTitle
+.panelTitle
 {
 	font-size: xx-large;
 	overflow: hidden;
@@ -135,13 +191,9 @@ h1.panelTitle
 	margin-bottom: 10px;
 }
 
-.panelView
+.panelContent
 {
 	overflow: auto;
-}
-
-.panelContent {
-	padding: 0;
 }
 
 .panelButtons {
@@ -152,7 +204,6 @@ h1.panelTitle
     position: absolute;
     width: 100%;
 	border-top: 1px solid white;
-	background-color: Black;
     text-align: center;
 }
 
@@ -160,6 +211,35 @@ h1.panelTitle
 {
 	border: none;
 	padding: 2px 3px;
+}
+
+.scoreStatsData {
+	font-size: 0.8em;
+}
+
+.scoreStatsData span {
+	color: white;
+	font-weight: bold;
+}
+
+#gameScorePanel {
+    height: 220px;
+}
+
+#resultsStats {
+	font-size: smaller;
+}
+
+#resultsStats td {
+	text-align: center;
+}
+
+#playedGames, #avgScore, #maxScore {
+	margin-left: 37px;
+}
+
+#boardBkgUrl {
+    width: 100%;
 }
 
 #options p {
@@ -240,10 +320,4 @@ h1.panelTitle
 
 .emptyField {
 	background-color: transparent;
-}
-
-#jsb_logo_icon {
-	float: left;
-	padding: 3px;
-	margin: 0 10px 10px 0;
 }

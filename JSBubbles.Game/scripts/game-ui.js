@@ -1,12 +1,6 @@
 "use strict";
 
 /**
- * Nazwa panelu z planszą gry.
- * Nazwa jest wykorzystywana do przełączania paneli.
- */
-var boardPanelName = "boardPanel";
-
-/**
  * Tymczasowe pole do przechowywania zaznaczonego typy gry.
  * Dzięki niemu można ten wybór anulować.
  */
@@ -16,7 +10,7 @@ var selectedBoardSize = gameOptions.boardSize.y;
 
 /**
  * Numer panelu, który jest aktualnie wydoczny.
- * -1 - oznacza wszystkie panele schowane.
+ * -1 - oznacza wszystkie panele schowane; widoczny panel gry.
  */
 var toggled = -1;
 
@@ -24,17 +18,21 @@ var toggled = -1;
  * Pokazuje lub ukrywane dodatkowe panele na planszy.
  * Obecnie jest to panel opcji i panel wyników gry.
  */
-function TogglePanel(panelName, onPanelChange, onPanelClose) {
+function TogglePanel(panelNo, onPanelChange, onPanelClose) {
+
+	var panelWidth = $(".panelsArea:first-child").width();
+//	$('#appContainer').width(panelWidth * 4);
+
 	if (!onPanelChange) onPanelChange = null;
 	if (!onPanelClose) onPanelClose = null;
 
 	// otwarcie wybranego panelu
-	if (panelName > -1) {
-		$('#appContainer').animate({left: (panelName + 1) * -280}, 1000, function() {
+	if (panelNo > -1) {
+		$('#appContainer').animate({left: (panelNo + 1) * -panelWidth}, 1000, function() {
 			if( $.isFunction(onPanelChange) ) onPanelChange.apply(toggled);
 		});
-		toggled = panelName;
-		$("#panelTitle h1").animate({right: (panelName + 1) * 300}, 1000);
+		toggled = panelNo;
+		$("#panelTitle h1").animate({right: (panelNo + 1) * panelWidth}, 1000);
 	}
 	// zamknięcie otwartych paneli
 	else {
@@ -43,13 +41,43 @@ function TogglePanel(panelName, onPanelChange, onPanelClose) {
 			if( $.isFunction(onPanelClose) ) onPanelClose.apply(toggled);
 		});
 	}
+	toggleHighlight($("ul#gameTopMenu li").get(panelNo + 1));
+}
+
+/**
+ * Przełączanie obszarów PanelArea poprzez kliknięcie na należące do nich panele
+ */
+function switchToSelectedPanel(panelObj) {
+	// sprawdzenie do jakiego panelArea należy kliknięty panel
+	var panelParent = $(panelObj).parent().first().get(0);
+	var index = -1;
+	// obliczenie który to panelParent w kolejności
+	$(".panelsArea").each(function(i) {
+		if (this == panelParent) {
+			index = i - 1;
+			return;
+		}
+	});
+
+	if (index > -1) {
+		TogglePanel(index);
+	}
+	// przełączenie na ten panel
 }
 
 function InitEvents() {
 
+	// Przełączanie obszarów PanelArea poprzez kliknięcie na należące do nich panele
+	$("div.panel").click(function (event) {
+		//TogglePanel('controlPanel');
+		if (this == event.target || event.target.className == "panelButtons") { // działa wyłacznie klikanie na panelu
+			switchToSelectedPanel(this);
+		}
+		return false;
+	});
+
 	// Panel opcji
 	$("#optionsSwitchBtn").click(function () {
-		//TogglePanel('controlPanel');
 		TogglePanel(0);
 		return false;
 	});
@@ -84,7 +112,6 @@ function InitEvents() {
 
 	$("#settingsCancelBtn").click(function () {
 		SetSettingsPanel();
-		//TogglePanel('controlPanel');
 		TogglePanel(-1);
 	});
 
@@ -108,12 +135,18 @@ function InitEvents() {
 		return false;
 	});
 
+	// Panel gry
+	$("#boardPanelSwitchBtn").click(function () {
+		//TogglePanel('scorePanel');
+		TogglePanel(-1);
+		return false;
+	});
+
 	$("#scoreClearBtn").click(function () {
 		if (confirm("Are you sure you want to clear results?")) {
 			gameStats.Clear();
 			refreashMessages();
 			UpdateResultsTable();
-			//TogglePanel(1);
 			return true;
 		}
 		return false;
@@ -121,7 +154,6 @@ function InitEvents() {
 
 	// Panel pomocy
 	$("#helpSwitchBtn").click(function () {
-		//TogglePanel('helpPanel');
 		TogglePanel(2);
 		return false;
 	});
@@ -252,4 +284,9 @@ function refreashMessages() {
 	$("#gameTypeValue").attr("title", gameStats.currentType);
 	$("#playerNameValue").text(gameOptions.playerName);
 	document.title = GetGameTitle();
+}
+
+function toggleHighlight(selectedBtn){
+	$("#gameTopMenu li").removeClass("selected");
+	$(selectedBtn).addClass("selected");
 }
