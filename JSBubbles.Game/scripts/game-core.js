@@ -73,7 +73,11 @@ function InitBoard() {
 			var field = document.createElement("td");
 			field.setAttribute("id", "field-" + i + "-" + j);
 			// losowanie koloru tla
-			field.setAttribute("class", "color" + Math.floor(Math.random() * 4+1));
+			var classNames = "color" + Math.floor(Math.random() * 4+1)
+			if (gameOptions.boardType == 'squares') {
+				classNames += " square";
+			}
+			field.setAttribute("class", classNames);
 			field.onclick = selectSimilarFields;
 			row.appendChild(field);
 		}
@@ -96,10 +100,10 @@ function EndGame(ended) {
     if (ended || confirm("Do you want to finish the game?")) {
     	if (ended) {
     		$.jnotify("<strong>Game over!</strong><br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
-    				  remove: function () {
-    				  	refreashMessages();
-    				  	//InitBoard();
-    				  }
+			  remove: function () {
+				refreashMessages();
+				InitBoard();
+			  }
     		});
     	}
 		gameStats.Update();
@@ -502,6 +506,10 @@ function hasAnyMove() {
 			if (initField === null) return false;
 			if (initField.getAttribute("class") != 'emptyField') {
 				return !findMove(initField, initField.getAttribute("class"), 0);
+			}
+			// sprawdzenie pustej planszy
+			else if (x == gameOptions.boardSize.x-1 && y == gameOptions.boardSize.y-1) {
+				return false;
 			}
 		}
 	}

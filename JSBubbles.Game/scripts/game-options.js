@@ -76,6 +76,11 @@ var gameOptions = {
 	*/
 	_defaultTheme: "metro",
 
+	/**
+	 * Typ planszy
+	 */
+	boardType: 'bools',
+
 	ChangeBoardBackground: function (url) {
 		gameOptions.boardBackground = url;
 		if (gameOptions.boardBackground !== "") {
@@ -123,6 +128,19 @@ var gameOptions = {
 		}
 	},
 
+	ChangeBoardViewType: function(newType) {
+		if (this.boardType !== newType) {
+			// zmiana wizualizacji planszy
+			if (newType === 'squares'){
+				$('#boardTable td:not(.emptyField)').addClass('square');
+			}
+			else {
+				$('#boardTable td').removeClass('square');
+			}
+			this.boardType = newType;
+		}
+	},
+
 	Save: function () {
 		storage.Set(this._cookieName, this);
 	},
@@ -137,6 +155,7 @@ var gameOptions = {
 				this.ChangeBoardBackground(mo.boardBackground);
 				this.enableAudio = mo.enableAudio;
 				this.playerName = mo.playerName;
+				this.ChangeBoardViewType(mo.boardType);
 				if (mo.theme == undefined) {
 					this.theme = _defaultTheme
 				}

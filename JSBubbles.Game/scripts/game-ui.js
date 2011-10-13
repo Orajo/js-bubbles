@@ -28,20 +28,21 @@ function TogglePanel(panelNo, onPanelChange, onPanelClose) {
 
 	// otwarcie wybranego panelu
 	if (panelNo > -1) {
-		$('#appContainer').animate({left: (panelNo + 1) * -panelWidth}, 1000, function() {
+		$('#appContainer').animate({left: (panelNo + 1) * -panelWidth}, 1500, function() {
 			if( $.isFunction(onPanelChange) ) onPanelChange.apply(toggled);
 		});
 		toggled = panelNo;
-		$("#panelTitle h1").animate({right: (panelNo + 1) * panelWidth}, 1000);
+		$("#panelTitle h1").animate({right: (panelNo + 1) * panelWidth}, 1500);
 	}
 	// zamknięcie otwartych paneli
 	else {
-		$('#appContainer').animate({left: 0}, 1000, function() {
+		$('#appContainer').animate({left: 0}, 2000, function() {
 			toggled = -1;
 			if( $.isFunction(onPanelClose) ) onPanelClose.apply(toggled);
 		});
 	}
 	toggleHighlight($("ul#gameTopMenu li").get(panelNo + 1));
+	$("body").addClass("gameBody" + panelNo);
 }
 
 /**
@@ -68,13 +69,13 @@ function switchToSelectedPanel(panelObj) {
 function InitEvents() {
 
 	// Przełączanie obszarów PanelArea poprzez kliknięcie na należące do nich panele
-	$("div.panel").click(function (event) {
-		//TogglePanel('controlPanel');
-		if (this == event.target || event.target.className == "panelButtons") { // działa wyłacznie klikanie na panelu
-			switchToSelectedPanel(this);
-		}
-		return false;
-	});
+//	$("div.panel1").click(function (event) {
+//		//TogglePanel('controlPanel');
+//		if (this == event.target || event.target.className == "panelButtons") { // działa wyłacznie klikanie na panelu
+//			switchToSelectedPanel(this);
+//		}
+//		return false;
+//	});
 
 	// Panel opcji
 	$("#optionsSwitchBtn").click(function () {
@@ -83,13 +84,15 @@ function InitEvents() {
 	});
 
 	$("#settingsOkBtn").click(function () {
-		TogglePanel('controlPanel');
+		TogglePanel(-1);
 
 		gameOptions.oneClickMode = $("#oneClickMode").attr("checked") ? false : true;
 
 		gameOptions.ChangeBoardBackground($("#boardBkgUrl").get(0).value);
 
 		gameOptions.EnableAudio = $("#canPlaySounds").attr("checked") ? true : false;
+
+		gameOptions.ChangeBoardViewType($("#controlPanel input[type=radio]:checked").val());
 
 		selectedBoardSize = parseInt($("#boardDimensionId").get(0).value);
 
@@ -194,11 +197,10 @@ function SetSettingsPanel() {
 
 	// ustawienie wskaźnika typu gry
 	$("#options input").removeClass("selected");
-	if (gameOptions.currentGameType === gameTypes.type1) {
-		$("#gmt1").addClass("selected");
-	}
-	else {
-		$("#gmt2").addClass("selected");
+	for (var type in gameTypes) {
+		if (gameOptions.currentGameType === gameTypes[type]) {
+			$("#gm_" + type).addClass("selected");
+		}
 	}
 
 	// inicjalizacja listy rozmiarów planszy

@@ -132,7 +132,15 @@ function saveData($dbh, $gamerId) {
 function getTopTen($dbh) {
 	$result = array();
 
-	$sql = 'select g.name, s.max from gamer g left join stats s on g.id = s.fk_gamer  where max> 0 order by max desc limit 10';
+	$sql = 'select gm.name as player, g.name as game, s.max as max_result
+from gamer gm, game g, stats s
+where s.fk_gamer = gm.id and s.fk_game = g.id
+and s.max = (select max(max) as max_result
+	from stats
+	where s.id = stats.id and s.max > 0)
+group by game
+having max(max_result)
+order by max_result desc';
 	try {
 		$sth = $dbh->query($sql);
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);
