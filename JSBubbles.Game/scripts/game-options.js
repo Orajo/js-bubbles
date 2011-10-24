@@ -132,10 +132,10 @@ var gameOptions = {
 		if (this.boardType !== newType) {
 			// zmiana wizualizacji planszy
 			if (newType === 'squares'){
-				$('#boardTable td:not(.emptyField)').addClass('square');
+				$('#gameArea').addClass('square');
 			}
 			else {
-				$('#boardTable td').removeClass('square');
+				$('#gameArea').removeClass('square');
 			}
 			this.boardType = newType;
 		}
@@ -150,7 +150,6 @@ var gameOptions = {
 			var mo = storage.Get(this._cookieName);
 			if (mo !== undefined) {
 				this.ChangeBoardSize(parseInt(mo.boardSize.y));
-				this.ChangeGameType(mo.currentGameType);
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);
 				this.enableAudio = mo.enableAudio;
@@ -162,6 +161,7 @@ var gameOptions = {
 				else {
 					this.theme = mo.theme;
 				}
+				this.ChangeGameType(mo.currentGameType);
 			}
 		}
 		catch (exp) {

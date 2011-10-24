@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:addthis="http://www.addthis.com/help/api-spec">
 <head>
@@ -6,33 +7,10 @@
 	<title>JS Bubbles</title>
 	<link rel="stylesheet" type="text/css" href="css/themes/theme_metro.css" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.jnotify.css" />
-	<script type="text/javascript" src="scripts/game-common.js"></script>
-	<script type="text/javascript" src="scripts/jquery-1.6.4.js"></script>
-	<script type="text/javascript" src="scripts/storage.js"></script>
-	<script type="text/javascript" src="scripts/jquery.tmpl.min.js"></script>
-	<script type="text/javascript" src="scripts/jquery.ezCookie_0.8.0.js"></script>
-	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js"></script>
-	<script type="text/javascript" src="scripts/game-options.js"></script>
-	<script type="text/javascript" src="scripts/game-stats.js"></script>
-	<script type="text/javascript" src="scripts/game-core.js"></script>
-	<script type="text/javascript" src="scripts/game-ui.js"></script>
-	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4e9200752fd238bc"></script>
-	<script type="text/javascript">
-		var addthis_config =
-		{
-		   ui_click: true
-		}
-	</script>
-	<meta http-equiv='cache-control' content='no-cache'/>
 </head>
 <body>
-
 	<!-- Test area -->
 	<div id="testArea" style="z-index: 100; background-color: white; width: 500px; border: 1px solid black; padding: 5px; color: black; position: absolute; top: 20px; right: 20px;">
-		<script type="text/javascript" src="scripts/jquery-ui-1.8.16.custom.min.js"></script>
-		<script type="text/javascript">
-			$("#testArea").draggable({ cursor: 'move', opacity: 0.5 });
-		</script>
 		<label>Test tools:</label>
 		<input type="button" onclick="EndGame(true)" value="End game" />
 		<input type="button" onclick="hasAnyMove()" value="Sprawdź ruchy" />
@@ -45,6 +23,7 @@
 
 	<ul id="gameTopMenu">
 		<li id="boardPanelSwitchBtn">Game: <span id="gameTypeValue"></span></li>
+		<li id="commentsSwitchBtn">Comments</li>
 		<li id="optionsSwitchBtn">Settings</li>
 		<li id="resultsSwitchBtn">Scores</li>
 		<li id="helpSwitchBtn">About</li>
@@ -54,6 +33,23 @@
 	<div id="viewPort">
 		<div id="appContainer">
 			<div class="panelsArea">
+				<!-- narzędzia społecznościowe -->
+				<div class="panel" id="socialToolsPanel">
+					<div class="panelContent">
+						<h2>If you're a fan of social networking:</h2>
+						<!-- AddThis Button BEGIN -->
+						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+							<a class="addthis_button_facebook"></a>
+							<a class="addthis_button_twitter"></a>
+							<a class="addthis_button_wykop"></a>
+							<a class="addthis_button_blip"></a>
+							<a class="addthis_button_email"></a>
+							<a class="addthis_button_favorites"></a>
+							<a class="addthis_button_compact"></a>
+						</div>
+						<!-- AddThis Button END -->
+					</div>
+				</div>
 				<div id="boardPanel" class="panel">
 					<div class="panelContent" id="gameArea">
 							<!-- obszar na magazy kul (zależnie od typu gry) -->
@@ -69,65 +65,67 @@
 					<div class="panelButtons">
 						<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo move" title="Undo move" />
 						<input type="image" src="images/themes/metro/NewGame.png" id="newGameBtn" alt="New game" title="New game" />
-	<!--					<input type="image" src="images/themes/metro/Settings.png" id="optionsSwitchBtn" alt="Settings" title="Settings" />
-						<input type="image" src="images/themes/metro/TopScores.png" id="resultsSwitchBtn" alt="Results" title="Show results" />
-						<input type="image" src="images/themes/metro/About.png" id="helpSwitchBtn" alt="About JSBubbles" title="About JSBubbles" />-->
 					</div>
 				</div>
-				<!-- narzędzia społecznościowe -->
-				<div class="panel" id="socialToolsPanel">
+			</div>
+
+			<div class="panelsArea">
+				<div id="disqusPanel" class="panel">
 					<div class="panelContent">
-						<h2>If you are a social fun:</h2>
-						<!-- AddThis Button BEGIN -->
-						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-							<a class="addthis_button_facebook"></a>
-							<a class="addthis_button_twitter"></a>
-							<a class="addthis_button_wykop"></a>
-							<a class="addthis_button_blip"></a>
-							<a class="addthis_button_email"></a>
-							<a class="addthis_button_favorites"></a>
-							<a class="addthis_button_compact"></a>
-						</div>
-						<!-- AddThis Button END -->
+						<div id="disqus_thread"></div>
+						<script type="text/javascript">
+							/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+							var disqus_shortname = 'kulki'; // required: replace example with your forum shortname
+							var disqus_developer = 1; // developer mode is on
+							/* * * DON'T EDIT BELOW THIS LINE * * */
+							(function() {
+								var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+								dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+								(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+							})();
+						</script>
+						<noscript><p>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></p></noscript>
+						<p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
+					</div>
+					<div class="panelButtons">
+						<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return" class="returnBtn" />
 					</div>
 				</div>
 			</div>
 			<!-- panele ustawień gry -->
 			<div class="panelsArea">
 				<div id="controlPanel" class="panel">
-					<div class="panelContent">
-						<div id="options">
-							<p>
-								<label for="boardDimensionId">
-									Board size:</label>
-								<select name="boardDimension" id="boardDimensionId">
-								</select>
-							</p>
-							<p>
-								Game type:</p>
-							<div>
-								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gm_type1" class="gameTypeIcon" />
-								<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gm_type2" class="gameTypeIcon" />
-								<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gm_type3" class="gameTypeIcon" />
-								<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gm_type4" class="gameTypeIcon" />
-							</div>
-							<p style="clear: both;" id="boardViewTypeSelector">
-								<p>Choose board type:</p>
-								<label><input type="radio" name="point_type" value="bools" checked="checked" id="pointTypeBools" /><img src="images/red_24.png" alt="Bools" /></label>
-								<label><input type="radio" name="point_type" value="squares" id="pointTypeSquares"  /><img alt="Squares" src="images/square.png" /></label>
-							</p>
-							<p style="clear: both;">
-								<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
-							</p>
-							<p style="display: none;">
-								<label for="boardBkgUrl">
-									Backgroud image address</label><br />
-								<input type="text" id="boardBkgUrl" />
-							</p>
-							<!--<p>
-							<label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
-						</p> -->
+					<div class="panelContent" id="options">
+						<p>
+							<label for="boardDimensionId">
+								Board size:</label>
+							<select name="boardDimension" id="boardDimensionId">
+							</select>
+						</p>
+						<p>
+							Game type:</p>
+						<div>
+							<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gm_type1" class="gameTypeIcon" />
+							<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gm_type2" class="gameTypeIcon" />
+							<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gm_type3" class="gameTypeIcon" />
+							<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gm_type4" class="gameTypeIcon" />
 						</div>
+						<div style="clear: both;" id="boardViewTypeSelector">
+							<p>Choose board type:</p>
+							<label><input type="radio" name="point_type" value="bools" checked="checked" id="pointTypeBools" /><img src="images/red_24.png" alt="Bools" /></label>
+							<label><input type="radio" name="point_type" value="squares" id="pointTypeSquares"  /><img alt="Squares" src="images/square.png" /></label>
+						</div>
+						<div style="clear: both;">
+							<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
+						</div>
+						<div style="display: none;">
+							<label for="boardBkgUrl">
+								Backgroud image address</label><br />
+							<input type="text" id="boardBkgUrl" />
+						</div>
+						<!--<p>
+						<label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
+						</p> -->
 					</div>
 					<div class="panelButtons">
 						<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return" id="settingsCancelBtn" />
@@ -214,7 +212,7 @@
 			<div class="panelsArea">
 				<div id="helpPanel" class="panel">
 					<div class="panelContent">
-						<p>version: <script type="text/javascript" language="javascript">								document.write(gameVersion);</script></p>
+						<p id="gameVersion">version: </p>
 						<p style="margin-top: 20px; clear: both;">Author: <strong>Jarosław Wasilewski</strong></p>
 						<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
 						<p style="margin-top: 20px;"><a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" /></a></p>
@@ -229,29 +227,24 @@
 		</div>
 	</div>
 
+	<script type="text/javascript" src="scripts/game-common.js"></script>
+	<script type="text/javascript" src="scripts/jquery-1.6.4.js"></script>
+	<script type="text/javascript" src="scripts/storage.js"></script>
+	<script type="text/javascript" src="scripts/jquery.tmpl.min.js"></script>
+	<script type="text/javascript" src="scripts/jquery.ezCookie_0.8.0.js" async="true"></script>
+	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js"></script>
+	<script type="text/javascript" src="scripts/game-options.js"></script>
+	<script type="text/javascript" src="scripts/game-stats.js"></script>
+	<script type="text/javascript" src="scripts/game-core.js"></script>
+	<script type="text/javascript" src="scripts/game-ui.js"></script>
 
-
-
-	<div id="disqusPanel">
-		<div id="disqus_thread"></div>
-		<script type="text/javascript">
-			/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-			var disqus_shortname = 'kulki'; // required: replace example with your forum shortname
-			var disqus_developer = 1; // developer mode is on
-			/* * * DON'T EDIT BELOW THIS LINE * * */
-			(function() {
-				var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-				dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-				(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-			})();
-		</script>
-		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-		<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
-		<a name="comments"></a>
-	</div>
-
-
-	<!-- AddThis Button END -->
+	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4e9200752fd238bc" async="true"></script>
+	<script type="text/javascript">
+		var addthis_config =
+		{
+		   ui_click: true
+		}
+	</script>
 	<script type="text/javascript">
 
 		var _gaq = _gaq || [];
@@ -264,6 +257,11 @@
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		})();
 
-</script>
+	</script>
+	<script type="text/javascript" src="scripts/jquery-ui-1.8.16.custom.min.js"></script>
+	<script type="text/javascript">
+		$("#testArea").draggable({ cursor: 'move', opacity: 0.5 });
+	</script>
+
 </body>
 </html>

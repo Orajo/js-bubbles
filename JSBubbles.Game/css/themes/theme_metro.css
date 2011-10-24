@@ -12,7 +12,7 @@ body {
 	background-image: none;
 	background-color: Black;
 	color: #EEE;
-	padding: 20px 70px;
+	padding: 20px 0;
 	font-family: "Segoe UI Light", "Open Sans", Helvetica, Arial, Sans-Serif;
 }
 
@@ -39,10 +39,14 @@ p {
 	line-height: 130%;
 }
 
+img {
+	border: none;
+}
+
 /* HEADER */
 #gameTitle {
 	font-size: 50px;
-	margin: 0;
+	margin: 0 70px;
 }
 
 #jsbLogoIcon {
@@ -52,7 +56,7 @@ p {
 ul#gameTopMenu {
 	list-style: none;
 	font-size: 28px;
-	margin-bottom: 20px;
+	margin: 0 70px 20px 70px;
 	font-family: "Segoe UI Light", "Segoe Light", Segoe, "Open Sans", Helvetica, Arial, Sans-Serif;
 }
 
@@ -99,10 +103,11 @@ ul#gameTopMenu li.selected {
 /* END MAIN CONTENT */
 
 .panelsArea {
-	width: 1000px;
+	width: 1100px;
 	height: 450px;
     position: relative;
     float: left;
+	margin: 0 0 0 70px;
 }
 
 .panel {
@@ -117,15 +122,25 @@ ul#gameTopMenu li.selected {
 }
 
 #disqusPanel {
-	background-color: #ddd;
 	width: 500px;
-	margin-top: 30px;
-	padding: 10px 20px;
-	color: black;
+	overflow: auto;
+	height: inherit;
+	background: #ff0097; /* Old browsers */
+	background: -moz-linear-gradient(top, #ff0097 0%, #a50060 82%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff0097), color-stop(82%,#a50060)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ff0097 0%,#a50060 82%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ff0097 0%,#a50060 82%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #ff0097 0%,#a50060 82%); /* IE10+ */
+	background: linear-gradient(top, #ff0097 0%,#a50060 82%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff0097', endColorstr='#a50060',GradientType=0 ); /* IE6-9 */
 }
 
 #disqusPanel div, #disqusPanel p, #disqusPanel a {
 	font-family: "Segoe UI Semibold", Verdana, Tahoma, Helvetica, Arial, Sans-Serif;
+}
+
+#disqusPanel div.panelContent {
+	margin-bottom: 50px;
 }
 
 #boardPanel, #controlPanel, #helpPanel, #scorePanel {
@@ -133,19 +148,14 @@ ul#gameTopMenu li.selected {
 }
 
 #boardPanel {
-	background-color: #1BA1E2;
-	background-image: linear-gradient(bottom, rgb(0,55,128) 9%, rgb(0,143,245) 78%);
-	background-image: -o-linear-gradient(bottom, rgb(0,55,128) 9%, rgb(0,143,245) 78%);
-	background-image: -moz-linear-gradient(bottom, rgb(0,55,128) 9%, rgb(0,143,245) 78%);
-	background-image: -webkit-linear-gradient(bottom, rgb(0,55,128) 9%, rgb(0,143,245) 78%);
-	background-image: -ms-linear-gradient(bottom, rgb(0,55,128) 9%, rgb(0,143,245) 78%);
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0.09, rgb(0,55,128)),
-		color-stop(0.78, rgb(0,143,245))
-	);
+	background: #008ff5; /* Old browsers */
+	background: -moz-linear-gradient(top, #008ff5 0%, #003780 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#008ff5), color-stop(100%,#003780)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #008ff5 0%,#003780 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #008ff5 0%,#003780 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #008ff5 0%,#003780 100%); /* IE10+ */
+	background: linear-gradient(top, #008ff5 0%,#003780 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#008ff5', endColorstr='#003780',GradientType=0 ); /* IE6-9 */
 }
 
 #controlPanel {
@@ -173,18 +183,14 @@ ul#gameTopMenu li.selected {
 }
 
 #socialToolsPanel {
-	background-image: linear-gradient(bottom, rgb(255,110,151) 5%, rgb(236,41,93) 60%);
-	background-image: -o-linear-gradient(bottom, rgb(255,110,151) 5%, rgb(236,41,93) 60%);
-	background-image: -moz-linear-gradient(bottom, rgb(255,110,151) 5%, rgb(236,41,93) 60%);
-	background-image: -webkit-linear-gradient(bottom, rgb(255,110,151) 5%, rgb(236,41,93) 60%);
-	background-image: -ms-linear-gradient(bottom, rgb(255,110,151) 5%, rgb(236,41,93) 60%);
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0.05, rgb(255,110,151)),
-		color-stop(0.6, rgb(236,41,93))
-	);
+	background: #ff6e97; /* Old browsers */
+	background: -moz-linear-gradient(top, #ff6e97 5%, #ec295d 60%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(5%,#ff6e97), color-stop(60%,#ec295d)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #ff6e97 5%,#ec295d 60%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #ff6e97 5%,#ec295d 60%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #ff6e97 5%,#ec295d 60%); /* IE10+ */
+	background: linear-gradient(top, #ff6e97 5%,#ec295d 60%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff6e97', endColorstr='#ec295d',GradientType=0 ); /* IE6-9 */
 }
 
 #gameArea {
@@ -246,10 +252,6 @@ ul#gameTopMenu li.selected {
 	overflow: hidden;
 	white-space: nowrap;
 	margin-bottom: 10px;
-}
-
-.panelContent {
-	overflow: auto;
 }
 
 .panelButtons {
@@ -383,22 +385,22 @@ table#topTenStats td, table#topTenStats th {
 	background: url("../../images/themes/metro/yellow_ball.png") no-repeat;
 }
 
-.color1.square {
+.square .color1 {
 	background-color: #E51400;
 	background-image: none;
 }
 
-.color2.square {
+.square .color2 {
 	background-color: #339933;
 	background-image: none;
 }
 
-.color3.square {
+.square .color3 {
 	background-color: #0066cc;
 	background-image: none;
 }
 
-.color4.square {
+.square .color4 {
 	background-color: #ffcc00;
 	background-image: none;
 }

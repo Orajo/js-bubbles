@@ -1,6 +1,6 @@
 <?php
 
-$debug = false;
+$debug = true;
 
 if (!$debug) {
 //	xdebug_disable();
@@ -87,6 +87,8 @@ function saveData($dbh, $gamerId) {
 				$sth->bindParam(':name', $playerName, PDO::PARAM_STR);
 				$sth->bindParam(':options', $options, PDO::PARAM_STR);
 				$isSaved = $sth->execute();
+				$arr = $sth->errorInfo();
+				save2log($arr[2]);
 				if ($isSaved) {
 					// jeśli udało się dodać to zapisz wyniki
 					$gamerId = $dbh->lastInsertId();
@@ -137,10 +139,10 @@ from gamer gm, game g, stats s
 where s.fk_gamer = gm.id and s.fk_game = g.id
 and s.max = (select max(max) as max_result
 	from stats
-	where s.id = stats.id and s.max > 0)
-group by game
-having max(max_result)
-order by max_result desc';
+	where g.id = stats.fk_game and s.max > 0)
+group by g.name
+having max(s.max)
+order by s.max desc';
 	try {
 		$sth = $dbh->query($sql);
 		$result = $sth->fetchAll(PDO::FETCH_ASSOC);

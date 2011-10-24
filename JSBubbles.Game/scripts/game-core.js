@@ -52,6 +52,8 @@ var playerName = "";
  */
 var newColumnStore = [];
 
+var emptyBoardBonus = 500;
+
 function GetGameTitle() {
     return gameTitle + " (" + gameVersion + ") - current mode: " + gameOptions.currentGameType;
 }
@@ -73,11 +75,7 @@ function InitBoard() {
 			var field = document.createElement("td");
 			field.setAttribute("id", "field-" + i + "-" + j);
 			// losowanie koloru tla
-			var classNames = "color" + Math.floor(Math.random() * 4+1)
-			if (gameOptions.boardType == 'squares') {
-				classNames += " square";
-			}
-			field.setAttribute("class", classNames);
+			field.setAttribute("class", "color" + Math.floor(Math.random() * 4+1));
 			field.onclick = selectSimilarFields;
 			row.appendChild(field);
 		}
@@ -99,10 +97,11 @@ function InitBoard() {
 function EndGame(ended) {
     if (ended || confirm("Do you want to finish the game?")) {
     	if (ended) {
-    		$.jnotify("<strong>Game over!</strong><br/><span style=\"font-size: smaller\">No more moves.</span><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
+    		$.jnotify("<strong>Game over!</strong><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
 			  remove: function () {
 				refreashMessages();
-				InitBoard();
+				//InitBoard();
+				LoadTopTen();
 			  }
     		});
     	}
@@ -119,10 +118,7 @@ function EndGame(ended) {
 		if (IsNullOrEmpty(gameStats.playerName)) {
 			GetUserName();
 		}
-		if (storage.Save(true)) {
-			$.jnotify("Data saved!", {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
-		}
-		else {
+		if (!storage.Save(true)) {
 			$.jnotify("<strong>Data not saved!</strong>", {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
 		}
 
@@ -151,7 +147,13 @@ function selectSimilarFields(evn) {
 	}
 	else if (selectedClassName.indexOf("selected") !== -1 || selectedClassName.indexOf("emptyField") !== -1) {
 		removeSelected(evt.target, selectedClassName.slice(0,selectedClassName.indexOf(" ")));
- 		if (hasAnyMove()) {
+		var continueGame = hasAnyMove();
+ 		if (continueGame != true) {
+			// naliczenie bonusu za pusta planszę
+			if (continueGame === null) {
+				gameStats.gameScore += emptyBoardBonus;
+				$.jnotify("Bonus 500!", {parentElement: "#controlPanel", delay: 3000, slideSpeed: 2000});
+			}
 			EndGame(true);
 		}
 	}
@@ -159,7 +161,7 @@ function selectSimilarFields(evn) {
 	else {
 		deselectFields();
 		// krok 3: zaznaczanie nowego miejsca
-		findSimilar(evt.target, selectedClassName, 0);
+		findSimilar(evt.target, selectedClassName, 0, true);
 		CountSelectedScore(false);
 		if (gameOptions.oneClickMode) { // in oneClickMode remove selected bools now
 			selectSimilarFields(evn);
@@ -235,61 +237,6 @@ function CountTotalScore() {
 //	totalScoreValue += selectedScore;
 	gameStats.gameScore += selectedScore;
 	$("#totalScoreValue").text(gameStats.gameScore);
-}
-
-/**
- * Wyszukuje elementy sąsiednie do wskazanego elementu planszy
- * @param selElement TD Element selElement
- * @param selClassName String nazwa klasy CSS, która posiada wskazany element
- * @param licznik int licznik pomocniczy do obsługi rekurencji
- * @return void
- */
-function findSimilar(selElement, selClassName, licznik) {
-
-	if (selectedFields.indexOf(selElement, 0) == -1) {
-		selectedFields.push(selElement);
-	}
-
-	var idElements = selElement.getAttribute("id").split("-");
-	var posY = idElements[1];
-	var posX = idElements[2];
-	var newPosX = posX;
-	var newPosY = posY;
-
-	do {
-		switch (licznik) {
-			case 0:
-				newPosX = parseInt(posX) - 1;
-				licznik++;
-				if (newPosX < 0) continue;
-				break;
-			case 1:
-				newPosX = parseInt(posX) + 1;
-				licznik++;
-				if (newPosX >= gameOptions.boardSize.x) continue;
-				break;
-			case 2:
-				newPosX = posX;
-				newPosY = parseInt(posY) - 1;
-				licznik++;
-				if (newPosY < 0) continue;
-				break;
-			case 3:
-				newPosX = posX;
-				newPosY = parseInt(posY) + 1;
-				licznik++;
-				if (newPosX >= gameOptions.boardSize.x) continue;
-				break;
-		}
-		var nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
-		if (nextSibling !== null && selectedFields.indexOf(nextSibling) == -1) {
-			var nextSiblingClassName = jQuery.trim(nextSibling.getAttribute("class"));
-			if (nextSibling !== undefined && (nextSiblingClassName == selClassName)) {
-				findSimilar(nextSibling, selClassName, 0);
-			}
-		}
-	}
-	while (licznik < 4);
 }
 
 /**
@@ -493,7 +440,7 @@ function deselectFields () {
 
 /**
  * Sprawdza czy gracz ma jeszcze jakieś opcje ruchu
- * @return bool
+ * @return mixed true jeśli jest ruch; false jeśli nie ma ruchu i null, jeśli nie ma ruchu a plansza jest pusta
  */
 function hasAnyMove() {
 	var initField;
@@ -505,25 +452,29 @@ function hasAnyMove() {
 			initField = document.getElementById("field-"+y+"-"+x);
 			if (initField === null) return false;
 			if (initField.getAttribute("class") != 'emptyField') {
-				return !findMove(initField, initField.getAttribute("class"), 0);
+				return findSimilar(initField, initField.getAttribute("class"), 0, false);
 			}
 			// sprawdzenie pustej planszy
 			else if (x == gameOptions.boardSize.x-1 && y == gameOptions.boardSize.y-1) {
-				return false;
+				return null;
 			}
 		}
 	}
-	return true;
+	return false;
 }
 
 /**
  * Wyszukuje elementy sąsiednie do wskazanego elementu planszy
- * @param selElement TD Element
+ * @param selElement TD Element selElement
  * @param selClassName String nazwa klasy CSS, która posiada wskazany element
  * @param licznik int licznik pomocniczy do obsługi rekurencji
- * @return void
+ * @return bool true jeśli znajdzie takie same sąsiednie pola; false jeśli nie znajdzie
  */
-function findMove(selElement, selClassName, licznik) {
+function findSimilar(selElement, selClassName, licznik, selectMode) {
+
+	if (selectMode == true && selectedFields.indexOf(selElement, 0) == -1) {
+		selectedFields.push(selElement);
+	}
 
 	var idElements = selElement.getAttribute("id").split("-");
 	var posY = idElements[1];
@@ -559,14 +510,24 @@ function findMove(selElement, selClassName, licznik) {
 		}
 		nextSibling = document.getElementById("field-" + newPosY + "-" + newPosX);
 		if (nextSibling !== null && nextSibling !== undefined) {
-			if (nextSibling.getAttribute("class") == 'emptyField' || checkedFields.indexOf(nextSibling.getAttribute("id")) !== -1) continue;
-			if (nextSibling.getAttribute("class") == selClassName) {
-				return true;
+			if (selectMode) { // wyszukiwanie do zaznaczenia
+				if (selectedFields.indexOf(nextSibling) == -1) {
+					var nextSiblingClassName = jQuery.trim(nextSibling.getAttribute("class"));
+					if (nextSiblingClassName == selClassName) {
+						findSimilar(nextSibling, selClassName, 0, selectMode);
+					}
+				}
 			}
-			else {
-				checkedFields.push(nextSibling.getAttribute("id"));
-				if (findMove(nextSibling, nextSibling.getAttribute("class"), 0)) {
+			else { // wyszukiwanie czy jest jeszcze jakiś ruch
+				if (nextSibling.getAttribute("class") == 'emptyField' || checkedFields.indexOf(nextSibling.getAttribute("id")) !== -1) continue;
+				if (nextSibling.getAttribute("class") == selClassName) {
 					return true;
+				}
+				else {
+					checkedFields.push(nextSibling.getAttribute("id"));
+					if (findSimilar(nextSibling, nextSibling.getAttribute("class"), 0, selectMode)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -582,26 +543,15 @@ function findMove(selElement, selClassName, licznik) {
 function RenderStore() {
 	newColumnStore = generateNewBools(); // zmienna globalna! nie dodawać var!!! bo wpada w nieskończoną pętlę
 
-	if ($("#storeArea").css('display') === 'none') {
-		$("#storeArea").css('display', 'block');
-	}
 	// czyszczenie planszy
 	$("#storeArea").empty();
 
 	$("#storeArea").append("<table id=\"storeTable\"></table>");
-    //storeTable = document.createElement("table");
-	//storeTable.setAttribute("id", "storeTable");
     for(var i = 0; i < gameOptions.boardSize.y; i++) {
 		$("#storeTable").append("<tr><td></td></tr>");
- 		//row = document.createElement("tr");
-		//field = document.createElement("td");
-		if (newColumnStore.length + 1 >= (gameOptions.boardSize.y - i)) {
+		if (newColumnStore.length >= (gameOptions.boardSize.y - i)) {
 			$("#storeTable td:last").addClass("color" + newColumnStore[gameOptions.boardSize.y - i - 1]);
-            //field.setAttribute("class", "color" + newColumnStore[gameOptions.boardSize.y - i]);
 		}
-        //row.appendChild(field);
-		//storeTable.appendChild(row);
-		//document.getElementById("storeArea").appendChild(storeTable);
 	}
 	$("#storeArea").show();
 }
@@ -703,6 +653,8 @@ $(window).load(function () {
 //	}
 
 //	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
+
+	$("#gameVersion").append(gameVersion);
 	storage.saveType = 'ajax';
 	var firstStart = !(storage.Init("../JSBubbles.ServerSide/index.php"));
 	// odczytanie statystyk gry
@@ -721,13 +673,14 @@ $(window).load(function () {
 
 	// inicjowanie personalizacji
 	if (firstStart) {
+		// pobranie nazwy gracza
+		GetUserName();
+
 		// sprawdzenie czy jest konfiguracja i stan ze starej wersji gry
 		ReadUncientStorage();
 
-		// pobranie nazwy gracza
-		GetUserName();
-		gameOptions.Save();
-		TogglePanel(0, function() {
+//		gameOptions.Save();
+		TogglePanel(pannels.settings, function() {
 			$.jnotify("It seems that this is your first time with JS Bubbles.<br /> Maybe you should start from learning the game options?<p class=\"add-info\">Click anywhere to close.</p>", {parentElement: "#controlPanel", delay: 5000, slideSpeed: 2000});
 		});
 	}

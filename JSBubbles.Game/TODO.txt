@@ -12,8 +12,12 @@ dodanie w statystykach gier rozróżniania wielkości planszy
 + dodanie importowanie starych wyników, zapisanych w ciachu\
 + dodanie handlera ciach do storage
 poprawienie procesu rejestracji użytkownika
-dodanie placeholderów z globalnymi statystykami gier
-dodanie komentarzy http://disqus.com/
++ dodanie placeholderów z globalnymi statystykami gier
++ dodanie komentarzy http://disqus.com/
++ poprawienie i sprawdzenie wyglądu pad różnymi przeglądarkami
+dodanie trybu gry na czas (czas na wykonanie ruchu)
+dodanie bonusu za zlikwidowanie wszystkich kól
++ poprawienie obsługi kwadratowych pól gry
 
 3.1
 przepisanie storage.js jako plugin jQuery

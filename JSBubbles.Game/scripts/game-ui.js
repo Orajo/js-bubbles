@@ -15,33 +15,35 @@ var selectedBoardSize = gameOptions.boardSize.y;
 var toggled = -1;
 
 /**
+ * Lista paneli
+ */
+var pannels = {
+	game: -1,
+	comments: 0,
+	settings: 1,
+	scores: 2,
+	about: 3
+}
+
+/**
  * Pokazuje lub ukrywane dodatkowe panele na planszy.
  * Obecnie jest to panel opcji i panel wyników gry.
+ * @param panelNo integer NUmer panelu. Zaleca się korzystanie z listy pannels
+ * @param onPanelChange function Funkcja wywoływana po zmianie aktywnego panela
  */
-function TogglePanel(panelNo, onPanelChange, onPanelClose) {
+function TogglePanel(panelNo, onPanelChange) {
 
-	var panelWidth = $(".panelsArea:first-child").width();
+	var panelWidth = $(".panelsArea:first-child").outerWidth(true);
 //	$('#appContainer').width(panelWidth * 4);
 
 	if (!onPanelChange) onPanelChange = null;
-	if (!onPanelClose) onPanelClose = null;
 
 	// otwarcie wybranego panelu
-	if (panelNo > -1) {
-		$('#appContainer').animate({left: (panelNo + 1) * -panelWidth}, 1500, function() {
-			if( $.isFunction(onPanelChange) ) onPanelChange.apply(toggled);
-		});
-		toggled = panelNo;
-		$("#panelTitle h1").animate({right: (panelNo + 1) * panelWidth}, 1500);
-	}
-	// zamknięcie otwartych paneli
-	else {
-		$('#appContainer').animate({left: 0}, 2000, function() {
-			toggled = -1;
-			if( $.isFunction(onPanelClose) ) onPanelClose.apply(toggled);
-		});
-	}
-	toggleHighlight($("ul#gameTopMenu li").get(panelNo + 1));
+	$('#appContainer').animate({left: (panelNo + 1) * -panelWidth}, 1500, function() {
+		toggleHighlight($("ul#gameTopMenu li").get(panelNo + 1));
+		if( $.isFunction(onPanelChange) ) onPanelChange.apply(toggled);
+	});
+	toggled = panelNo;
 	$("body").addClass("gameBody" + panelNo);
 }
 
@@ -79,12 +81,12 @@ function InitEvents() {
 
 	// Panel opcji
 	$("#optionsSwitchBtn").click(function () {
-		TogglePanel(0);
+		TogglePanel(pannels.settings);
 		return false;
 	});
 
 	$("#settingsOkBtn").click(function () {
-		TogglePanel(-1);
+		TogglePanel(pannels.game);
 
 		gameOptions.oneClickMode = $("#oneClickMode").attr("checked") ? false : true;
 
@@ -115,7 +117,7 @@ function InitEvents() {
 
 	$("#settingsCancelBtn").click(function () {
 		SetSettingsPanel();
-		TogglePanel(-1);
+		TogglePanel(pannels.game);
 	});
 
 	// wybranie trybu gry
@@ -134,14 +136,21 @@ function InitEvents() {
 	// Panel statystyk gier
 	$("#resultsSwitchBtn").click(function () {
 		//TogglePanel('scorePanel');
-		TogglePanel(1);
+		TogglePanel(pannels.scores);
+		return false;
+	});
+
+	// Panel komentarzy
+	$("#commentsSwitchBtn").click(function () {
+		//TogglePanel('scorePanel');
+		TogglePanel(pannels.comments);
 		return false;
 	});
 
 	// Panel gry
 	$("#boardPanelSwitchBtn").click(function () {
 		//TogglePanel('scorePanel');
-		TogglePanel(-1);
+		TogglePanel(pannels.game);
 		return false;
 	});
 
@@ -157,7 +166,7 @@ function InitEvents() {
 
 	// Panel pomocy
 	$("#helpSwitchBtn").click(function () {
-		TogglePanel(2);
+		TogglePanel(pannels.about);
 		return false;
 	});
 
@@ -175,18 +184,18 @@ function InitEvents() {
 
 	// zamknięcie dowolnego panela
 	$(".returnBtn").click(function () {
-		TogglePanel(-1);
+		TogglePanel(pannels.game);
 	});
 
 	//przycisk zmiany gracza
-	$("#playerIdChange").click(function(){
-		var newName = window.prompt("Login as new user");
-		if (newName != null) {
-			gameOptions.playerName = newName;
-			gameOptions.Save();
-			storage.Save(true);
-		}
-	});
+//	$("#playerIdChange").click(function(){
+//		var newName = window.prompt("Login as new user");
+//		if (newName != null) {
+//			gameOptions.playerName = newName;
+//			gameOptions.Save();
+//			storage.Save(true);
+//		}
+//	});
 }
 
 /**
