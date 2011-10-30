@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.6.4.min.js" type="text/javascript"></script>
+		<script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+		<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/themes/blitzer/jquery-ui.css" type="text/css" rel="stylesheet" />
+
+<!--		<link rel="stylesheet" media="screen" type="text/css" href="colorpicker.css" />
+		<script type="text/javascript" src="colorpicker.js"></script>-->
+
+		<style type="text/css">
+			.editHelpers {
+				text-align: right;
+				margin: 4px 0;
+				padding: 3px;
+				display: none;
+				background-color: #EEE;
+				border: 1px solid #cccccc;
+				-webkit-border-radius: 3px;
+				-moz-border-radius: 3px;
+				border-radius: 3px;
+				overflow: hidden;
+			}
+
+			.editHelpers img.moveHolder {
+				float: left;
+				cursor: pointer;
+			}
+
+			.editHelpers a {
+				float: right;
+			}
+
+			.slider {
+				height: 150px;
+				position: relative;
+				z-index: 100;
+				width: 15px;
+			}
+
+			#pageContent  {
+				background: url("cbx-dart.png") no-repeat;
+				width: 500px;
+				height: 500px;
+			}
+
+			#editPanel {
+				position: absolute;
+				top: 20px;
+				left: 400px;
+				background-color: #0066cc;
+				border: 1px solid #294790;
+				padding: 10px;
+				margin: 10px;
+				color: white;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+			}
+
+			#editPanel a, #editPanel a:visited, #editPanel a:active {
+				color: white;
+			}
+
+			div.registerBox {
+				background-color: #667E2E;
+				border: 1px solid #667E2E;
+				border-radius: 3px 3px 3px 3px;
+				box-shadow: 0 0 5px #38382E;
+				color: #FFFFFF;
+				padding: 2px 5px;
+				position: absolute;
+			}
+
+			#savePanel{
+				display: none;
+			}
+
+/*			.colorSelector {
+				background: url("images/colorpicker/select.png") repeat scroll 0 0 transparent;
+				height: 36px;
+				position: relative;
+				width: 36px;
+			}*/
+		</style>
+		<script type="text/javascript">
+			"use strict";
+			// lista obiektów RegisterBox i ich położenia na stronie
+			var storage = new Array();
+
+			// tymczasowy bufor na położenie elementów do obsługi Undo
+			var _undoStorage = new Array();
+
+			var sliderDiv;
+
+			$(window).load(function (){
+				$("#editPanel").draggable({ cursor: 'move' });
+//				$(".colorPicker").ColorPicker({
+//					color: '#0000ff',
+//					onShow: function (colpkr) {
+//						$(colpkr).fadeIn(500);
+//						return false;
+//					},
+//					onHide: function (colpkr) {
+//						$(colpkr).fadeOut(500);
+//						return false;
+//					},
+//					onChange: function (hsb, hex, rgb) {
+//						$('#colorSelector div').css('backgroundColor', '#' + hex);
+//					}
+//				});
+			});
+
+			/**
+			 * Włącza edycję położenia i właściwości bloków RegisterBox
+			 */
+			function enableEditingRegisterBoxes(){
+				// zapisanie pozycji etykiet rejestrów
+				$(".registerBox").each(function (){
+					_undoStorage[this.id] = $(this).offset();
+				});
+				$(".registerBox").children('.editHelpers').show();
+				$("#savePanel").show();
+				$("#editPanel a:first").hide();
+				$(".registerBox").draggable({ cursor: 'move', disabled: false, appendTo: '.move', opacity: 0.6, containment: '#pageContent', handle: '.moveHolder' });
+				$(".opacityControl").click(function(event){
+					sliderDiv = $("<div class='slider'></div>").appendTo("body");
+					sliderDiv.offset({left: $(event.target).offset().left, top: $(event.target).offset().top + $(event.target).height + 2});
+					changeOpacity(sliderDiv, $(event.target).parents(".registerBox"));
+				});
+				storage = new Array();
+				return false;
+			}
+
+			/**
+			 * Zapisuje nowe położenie bloków RegisterBox
+			 */
+			function saveRegisterBoxes(){
+				// zapisanie położenia bloków
+				$(".registerBox").each(function (){
+					storage[this.id] = $(this).offset();
+				});
+				// showanie opcji
+				hideEditHelpers();
+				return false;
+			}
+
+			/**
+			 * Cofa zmiany w położeniu bloków RegisterBox
+			 */
+			function cancelEditingRegisterBoxes(){
+				if (confirm("Czy chcesz anulować? Etykiety zostaną przeniesione na poprzednie miejsca.")) {
+					// przywrócenie pozycji paneli
+					try {
+						for (var regBoxId in _undoStorage) {
+							$("#" + regBoxId).offset(_undoStorage[regBoxId]);
+						}
+					}
+					catch(exp){
+						// zasadniczo jedynie co się może wydażyć to usunięcie bloku w wyniku jego edycji
+						console.error(exp.description);
+					}
+					hideEditHelpers();
+				}
+			}
+
+			/**
+			 * Zamknięcie pól edycji bloków regosterBox
+			 */
+			function hideEditHelpers(){
+				$(".registerBox").children('.editHelpers').hide();
+				$("#savePanel").hide();
+				$("#editPanel a:first").show();
+				$(".registerBox").draggable( "disable" );
+				$("body").remove(".slider");
+				return false;
+			}
+
+			function changeOpacity(slider1, regBox) {
+				slider1.slider({
+					orientation: "vertical",
+					range: "min",
+					min: 4,
+					max: 10,
+					value: 10,
+					step: 1,
+					slide: function(event, ui) {
+						regBox.fadeTo('fast', ui.value * 0.1);
+					},
+					stop: function(event, ui) {
+						event.target.remove();
+					}
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<div id="pageContent">
+			<div id="cvl_CSQ" class="registerBox registerBoxOffline" title="CSQ">
+				<label>Poziom sygnału GSM:</label><span id="CSQ_value">26 </span>
+				<div class="editHelpers">
+					<img src="move.png" class="moveHolder" alt="move" title="Click and hold to move"/>
+					<img src="opacity.png" class="opacityControl" alt="opacity" title="Click to change opacity" />
+					<a onclick="ShowImpDialog('CSQ_profile','Zmień nazwę');" href="#"><img src="edit_register_box.png" alt="edit" /></a></div>
+			</div>
+
+			<div id="cvl_P1" class="registerBox registerBoxOffline" title="CSQ" style="top: 50px; left: 200px">
+				<label>Ciśnienie:</label><span id="P1_value">26 </span>
+				<div class="editHelpers">
+					<img src="move.png" class="moveHolder" alt="move" title="Click and hold to move" />
+					<img src="opacity.png" class="opacityControl" alt="opacity" title="Click to change opacity" />
+<!--					<div class="colorSelector" title="Click to change color"><div style="background-color: #0000ff"></div></div>-->
+					<img onclick="ShowImpDialog('CSQ_profile','Zmień nazwę');" title="Edit label properties" src="edit_register_box.png" alt="edit" />
+				</div>
+			</div>
+		</div>
+		<div id="editPanel">
+			<a href="#" onclick="enableEditingRegisterBoxes()">Edytuj</a>
+			<div id="savePanel">
+				<a href="#" onclick="saveRegisterBoxes()">Zapisz</a>
+				<a href="#" onclick="cancelEditingRegisterBoxes()">Anuluj</a>
+			</div>
+		</div>
+	</body>
+</html>

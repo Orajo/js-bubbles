@@ -18,17 +18,20 @@
 		<input type="button" onclick="TestSound()" value="Sound" />
 	</div>
 	<!-- End test area -->
-
-	<h1 id="gameTitle">JS Bubbles <img src="images/jsb_logo.png" id="jsbLogoIcon" alt="JSBubbles Logo" /></h1>
-
-	<ul id="gameTopMenu">
-		<li id="boardPanelSwitchBtn">Game: <span id="gameTypeValue"></span></li>
-		<li id="commentsSwitchBtn">Comments</li>
-		<li id="optionsSwitchBtn">Settings</li>
-		<li id="resultsSwitchBtn">Scores</li>
-		<li id="helpSwitchBtn">About</li>
-	</ul>
-
+	<header>
+		<h1 id="gameTitle">JS Bubbles <img src="images/jsb_logo.png" id="jsbLogoIcon" alt="JSBubbles Logo" /></h1>
+		<nav>
+			<ul id="gameTopMenu">
+				<li id="boardPanelSwitchBtn">Game: <span id="gameTypeValue"></span></li>
+				<li id="commentsSwitchBtn">Comments</li>
+				<li id="optionsSwitchBtn">Settings</li>
+				<li id="resultsSwitchBtn">Scores</li>
+				<li id="helpSwitchBtn">About</li>
+			</ul>
+		</nav>
+	</header>
+	<div id="prevIcon"><div><img src="images/themes/metro/Return.png"/></div></div>
+	<div id="nextIcon"><div><img src="images/themes/metro/Next.png"/></div></div>
 	<!-- GAME AREA -->
 	<div id="viewPort">
 		<div id="appContainer">
@@ -58,6 +61,7 @@
 							<!-- obszar na planszę gry -->
 							<div id="boardArea">
 							</div>
+							<p id="timeToMove" class="scoreStatsData">Fast points <span id="timeToMoveValue"></span></p>
 							<p id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></p>
 							<p id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></p>
 					</div>
@@ -86,9 +90,6 @@
 						</script>
 						<noscript><p>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></p></noscript>
 						<p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
-					</div>
-					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return" class="returnBtn" />
 					</div>
 				</div>
 			</div>
@@ -128,7 +129,6 @@
 						</p> -->
 					</div>
 					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return" id="settingsCancelBtn" />
 						<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close" id="settingsOkBtn" />
 					</div>
 				</div>
@@ -172,7 +172,6 @@
 						</script>
 					</div>
 					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return" class="returnBtn" />
 						<input type="image" src="images/themes/metro/Remove.png" title="Clear results" value="Clear" id="scoreClearBtn" />
 					</div>
 				</div>
@@ -218,9 +217,6 @@
 						<p style="margin-top: 20px;"><a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" /></a></p>
 						<p><a href="http://code.google.com/p/js-bubbles/" target="_blank">Visit project page on Google Code</a></p>
 						<p><a href="http://code.google.com/p/js-bubbles/issues/entry">Send an issue</a></p>
-					</div>
-					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/Return.png" value="Return" title="Return" class="returnBtn" />
 					</div>
 				</div>
 			</div>

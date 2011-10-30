@@ -22,7 +22,9 @@ var pannels = {
 	comments: 0,
 	settings: 1,
 	scores: 2,
-	about: 3
+	about: 3,
+	next: 100,
+	prev: -100
 }
 
 /**
@@ -32,6 +34,13 @@ var pannels = {
  * @param onPanelChange function Funkcja wywoływana po zmianie aktywnego panela
  */
 function TogglePanel(panelNo, onPanelChange) {
+
+	if (panelNo == pannels.next) {
+		panelNo = toggled + 1;
+	}
+	else if (panelNo == pannels.prev) {
+		panelNo = toggled - 1;
+	}
 
 	var panelWidth = $(".panelsArea:first-child").outerWidth(true);
 //	$('#appContainer').width(panelWidth * 4);
@@ -79,6 +88,46 @@ function InitEvents() {
 //		return false;
 //	});
 
+	// wskaźnik czy któraś z ikon przesuwania na boki jest aktywna
+	var showNextPrev = false;
+
+	// obsługa obszaru (ikony) przesywania do poprzedniego panelu
+	$("#prevIcon").click(function (){
+		if (toggled > pannels.game) {
+			$("#prevIcon div").fadeOut();
+			TogglePanel(pannels.prev);
+			showNextPrev = false;
+		}
+	}).hover(function(event) {
+		if (toggled > pannels.game) {
+			// przesuń do pozycji kursora
+			$("#prevIcon div").offset({left: 0, top: event.pageY - 21}); // 21 to 1/2 wysokości ikony.
+			$("#prevIcon div").fadeIn("fast");
+			showNextPrev = true;
+		}
+	}, function() {
+		$("#prevIcon div").fadeOut();
+		showNextPrev = false;
+	});
+
+	// obsługa obszaru (ikony) przesywania do następnego panelu
+	$("#nextIcon").click(function (){
+		if (toggled < pannels.about) {
+			$("#nextIcon div").fadeOut();
+			TogglePanel(pannels.next);
+			showNextPrev = false;
+		}
+	}).hover(function(event) {
+		if (toggled < pannels.about) {
+			$("#nextIcon div").offset({left: $("#nextIcon").offset.left, top: event.pageY - 21});
+			$("#nextIcon div").fadeIn("fast");
+			showNextPrev = true;
+		}
+	}, function() {
+		$("#nextIcon div").fadeOut();
+		showNextPrev = false;
+	});
+
 	// Panel opcji
 	$("#optionsSwitchBtn").click(function () {
 		TogglePanel(pannels.settings);
@@ -92,7 +141,9 @@ function InitEvents() {
 
 		gameOptions.ChangeBoardBackground($("#boardBkgUrl").get(0).value);
 
-		gameOptions.EnableAudio = $("#canPlaySounds").attr("checked") ? true : false;
+		//gameOptions.EnableAudio = $("#canPlaySounds").attr("checked") ? true : false;
+
+		gameOptions.timedGame = $("#timedGameMode").attr("checked") ? true : false;
 
 		gameOptions.ChangeBoardViewType($("#controlPanel input[type=radio]:checked").val());
 
@@ -294,6 +345,7 @@ function refreashMessages() {
 	$("#gameTypeValue").text(gameStats.currentType);
 	$("#gameTypeValue").attr("title", gameStats.currentType);
 	$("#playerNameValue").text(gameOptions.playerName);
+	$("#timeToMoveValue").text(moveTimer.Get());
 	document.title = GetGameTitle();
 }
 

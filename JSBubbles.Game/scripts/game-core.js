@@ -54,6 +54,65 @@ var newColumnStore = [];
 
 var emptyBoardBonus = 500;
 
+/**
+ * Obiekt pomocniczy do obsługi timera czasu na wykonanie ruchu
+ */
+var moveTimer = {
+	// domyślny czas do wykonania ruchu
+	_startValue: 10,
+	_paused: false,
+	// uchwyt do timera (zwracany przez setTimeout; służy do wyłączenia timera przez clearTimeout
+	_timer: null,
+	// aktualny czas, pozostały do wykonania ruchu
+	_t: null,
+	// uchwyt do metody wywoływanej po każdej sekundzie
+	_refColl: null,
+
+	Start: function(refreashCallback) {
+		if (this._timer != null) {
+			this.Stop();
+		}
+		this._paused = false;
+		this._refColl = refreashCallback;
+		this._t = this._startValue;
+		if (this._refColl != null && this._refColl != undefined) {
+			this._refColl();
+		}
+		this._timer = setTimeout("moveTimer._count()", 1000);
+	},
+
+	_count: function() {
+		if (this._paused != true) {
+			// liczymy tylko do zera. Potem tojuż byoby karanie ujemnymi punktami
+			if (this._t > 0) {
+				this._t--;
+				this._timer = setTimeout("moveTimer._count()", 1000);
+			}
+			if (this._refColl != null && this._refColl != undefined) {
+				this._refColl();
+			}
+		}
+	},
+
+	Get: function() {
+		return this._t;
+	},
+
+	Stop: function () {
+		this._paused = true;
+		this._t = this._startValue;
+		clearTimeout(this._timer);
+	},
+
+	Pause: function() {
+		this._paused = true;
+	},
+
+	Resume: function() {
+		this._paused = false;
+	}
+}
+
 function GetGameTitle() {
     return gameTitle + " (" + gameVersion + ") - current mode: " + gameOptions.currentGameType;
 }
@@ -87,6 +146,9 @@ function InitBoard() {
 	catch (e) {
 		alert(e.message);
 	}
+
+	// inicjalizacja zegara ruchu
+	moveTimer.Start(function() {$("#timeToMoveValue").text(moveTimer.Get());});
 }
 
 /**
@@ -100,11 +162,13 @@ function EndGame(ended) {
     		$.jnotify("<strong>Game over!</strong><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
 			  remove: function () {
 				refreashMessages();
-				//InitBoard();
+				InitBoard();
 				LoadTopTen();
 			  }
     		});
     	}
+		moveTimer.Stop();
+
 		gameStats.Update();
 
 		UpdateResultsTable();
@@ -132,6 +196,7 @@ function EndGame(ended) {
  */
 function selectSimilarFields(evn) {
 
+	moveTimer.Pause();
 	// obejście braku Event.target w IE
 	var evt=window.event || evn;
 	if (!evt.target) { //if event obj doesn't support e.target, presume it does e.srcElement
@@ -143,6 +208,7 @@ function selectSimilarFields(evn) {
 
 	if (selectedClassName.indexOf("emptyField") !== -1) {
 		deselectFields();
+		moveTimer.Resume();
 		return false;
 	}
 	else if (selectedClassName.indexOf("selected") !== -1 || selectedClassName.indexOf("emptyField") !== -1) {
@@ -156,16 +222,20 @@ function selectSimilarFields(evn) {
 			}
 			EndGame(true);
 		}
+		else {
+			moveTimer.Start(function() {$("#timeToMoveValue").text(moveTimer.Get());});
+		}
 	}
 	// krok 2: jeśli nie, to kasowanie poprzedniego zaznaczenia
 	else {
 		deselectFields();
 		// krok 3: zaznaczanie nowego miejsca
 		findSimilar(evt.target, selectedClassName, 0, true);
-		CountSelectedScore(false);
+		HighlightSelectedAndCountScore(false);
 		if (gameOptions.oneClickMode) { // in oneClickMode remove selected bools now
 			selectSimilarFields(evn);
 		}
+		moveTimer.Resume();
 	}
 	return true;
 }
@@ -177,7 +247,7 @@ function selectSimilarFields(evn) {
  * @param reset bool Wskazuje czy wyczyścić punktację ruchu
  * @return void
  */
-function CountSelectedScore(reset) {
+function HighlightSelectedAndCountScore(reset) {
 	selectedScore = 0;
 	if (reset === false && selectedFields.length > 1){ // pojedyncze elementy nie sa zaznaczane
 		for(var i = 0; i < selectedFields.length; i++) {
@@ -236,6 +306,7 @@ function ShowScoreValue() {
 function CountTotalScore() {
 //	totalScoreValue += selectedScore;
 	gameStats.gameScore += selectedScore;
+	gameStats.gameScore += moveTimer.Get();
 	$("#totalScoreValue").text(gameStats.gameScore);
 }
 
@@ -350,7 +421,7 @@ function removeSelected(elObj, classNameToRemove) {
 		RemoveEmptyFields();
 	}
 	CountTotalScore();
-	CountSelectedScore(true);
+	HighlightSelectedAndCountScore(true);
 }
 
 function RemoveEmptyColumns() {
@@ -447,12 +518,14 @@ function hasAnyMove() {
 
 	checkedFields = new Array();
 
-	for (var x = gameOptions.boardSize.x-1; x >= 0; x++) {
-		for(var y = gameOptions.boardSize.y-1; y >=0; y++) {
+	for (var x = gameOptions.boardSize.x-1; x >= 0; x--) {
+		for(var y = gameOptions.boardSize.y-1; y >=0; y--) {
 			initField = document.getElementById("field-"+y+"-"+x);
 			if (initField === null) return false;
 			if (initField.getAttribute("class") != 'emptyField') {
-				return findSimilar(initField, initField.getAttribute("class"), 0, false);
+				if (findSimilar(initField, initField.getAttribute("class"), 0, false)) {
+					return true;
+				}
 			}
 			// sprawdzenie pustej planszy
 			else if (x == gameOptions.boardSize.x-1 && y == gameOptions.boardSize.y-1) {
@@ -468,6 +541,7 @@ function hasAnyMove() {
  * @param selElement TD Element selElement
  * @param selClassName String nazwa klasy CSS, która posiada wskazany element
  * @param licznik int licznik pomocniczy do obsługi rekurencji
+ * @param selectMode bool wskazuje czy funkcja jest wywoływana w kontekście zaznaczania elementó czy sprawdzania dostępności ruchów.
  * @return bool true jeśli znajdzie takie same sąsiednie pola; false jeśli nie znajdzie
  */
 function findSimilar(selElement, selClassName, licznik, selectMode) {
@@ -524,9 +598,12 @@ function findSimilar(selElement, selClassName, licznik, selectMode) {
 					return true;
 				}
 				else {
-					checkedFields.push(nextSibling.getAttribute("id"));
-					if (findSimilar(nextSibling, nextSibling.getAttribute("class"), 0, selectMode)) {
-						return true;
+					if (licznik < 4) { continue; }
+					else {
+						checkedFields.push(nextSibling.getAttribute("id"));
+						if (findSimilar(nextSibling, nextSibling.getAttribute("class"), 0, selectMode)) {
+							return true;
+						}
 					}
 				}
 			}
