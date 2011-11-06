@@ -53,21 +53,21 @@ img {
 	float: right;
 }
 
-nav ul {
+ul#gameTopMenu {
 	list-style: none;
 	font-size: 28px;
 	margin: 0 70px 20px 70px;
 	font-family: "Segoe UI Light", "Segoe Light", Segoe, "Open Sans", Helvetica, Arial, Sans-Serif;
 }
 
-nav ul li {
+ul#gameTopMenu li {
 	display: inline-block;
 	margin-right: 35px;
 	cursor: pointer;
 	color: #ccc;
 }
 
-nav ul li.selected {
+ul#gameTopMenu li.selected {
 	color: white;
 	font-weight: 800;
 }
@@ -455,4 +455,57 @@ table#topTenStats td, table#topTenStats th {
 	font-size: xx-large;
 	display: block;
 	margin-top: 5px;
+}
+
+/* Formularz rejestracyjny */
+#registerForm {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: #3399FF;
+	z-index: 2000;
+	padding: 15px;
+	line-height: 1em;
+	display: none;
+}
+
+#registerForm p {
+	margin-bottom: 1.3em;
+}
+
+#registerForm label {
+	display: block;
+}
+
+#registerForm input {
+	border: 1px solid white;
+	background-color: #3399ff;
+	color: white;
+}
+
+#registerForm input:disabled {
+	border-color: #cccccc;
+	color: #cccccc;
+}
+
+#registerForm input[type=text] {
+	background-color: white;
+	color: #00468c;
+}
+
+#modalBackground {
+	background-color: black;
+    bottom: 0;
+    left: 0;
+    opacity: 0.8;
+    position: fixed;
+    right: 100%;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+	padding: 15% 0 0 0;
+    text-align: center;
+	font-size: xx-large;
+	color: white;
 }

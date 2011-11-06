@@ -8,7 +8,7 @@
 
 var gameTitle = "JS Bubbles";
 
-var gameVersion = "3.0 alpha 1";
+var gameVersion = "3.0 beta 2";
 
 /**
  * Tablica na zaznaczone elementy
@@ -157,9 +157,9 @@ function InitBoard() {
  * @param ended bool Wskazuje czy gra się skończyła (true) czy została przerwana (false)
  */
 function EndGame(ended) {
-    if (ended || confirm("Do you want to finish the game?")) {
+    if (ended || confirm(strings.confirmGameOver)) {
     	if (ended) {
-    		$.jnotify("<strong>Game over!</strong><br/>Your score is " + gameStats.gameScore, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000,
+    		$.jnotify(strings.gameOver + gameStats.gameScore, {parentElement: "#boardPanel", slideSpeed: 2000, delay: 3000,
 			  remove: function () {
 				refreashMessages();
 				InitBoard();
@@ -174,18 +174,17 @@ function EndGame(ended) {
 		UpdateResultsTable();
 		// Kasuje punktację aktualnie zaznaczonych elementów
 		gameStats.EndGame();
-		$("#totalScoreValue").text(gameStats.gameScore);
 		// blokada cofania ruchu
 		DisableUndo();
 
 		gameStats.Save(); // zapisanie stanu gry
-		if (IsNullOrEmpty(gameStats.playerName)) {
+		gameOptions.Save();
+		if (IsNullOrEmpty(gameOptions.playerName)) {
 			GetUserName();
 		}
-		if (!storage.Save(true)) {
-			$.jnotify("<strong>Data not saved!</strong>", {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
+		else if (!storage.Save(true)) {
+			$.jnotify(strings.dataNotSaved, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
 		}
-
 	}
 }
 
@@ -598,7 +597,7 @@ function findSimilar(selElement, selClassName, licznik, selectMode) {
 					return true;
 				}
 				else {
-					if (licznik < 4) { continue; }
+					if (licznik < 4) {continue;}
 					else {
 						checkedFields.push(nextSibling.getAttribute("id"));
 						if (findSimilar(nextSibling, nextSibling.getAttribute("class"), 0, selectMode)) {
@@ -697,7 +696,7 @@ function DisableUndo() {
 }
 
 function ResetResults() {
-	if (confirm("Are you sure you want to clear results?")) {
+	if (confirm(strings.clearResults)) {
 		gameStats.Clear();
 		refreashMessages();
 		return true;
@@ -705,35 +704,15 @@ function ResetResults() {
 	return false;
 }
 
-//var audioBang = null;
-//function BangSoundPlay() {
-//	if (gameOptions.EnableAudio && audioBang != null) {
-//		audioBang.pause();
-//		audioBang.play();
-//	}
-//}
-//
-//function testAudio() {
-//	var audio = document.createElement('audio');
-//	if (audio.play) {
-//		gameOptions.EnableAudio = true;
-//		audioBang = document.getElementById("audio_bang");
-//	}
-//}
-
 // inicjalizacja aplikacji
 $(window).load(function () {
-
-//	var currentTheme = $.cookie('theme');
-//	if (currentTheme != undefined) {
-//		loadCss(currentTheme, false);
-//	}
-
-//	testAudio(); // zmienie gameOptions.playAudio, więc musi być przed gameOptions.Read()!
-
+	loadResources("en");
 	$("#gameVersion").append(gameVersion);
 	storage.saveType = 'ajax';
+
+	// sprawdzenie czy jest to pierwsze uruchomienie nowej wersji
 	var firstStart = !(storage.Init("../JSBubbles.ServerSide/index.php"));
+
 	// odczytanie statystyk gry
 	gameStats.Read();
 	gameStats.playerName = playerName;
@@ -750,37 +729,34 @@ $(window).load(function () {
 
 	// inicjowanie personalizacji
 	if (firstStart) {
-		// pobranie nazwy gracza
-		GetUserName();
-
 		// sprawdzenie czy jest konfiguracja i stan ze starej wersji gry
-		ReadUncientStorage();
-
-//		gameOptions.Save();
-		TogglePanel(pannels.settings, function() {
-			$.jnotify("It seems that this is your first time with JS Bubbles.<br /> Maybe you should start from learning the game options?<p class=\"add-info\">Click anywhere to close.</p>", {parentElement: "#controlPanel", delay: 5000, slideSpeed: 2000});
-		});
+		if (!ReadUncientStorage()) {
+			TogglePanel(pannels.settings, function() {
+				$.jnotify(strings.welcomeMsg, {
+					parentElement: "#controlPanel",
+					delay: 10000,
+					slideSpeed: 2000
+				});
+			});
+		}
 	}
-	else {
-		// else ponieważ ReadUncientStorage też to wykonuje
-		SetSettingsPanel();
-	}
+	SetSettingsPanel();
 
 	refreashMessages();
 	UpdateResultsTable();
 	// podświetlenie pierwszej opcji menu (tytuł gry)
 	toggleHighlight($("#boardPanelSwitchBtn").get(0));
+	$("#modalBackground").remove();
 });
 
 /**
  * Ładuje stara wersję (2.x) konfiguracji i wyników z ciasteczka i zapisuje
  * do aktualnego storage.
  *
- * return void;
+ * return bool true jeśli odyczytano starsze wyniki;
  */
 function ReadUncientStorage() {
-	var settings = new Array();
-	// odczt danych z ciach
+	// odczt danych z ciacha
 	var elements = $.getCookie("storage");
 	var pair;
 	if (elements !== null && elements.length > 0) {
@@ -789,7 +765,7 @@ function ReadUncientStorage() {
 			var statsList = pair[1].split(";");
 			var tmpArray = new Array();
 
-		// tymczasowa lista zapisanych statystyk
+			// tymczasowa lista zapisanych statystyk
 			for(var i=0; i < statsList.length; i++) {
 				var tmpObj;
 				try {
@@ -829,25 +805,7 @@ function ReadUncientStorage() {
 				}
 			}
 		}
+		return true;
 	}
-
-	// odczyt opcji gry
-	var mo = $.subCookie(gameOptions._cookieName, "options");
-	try {
-		if (mo !== undefined) {
-			gameOptions.ChangeBoardSize(mo.boardSize.y);
-			gameOptions.ChangeGameType(mo.currentGameType);
-			gameOptions.oneClickMode = mo.oneClickMode;
-			gameOptions.ChangeBoardBackground(mo.boardBackground);
-			gameOptions.enableAudio = mo.enableAudio;
-		}
-	}
-	catch (exp) {
-	}
-
-	// zapisanie w nowej technologii
-	SetSettingsPanel();
-	gameOptions.Save();
-	gameStats.Save();
-	storage.Save(false);
+	return false;
 }

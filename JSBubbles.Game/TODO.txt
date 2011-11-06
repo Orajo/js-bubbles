@@ -6,18 +6,23 @@ poprawić zapisywanie wyników w Operze i IE (http://msdn.microsoft.com/en-us/li
 
 3.0
 + przeniesienie zapamiętywania ustawień na storage
-dodanie w statystykach gier rozróżniania wielkości planszy
+- dodanie w statystykach gier rozróżniania wielkości planszy
 +/- dodanie dźwięków niszczenia kulek
 	- wybrać i dopracować dźwięk
 + dodanie importowanie starych wyników, zapisanych w ciachu\
 + dodanie handlera ciach do storage
-poprawienie procesu rejestracji użytkownika
++ poprawienie procesu rejestracji użytkownika
 + dodanie placeholderów z globalnymi statystykami gier
 + dodanie komentarzy http://disqus.com/
 + poprawienie i sprawdzenie wyglądu pad różnymi przeglądarkami
-dodanie trybu gry na czas (czas na wykonanie ruchu)
-dodanie bonusu za zlikwidowanie wszystkich kól
++ dodanie trybu gry na czas (czas na wykonanie ruchu, za co sa dodatkowe punkty)
++ dodanie bonusu za zlikwidowanie wszystkich kól (500 pkt).
 + poprawienie obsługi kwadratowych pól gry
++ poprawienie formularza rejestracji usera.
++ obsługa języków
+	+ porobić tłumaczenia na pl
+	dodać przełączanie jezyka w ustawaieniach
+	+ dodać obsługę języka domyslnego (nie posiada pliku z tłumaczeniami bo jest w kodzie HTML)
 
 3.1
 przepisanie storage.js jako plugin jQuery

@@ -56,37 +56,7 @@ function TogglePanel(panelNo, onPanelChange) {
 	$("body").addClass("gameBody" + panelNo);
 }
 
-/**
- * Przełączanie obszarów PanelArea poprzez kliknięcie na należące do nich panele
- */
-function switchToSelectedPanel(panelObj) {
-	// sprawdzenie do jakiego panelArea należy kliknięty panel
-	var panelParent = $(panelObj).parent().first().get(0);
-	var index = -1;
-	// obliczenie który to panelParent w kolejności
-	$(".panelsArea").each(function(i) {
-		if (this == panelParent) {
-			index = i - 1;
-			return;
-		}
-	});
-
-	if (index > -1) {
-		TogglePanel(index);
-	}
-	// przełączenie na ten panel
-}
-
 function InitEvents() {
-
-	// Przełączanie obszarów PanelArea poprzez kliknięcie na należące do nich panele
-//	$("div.panel1").click(function (event) {
-//		//TogglePanel('controlPanel');
-//		if (this == event.target || event.target.className == "panelButtons") { // działa wyłacznie klikanie na panelu
-//			switchToSelectedPanel(this);
-//		}
-//		return false;
-//	});
 
 	// wskaźnik czy któraś z ikon przesuwania na boki jest aktywna
 	var showNextPrev = false;
@@ -137,22 +107,16 @@ function InitEvents() {
 	$("#settingsOkBtn").click(function () {
 		TogglePanel(pannels.game);
 
-		gameOptions.oneClickMode = $("#oneClickMode").attr("checked") ? false : true;
-
-		gameOptions.ChangeBoardBackground($("#boardBkgUrl").get(0).value);
-
-		//gameOptions.EnableAudio = $("#canPlaySounds").attr("checked") ? true : false;
-
-		gameOptions.timedGame = $("#timedGameMode").attr("checked") ? true : false;
+		gameOptions.oneClickMode = $('#oneClickMode').is(':checked') ? false : true;
 
 		gameOptions.ChangeBoardViewType($("#controlPanel input[type=radio]:checked").val());
 
 		selectedBoardSize = parseInt($("#boardDimensionId").get(0).value);
 
 		if (gameOptions.currentGameType !== selectedGameType || selectedBoardSize != gameOptions.boardSize.y) {
-			if (gameStats.gameScore === 0 || confirm("Are you sure you want to start new game?")) {
-				gameOptions.ChangeBoardSize(selectedBoardSize);
-				gameOptions.ChangeGameType(selectedGameType);
+			if (gameStats.gameScore === 0 || confirm(strings.newGame)) {
+				var sizeChanged = gameOptions.ChangeBoardSize(selectedBoardSize);
+				gameOptions.ChangeGameType(selectedGameType, sizeChanged);
 				InitBoard();
 			}
 			else {
@@ -161,9 +125,7 @@ function InitEvents() {
 				SetSettingsPanel();
 			}
 		}
-		GetUserName();
 		gameOptions.Save(); // zapisanie opcji
-		storage.Save(true);
 	});
 
 	$("#settingsCancelBtn").click(function () {
@@ -206,7 +168,7 @@ function InitEvents() {
 	});
 
 	$("#scoreClearBtn").click(function () {
-		if (confirm("Are you sure you want to clear results?")) {
+		if (confirm(strings.clearResults)) {
 			gameStats.Clear();
 			refreashMessages();
 			UpdateResultsTable();
@@ -234,19 +196,18 @@ function InitEvents() {
 	});
 
 	// zamknięcie dowolnego panela
-	$(".returnBtn").click(function () {
+	$(".returnBtn").click(function() {
 		TogglePanel(pannels.game);
 	});
 
-	//przycisk zmiany gracza
-//	$("#playerIdChange").click(function(){
-//		var newName = window.prompt("Login as new user");
-//		if (newName != null) {
-//			gameOptions.playerName = newName;
-//			gameOptions.Save();
-//			storage.Save(true);
-//		}
-//	});
+	$("#registerForm input[type=text]").keydown(function() {
+		if (IsNullOrEmpty(this.value)) {
+			$("#registerForm input#saveBtn").attr("disabled", true);
+		}
+		else {
+			$("#registerForm input#saveBtn").removeAttr("disabled");
+		}
+	});
 }
 
 /**
@@ -298,30 +259,33 @@ function UpdateResultsTable() {
 }
 
 function GetUserName() {
-	// sprawdzenie czy użytkownik podał swoją nazwę. Jeśli nie to pytamu
-	while (IsNullOrEmpty(gameOptions.playerName)) {
-		gameOptions.playerName = prompt("Podaj swój nick:");
-		// TODO obsługa anulowania (zwraca null)
-		if (gameOptions.playerName === null) {
-			// przestawiamy magazyn na ciasteczka
-			storage.saveType == 'cookie';
-			break;
-		}
-	}
-	storage.Set("player", gameOptions.playerName);
-}
+	// włączenie "modal mode" :)
+	$("body").append("<div id='modalBackground'></div>");
 
-function loadCss(fileName, save) {
-	if (fileName !== "") {
-		var htmldef = '<link rel="stylesheet" type="text/css" id="themeCss" href="css/themes/' + fileName + '" />';
-		$("head").append(htmldef);
+	// sprawdzenie czy użytkownik podał swoją nazwę. Jeśli nie to pytamu
+	$("#registerForm").fadeIn();
+	$("playerNameInput").focus();
+	if (!IsNullOrEmpty($("#playerNameInput").val())) {
+		$("#registerForm input#saveBtn").removeAttr("disabled");
 	}
-	else {
-		$("head link#themeCss").remove();
-	}
-	if (save) {
-		$.setCookie('theme', fileName);
-	}
+	$("#registerForm input#saveBtn").click(function(){
+		gameOptions.playerName = $("#playerNameInput").val();
+		$("#modalBackground").remove();
+		storage.Set("player", gameOptions.playerName);
+		storage.saveType = 'ajax';
+		$("#registerForm").fadeOut();
+		if (!storage.Save(true)) {
+			$.jnotify(strings.dataNotSaved, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
+		}
+	});
+	// anulowanie rejestracji
+	$("#registerForm input[type=reset]").click(function(){
+		$("#registerForm").fadeOut();
+		gameOptions.playerName = null;
+		$("#modalBackground").remove();
+		storage.saveType = 'cookie';
+		storage.Save(true);
+	});
 }
 
 function LoadTopTen() {
@@ -346,10 +310,54 @@ function refreashMessages() {
 	$("#gameTypeValue").attr("title", gameStats.currentType);
 	$("#playerNameValue").text(gameOptions.playerName);
 	$("#timeToMoveValue").text(moveTimer.Get());
+	$("#totalScoreValue").text(gameStats.gameScore);
 	document.title = GetGameTitle();
 }
 
 function toggleHighlight(selectedBtn){
 	$("#gameTopMenu li").removeClass("selected");
 	$(selectedBtn).addClass("selected");
+}
+
+function loadResources(defLang, lang) {
+	var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+
+	if (!IsNullOrEmpty(lang)) {
+		ga.src = 'scripts/resources/game-resources-' + lang + '.js';
+	}
+	else {
+		var language = navigator.appName == 'Netscape' ? navigator.language : navigator.browserLanguage;
+
+		if (language.indexOf('pl') > -1) {
+		// ładuj polskie zasoby
+        ga.src = 'scripts/resources/game-resources-pl.js';
+		}
+		else {
+			// ładuj zaosby angielski
+			ga.src = 'scripts/resources/game-resources-en.js';
+		}
+	}
+
+	if (defLang != language) {
+		ga.onload = function(){
+			$('*[class*="strings."]').each(function () {
+				var classNames = this.getAttribute("class");
+				var respos = classNames.indexOf("strings.") + 8; // 8 to długość 'strings.'
+				var count = classNames.indexOf(" ", respos);
+				if (count <= 0) count = classNames.length;
+				var resName = classNames.substring(respos, count);
+				var inputType = this.getAttribute("type");
+				if (inputType == "button" || inputType == "input" || inputType == "clear") {
+					this.setAttribute("value", strings[resName]);
+				}
+				else {
+					this.innerHTML = strings[resName];
+				}
+			});
+		}
+	}
+
+    var s = document.getElementsByTagName('head')[0];
+	s.insertBefore(ga, s.firstChild);
 }

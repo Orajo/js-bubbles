@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:addthis="http://www.addthis.com/help/api-spec">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:addthis="http://www.addthis.com/help/api-spec" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>JS Bubbles</title>
 	<link rel="stylesheet" type="text/css" href="css/themes/theme_metro.css" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.jnotify.css" />
+	<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 </head>
 <body>
+	<!-- preloader -->
+	<script type="text/javascript">
+		var blackout = document.createElement('div');
+		blackout.setAttribute("id", "modalBackground");
+		blackout.innerHTML = "<img src='images/jsb_logo.png' /><h1>JS Bubbles loading ...</h1>";
+		document.getElementsByTagName("body")[0].appendChild(blackout);
+	</script>
+	<!-- End of preloader -->
 	<!-- Test area -->
 	<div id="testArea" style="z-index: 100; background-color: white; width: 500px; border: 1px solid black; padding: 5px; color: black; position: absolute; top: 20px; right: 20px;">
 		<label>Test tools:</label>
@@ -20,15 +29,13 @@
 	<!-- End test area -->
 	<header>
 		<h1 id="gameTitle">JS Bubbles <img src="images/jsb_logo.png" id="jsbLogoIcon" alt="JSBubbles Logo" /></h1>
-		<nav>
-			<ul id="gameTopMenu">
-				<li id="boardPanelSwitchBtn">Game: <span id="gameTypeValue"></span></li>
-				<li id="commentsSwitchBtn">Comments</li>
-				<li id="optionsSwitchBtn">Settings</li>
-				<li id="resultsSwitchBtn">Scores</li>
-				<li id="helpSwitchBtn">About</li>
-			</ul>
-		</nav>
+		<ul id="gameTopMenu">
+			<li id="boardPanelSwitchBtn"><span class="strings.game">Game:</span> <span id="gameTypeValue"></span></li>
+			<li id="commentsSwitchBtn" class="strings.comments">Comments</li>
+			<li id="optionsSwitchBtn" class="strings.settings">Settings</li>
+			<li id="resultsSwitchBtn" class="strings.scores">Scores</li>
+			<li id="helpSwitchBtn" class="strings.about">About</li>
+		</ul>
 	</header>
 	<div id="prevIcon"><div><img src="images/themes/metro/Return.png"/></div></div>
 	<div id="nextIcon"><div><img src="images/themes/metro/Next.png"/></div></div>
@@ -39,7 +46,7 @@
 				<!-- narzędzia społecznościowe -->
 				<div class="panel" id="socialToolsPanel">
 					<div class="panelContent">
-						<h2>If you're a fan of social networking:</h2>
+						<h2 class="strings.socfan">If you're a fan of social networking:</h2>
 						<!-- AddThis Button BEGIN -->
 						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
 							<a class="addthis_button_facebook"></a>
@@ -61,13 +68,23 @@
 							<!-- obszar na planszę gry -->
 							<div id="boardArea">
 							</div>
-							<p id="timeToMove" class="scoreStatsData">Fast points <span id="timeToMoveValue"></span></p>
-							<p id="selectedScore" class="scoreStatsData">Points: <span id="scoreValue">0</span></p>
-							<p id="totalScore" class="scoreStatsData">Game score: <span id="totalScoreValue">0</span></p>
+							<p id="timeToMove" class="scoreStatsData" title="Get extra points for a quick game"><span class="strings.fastPoints">Fast points</span> <span id="timeToMoveValue"></span></p>
+							<p id="selectedScore" class="scoreStatsData"><span class="strings.points">Points:</span> <span id="scoreValue">0</span></p>
+							<p id="totalScore" class="scoreStatsData"><span class="strings.gameScore">Game score:</span> <span id="totalScoreValue">0</span></p>
+							<div id="registerForm">
+								<h2 class="strings.register">Registration</h2>
+								<p class="strings.nameQuestion">If you want to store your result on server please fill your name (nickname).</p>
+								<form>
+									<p><label for="playerNameInput" class="strings.enterName">Enter your name</label>
+									<input type="text" id="playerNameInput" />
+									<input type="button" value="Save" disabled="true" id="saveBtn" class="strings.save" />
+									<input type="reset" value="Cancel" /></p>
+								</form>
+							</div>
 					</div>
 					<!-- narzędzia gry -->
 					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo move" title="Undo move" />
+						<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo" title="Undo move" />
 						<input type="image" src="images/themes/metro/NewGame.png" id="newGameBtn" alt="New game" title="New game" />
 					</div>
 				</div>
@@ -98,13 +115,11 @@
 				<div id="controlPanel" class="panel">
 					<div class="panelContent" id="options">
 						<p>
-							<label for="boardDimensionId">
-								Board size:</label>
+							<label for="boardDimensionId" class="strings.boardSize">Board size:</label>
 							<select name="boardDimension" id="boardDimensionId">
 							</select>
 						</p>
-						<p>
-							Game type:</p>
+						<p class="strings.gameType">Game type:</p>
 						<div>
 							<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gm_type1" class="gameTypeIcon" />
 							<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gm_type2" class="gameTypeIcon" />
@@ -112,21 +127,13 @@
 							<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gm_type4" class="gameTypeIcon" />
 						</div>
 						<div style="clear: both;" id="boardViewTypeSelector">
-							<p>Choose board type:</p>
+							<p class="strings.boardType">Choose board type:</p>
 							<label><input type="radio" name="point_type" value="bools" checked="checked" id="pointTypeBools" /><img src="images/red_24.png" alt="Bools" /></label>
 							<label><input type="radio" name="point_type" value="squares" id="pointTypeSquares"  /><img alt="Squares" src="images/square.png" /></label>
 						</div>
 						<div style="clear: both;">
-							<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode">Select before remove</label>
+							<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode" class="strings.noselect">Select before remove</label>
 						</div>
-						<div style="display: none;">
-							<label for="boardBkgUrl">
-								Backgroud image address</label><br />
-							<input type="text" id="boardBkgUrl" />
-						</div>
-						<!--<p>
-						<label><input type="checkbox" id="canPlaySounds" />Play sounds</label>
-						</p> -->
 					</div>
 					<div class="panelButtons">
 						<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close" id="settingsOkBtn" />
@@ -137,27 +144,27 @@
 			<div class="panelsArea">
 				<div id="scorePanel" class="panel">
 					<div class="panelContent">
-						<h2 id="scoredGameType">Game mode: <span id="gameTypeName">0</span></h2>
+						<h2 id="scoredGameType"><label class="strings.gameMode">Game mode:</label> <span id="gameTypeName">0</span></h2>
 						<hr style="margin-bottom: 10px;" />
 						<div id="playerName" class="scoreStatsData">
 							<img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />You: <span id="playerNameValue"></span><!--<input type="button" value="Change" id="playerIdChange" />--></div>
-						<div id="maxScore" class="scoreStatsData">Best score: <span id="maxScoreValue">0</span></div>
-						<div id="playedGames" class="scoreStatsData">Games: <span id="playedGamesValue">0</span></div>
-						<div id="avgScore" class="scoreStatsData">Avarange score: <span id="avgScoreValue">0</span></div>
+						<div id="maxScore" class="scoreStatsData"><label class="strings.bestScore">Best score:</label> <span id="maxScoreValue">0</span></div>
+						<div id="playedGames" class="scoreStatsData"><label class="strings.gamesNo">Games:</label> <span id="playedGamesValue">0</span></div>
+						<div id="avgScore" class="scoreStatsData"><label class="strings.avgScore">Avarange score:</label> <span id="avgScoreValue">0</span></div>
 						<hr />
-						<h2>Your results</h2>
+						<h2 class="strings.results">Your results</h2>
 						<table id="resultsStats">
 							<tr id="resultsStatsHeader">
-								<th>
+								<th class="strings.resultsGameType">
 									Game type
 								</th>
-								<th>
+								<th class="strings.resultsMaxType">
 									Max result
 								</th>
-								<th>
+								<th class="strings.resultsGamesNo">
 									Games
 								</th>
-								<th>
+								<th class="strings.resultsAvgScore">
 									Avg result
 								</th>
 							</tr>
@@ -177,7 +184,7 @@
 				</div>
 				<div class="panel" id="topTenPanel">
 					<div class="panelContent">
-						<h2>Top results</h2>
+						<h2 class="strings.topResults">Top results</h2>
 						<div id="topTenBlock">
 							<table id="topTenStats">
 								<colgroup>
@@ -185,13 +192,13 @@
 									<col align="right"/>
 								</colgroup>
 								<tr id="topTenStatsHader">
-									<th>
-										Game
+									<th class="strings.resultsGameType">
+										Game type
 									</th>
-									<th>
+									<th class="strings.resultsMaxType">
 										Max result
 									</th>
-									<th>
+									<th class="strings.playerName">
 										Player
 									</th>
 								</tr>
@@ -211,28 +218,27 @@
 			<div class="panelsArea">
 				<div id="helpPanel" class="panel">
 					<div class="panelContent">
-						<p id="gameVersion">version: </p>
-						<p style="margin-top: 20px; clear: both;">Author: <strong>Jarosław Wasilewski</strong></p>
+						<p id="gameVersion"><label class="strings.version">version:</label> </p>
+						<p style="margin-top: 20px; clear: both;" class="strings.author">Author: <strong>Jarosław Wasilewski</strong></p>
 						<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
 						<p style="margin-top: 20px;"><a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" /></a></p>
-						<p><a href="http://code.google.com/p/js-bubbles/" target="_blank">Visit project page on Google Code</a></p>
-						<p><a href="http://code.google.com/p/js-bubbles/issues/entry">Send an issue</a></p>
+						<p><a href="http://code.google.com/p/js-bubbles/" target="_blank" class="strings.visitWebPage">Visit project page on Google Code</a></p>
+						<p><a href="http://code.google.com/p/js-bubbles/issues/entry" class="strings.sendIssue">Send an issue</a></p>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 	<script type="text/javascript" src="scripts/game-common.js"></script>
-	<script type="text/javascript" src="scripts/jquery-1.6.4.js"></script>
+	<script type="text/javascript" src="scripts/jquery-1.7.min.js"></script>
 	<script type="text/javascript" src="scripts/storage.js"></script>
 	<script type="text/javascript" src="scripts/jquery.tmpl.min.js"></script>
 	<script type="text/javascript" src="scripts/jquery.ezCookie_0.8.0.js" async="true"></script>
-	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js"></script>
+	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js" async="true"></script>
 	<script type="text/javascript" src="scripts/game-options.js"></script>
 	<script type="text/javascript" src="scripts/game-stats.js"></script>
-	<script type="text/javascript" src="scripts/game-core.js"></script>
 	<script type="text/javascript" src="scripts/game-ui.js"></script>
+	<script type="text/javascript" src="scripts/game-core.js"></script>
 
 	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4e9200752fd238bc" async="true"></script>
 	<script type="text/javascript">

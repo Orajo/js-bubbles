@@ -4,20 +4,20 @@
 * Wielkości planszy
 */
 var boardSizeList = {
+	size16: {
+		text: "16 x 12 (WM 6 original size)",
+		x: 12,
+		y: 16
+	},
 	size12: {
-		text: "12 x 12",
+		text: "12 x 12 (old and deprecated)",
 		x: 12,
 		y: 12
 	},
 	size15: {
-		text: "10 x 15",
+		text: "15 x 10 (old and deprecated)",
 		x: 10,
 		y: 15
-	},
-	size20: {
-		text: "16 x 20",
-		x: 16,
-		y: 20
 	}
 };
 
@@ -47,8 +47,8 @@ var gameOptions = {
 	* Aktualna wielkość planszy
 	*/
 	boardSize: {
-		x: boardSizeList.size15.x, // szerokość planszy
-		y: boardSizeList.size15.y  // wysokość planszy
+		x: boardSizeList.size16.x, // szerokość planszy
+		y: boardSizeList.size16.y  // wysokość planszy
 	},
 
 	/**
@@ -89,30 +89,35 @@ var gameOptions = {
 	},
 
 	ChangeBoardSize: function (sizeId) {
-		// odczyt rozmiaru planszy
-		switch (sizeId) {
-			case boardSizeList.size12.y:
-				gameOptions.boardSize.x = boardSizeList.size12.x;
-				gameOptions.boardSize.y = boardSizeList.size12.y;
-				break;
-			case boardSizeList.size20.y:
-				gameOptions.boardSize.x = boardSizeList.size20.x;
-				gameOptions.boardSize.y = boardSizeList.size20.y;
-				break;
-			case boardSizeList.size15.y:
-			default:
-				gameOptions.boardSize.x = boardSizeList.size15.x;
-				gameOptions.boardSize.y = boardSizeList.size15.y;
-				break;
+		if (gameOptions.boardSize.x != sizeId) {
+			// odczyt rozmiaru planszy
+			switch (sizeId) {
+				case boardSizeList.size12.y:
+					gameOptions.boardSize.x = boardSizeList.size12.x;
+					gameOptions.boardSize.y = boardSizeList.size12.y;
+					break;
+				case boardSizeList.size15.y:
+					gameOptions.boardSize.x = boardSizeList.size15.x;
+					gameOptions.boardSize.y = boardSizeList.size15.y;
+					break;
+				case boardSizeList.size16.y:
+				default:
+					gameOptions.boardSize.x = boardSizeList.size16.x;
+					gameOptions.boardSize.y = boardSizeList.size16.y;
+					break;
+			}
+			return true;
 		}
+		return false;
 	},
 
 	/**
 	* Metoda zmienia typ aktualnej gry
 	* @param newGameType string nazwa opisowa nowego typu gry
+	* @param renderStore bool wymusza wygenerowanie magazynu na kula dla gier, które tego używają
 	*/
-	ChangeGameType: function (newGameType) {
-		if (this.currentGameType !== newGameType) {
+	ChangeGameType: function (newGameType, renderStore) {
+		if (this.currentGameType !== newGameType || renderStore) {
 			this.currentGameType = newGameType;
 			// gameStats.Save();
 			gameStats.currentType = this.currentGameType;
@@ -148,7 +153,7 @@ var gameOptions = {
 	Read: function () {
 		try {
 			var mo = storage.Get(this._cookieName);
-			if (mo !== undefined) {
+			if (mo !== null) {
 				this.ChangeBoardSize(parseInt(mo.boardSize.y));
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);
@@ -162,6 +167,10 @@ var gameOptions = {
 					this.theme = mo.theme;
 				}
 				this.ChangeGameType(mo.currentGameType);
+			}
+			else {
+				this.ChangeBoardSize(boardSizeList.size16.y);
+				this.ChangeGameType(gameTypes.type1);
 			}
 		}
 		catch (exp) {
