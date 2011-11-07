@@ -142,7 +142,7 @@ var storage = {
 					if (console && console.error) {
 						console.error('Error:' + msg + " exception: " + errorThrown.toString());
 					}
-					throw Exception ("Storage initialization error");
+					throw "Storage initialization error";
 				}
 			});
 		}

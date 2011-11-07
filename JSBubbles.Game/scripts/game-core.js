@@ -157,9 +157,9 @@ function InitBoard() {
  * @param ended bool Wskazuje czy gra się skończyła (true) czy została przerwana (false)
  */
 function EndGame(ended) {
-    if (ended || confirm(strings.confirmGameOver)) {
+    if (ended || confirm(resources.strings.confirmGameOver)) {
     	if (ended) {
-    		$.jnotify(strings.gameOver + gameStats.gameScore, {parentElement: "#boardPanel", slideSpeed: 2000, delay: 3000,
+    		$.jnotify(resources.strings.gameOver + gameStats.gameScore, {parentElement: "#boardPanel", slideSpeed: 2000, delay: 3000,
 			  remove: function () {
 				refreashMessages();
 				InitBoard();
@@ -183,7 +183,7 @@ function EndGame(ended) {
 			GetUserName();
 		}
 		else if (!storage.Save(true)) {
-			$.jnotify(strings.dataNotSaved, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
+			$.jnotify(resources.strings.dataNotSaved, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
 		}
 	}
 }
@@ -696,7 +696,7 @@ function DisableUndo() {
 }
 
 function ResetResults() {
-	if (confirm(strings.clearResults)) {
+	if (confirm(resources.strings.clearResults)) {
 		gameStats.Clear();
 		refreashMessages();
 		return true;
@@ -711,7 +711,12 @@ $(window).load(function () {
 	storage.saveType = 'ajax';
 
 	// sprawdzenie czy jest to pierwsze uruchomienie nowej wersji
-	var firstStart = !(storage.Init("../JSBubbles.ServerSide/index.php"));
+	try {
+		var firstStart = !(storage.Init("../JSBubbles.ServerSide/index.php"));
+	}
+	catch (exp) {
+		alert(resources.strings.storageError);
+	}
 
 	// odczytanie statystyk gry
 	gameStats.Read();
@@ -732,7 +737,7 @@ $(window).load(function () {
 		// sprawdzenie czy jest konfiguracja i stan ze starej wersji gry
 		if (!ReadUncientStorage()) {
 			TogglePanel(pannels.settings, function() {
-				$.jnotify(strings.welcomeMsg, {
+				$.jnotify(resources.strings.welcomeMsg, {
 					parentElement: "#controlPanel",
 					delay: 10000,
 					slideSpeed: 2000

@@ -68,9 +68,9 @@
 							<!-- obszar na planszę gry -->
 							<div id="boardArea">
 							</div>
-							<p id="timeToMove" class="scoreStatsData" title="Get extra points for a quick game"><span class="strings.fastPoints">Fast points</span> <span id="timeToMoveValue"></span></p>
-							<p id="selectedScore" class="scoreStatsData"><span class="strings.points">Points:</span> <span id="scoreValue">0</span></p>
-							<p id="totalScore" class="scoreStatsData"><span class="strings.gameScore">Game score:</span> <span id="totalScoreValue">0</span></p>
+							<p id="timeToMove" class="scoreStatsData" title="Get extra points for a quick game"><label class="strings.fastPoints">Fast points</label> <span id="timeToMoveValue"></span></p>
+							<p id="selectedScore" class="scoreStatsData"><label class="strings.points">Points:</label> <span id="scoreValue">0</span></p>
+							<p id="totalScore" class="scoreStatsData"><label class="strings.gameScore">Game score:</span> <span id="totalScoreValue">0</label></p>
 							<div id="registerForm">
 								<h2 class="strings.register">Registration</h2>
 								<p class="strings.nameQuestion">If you want to store your result on server please fill your name (nickname).</p>
@@ -134,6 +134,14 @@
 						<div style="clear: both;">
 							<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode" class="strings.noselect">Select before remove</label>
 						</div>
+						<!-- <div style="clear: both;" id="boardViewTypeSelector">
+							<label class="strings.selectLanguage">Language:</label>
+							<select name="lang" id="langSelector">
+								<option value="en" >English</option>
+								<option value="pl" >Polski</option>
+							</select>
+						</div>
+						-->
 					</div>
 					<div class="panelButtons">
 						<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close" id="settingsOkBtn" />
@@ -145,7 +153,6 @@
 				<div id="scorePanel" class="panel">
 					<div class="panelContent">
 						<h2 id="scoredGameType"><label class="strings.gameMode">Game mode:</label> <span id="gameTypeName">0</span></h2>
-						<hr style="margin-bottom: 10px;" />
 						<div id="playerName" class="scoreStatsData">
 							<img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />You: <span id="playerNameValue"></span><!--<input type="button" value="Change" id="playerIdChange" />--></div>
 						<div id="maxScore" class="scoreStatsData"><label class="strings.bestScore">Best score:</label> <span id="maxScoreValue">0</span></div>

@@ -72,6 +72,11 @@ var gameOptions = {
 	theme: "metro",
 
 	/**
+	 * Język aplikacji
+	 */
+//	lang: 'en',
+
+	/**
 	* Domyślny temat
 	*/
 	_defaultTheme: "metro",
@@ -157,7 +162,8 @@ var gameOptions = {
 				this.ChangeBoardSize(parseInt(mo.boardSize.y));
 				this.oneClickMode = mo.oneClickMode;
 				this.ChangeBoardBackground(mo.boardBackground);
-				this.enableAudio = mo.enableAudio;
+				//this.enableAudio = mo.enableAudio;
+//				this.lang = mo.lang;
 				this.playerName = mo.playerName;
 				this.ChangeBoardViewType(mo.boardType);
 				if (mo.theme == undefined) {

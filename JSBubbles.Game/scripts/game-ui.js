@@ -113,8 +113,17 @@ function InitEvents() {
 
 		selectedBoardSize = parseInt($("#boardDimensionId").get(0).value);
 
+
+		/*
+		var newLang = $("#langSelector option:selected").val();
+		if (gameOptions.lang != newLang) {
+			gameOptions.lang = newLang;
+			loadResources("en", gameOptions.lang);
+		}
+		*/
+
 		if (gameOptions.currentGameType !== selectedGameType || selectedBoardSize != gameOptions.boardSize.y) {
-			if (gameStats.gameScore === 0 || confirm(strings.newGame)) {
+			if (gameStats.gameScore === 0 || confirm(resources.strings.newGame)) {
 				var sizeChanged = gameOptions.ChangeBoardSize(selectedBoardSize);
 				gameOptions.ChangeGameType(selectedGameType, sizeChanged);
 				InitBoard();
@@ -168,7 +177,7 @@ function InitEvents() {
 	});
 
 	$("#scoreClearBtn").click(function () {
-		if (confirm(strings.clearResults)) {
+		if (confirm(resources.strings.clearResults)) {
 			gameStats.Clear();
 			refreashMessages();
 			UpdateResultsTable();
@@ -275,7 +284,7 @@ function GetUserName() {
 		storage.saveType = 'ajax';
 		$("#registerForm").fadeOut();
 		if (!storage.Save(true)) {
-			$.jnotify(strings.dataNotSaved, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
+			$.jnotify(resources.strings.dataNotSaved, {parentElement: "#boardPanel", delay: 4000, slideSpeed: 2000});
 		}
 	});
 	// anulowanie rejestracji
@@ -330,16 +339,26 @@ function loadResources(defLang, lang) {
 		var language = navigator.appName == 'Netscape' ? navigator.language : navigator.browserLanguage;
 
 		if (language.indexOf('pl') > -1) {
-		// ładuj polskie zasoby
-        ga.src = 'scripts/resources/game-resources-pl.js';
+			lang = "pl";
+			// ładuj polskie zasoby
+			ga.src = 'scripts/resources/game-resources-pl.js';
 		}
 		else {
-			// ładuj zaosby angielski
+			lang = "en";
+			// ładuj zasoby angielski
 			ga.src = 'scripts/resources/game-resources-en.js';
 		}
 	}
 
-	if (defLang != language) {
+	// test czy już wczesniej zostały załadowane zasoby w innym języku
+	var needReload = false;
+	try {
+		needReload = (resources.lang != lang);
+	}
+	catch (exp) {
+
+	}
+	if (needReload || defLang != lang) {
 		ga.onload = function(){
 			$('*[class*="strings."]').each(function () {
 				var classNames = this.getAttribute("class");
@@ -348,11 +367,11 @@ function loadResources(defLang, lang) {
 				if (count <= 0) count = classNames.length;
 				var resName = classNames.substring(respos, count);
 				var inputType = this.getAttribute("type");
-				if (inputType == "button" || inputType == "input" || inputType == "clear") {
-					this.setAttribute("value", strings[resName]);
+				if (inputType == "button" || inputType == "submit" || inputType == "clear") {
+					this.setAttribute("value", resources.strings[resName]);
 				}
 				else {
-					this.innerHTML = strings[resName];
+					this.innerHTML = resources.strings[resName];
 				}
 			});
 		}
@@ -360,4 +379,5 @@ function loadResources(defLang, lang) {
 
     var s = document.getElementsByTagName('head')[0];
 	s.insertBefore(ga, s.firstChild);
+	return lang;
 }
