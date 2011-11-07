@@ -3,7 +3,7 @@
 # Server version:               5.1.56-community
 # Server OS:                    Win32
 # HeidiSQL version:             6.0.0.3603
-# Date/time:                    2011-09-16 23:44:56
+# Date/time:                    2011-11-07 16:29:17
 # --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -43,9 +43,12 @@ CREATE TABLE IF NOT EXISTS `gamer` (
   `options` varchar(1000) NOT NULL COMMENT 'opcje gry danego użytkownika zapisane w postaci zserializowanego JSON',
   `add_date` datetime DEFAULT NULL,
   `last_update_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UQ_NAME` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Tablica graczy';
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='Tablica graczy';
+
+# Dumping data for table jsbubbles.gamer: ~6 rows (approximately)
+/*!40000 ALTER TABLE `gamer` DISABLE KEYS */;
+/*!40000 ALTER TABLE `gamer` ENABLE KEYS */;
 
 
 # Dumping structure for table jsbubbles.stats
@@ -63,7 +66,11 @@ CREATE TABLE IF NOT EXISTS `stats` (
   KEY `FK_stats_gamer` (`fk_gamer`),
   CONSTRAINT `FK_stats_game` FOREIGN KEY (`fk_game`) REFERENCES `game` (`id`),
   CONSTRAINT `FK_stats_gamer` FOREIGN KEY (`fk_gamer`) REFERENCES `gamer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=231 DEFAULT CHARSET=utf8 COMMENT='Tabela na wyniki poszczególnych gier\r\n';
+) ENGINE=InnoDB AUTO_INCREMENT=1411 DEFAULT CHARSET=utf8 COMMENT='Tabela na wyniki poszczególnych gier\r\n';
+
+# Dumping data for table jsbubbles.stats: ~24 rows (approximately)
+/*!40000 ALTER TABLE `stats` DISABLE KEYS */;
+/*!40000 ALTER TABLE `stats` ENABLE KEYS */;
 
 
 # Dumping structure for trigger jsbubbles.set_gamer_add_date

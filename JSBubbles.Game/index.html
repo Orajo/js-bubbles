@@ -2,66 +2,57 @@
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:addthis="http://www.addthis.com/help/api-spec" xml:lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>JS Bubbles</title>
-	<link rel="stylesheet" type="text/css" href="css/themes/theme_metro.css" />
-	<link rel="stylesheet" type="text/css" href="css/jquery.jnotify.css" />
-	<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
-</head>
-<body>
-	<!-- preloader -->
-	<script type="text/javascript">
-		var blackout = document.createElement('div');
-		blackout.setAttribute("id", "modalBackground");
-		blackout.innerHTML = "<img src='images/jsb_logo.png' /><h1>JS Bubbles loading ...</h1>";
-		document.getElementsByTagName("body")[0].appendChild(blackout);
-	</script>
-	<!-- End of preloader -->
-	<!-- Test area -->
-	<div id="testArea" style="z-index: 100; background-color: white; width: 500px; border: 1px solid black; padding: 5px; color: black; position: absolute; top: 20px; right: 20px;">
-		<label>Test tools:</label>
-		<input type="button" onclick="EndGame(true)" value="End game" />
-		<input type="button" onclick="hasAnyMove()" value="Sprawdź ruchy" />
-		<input type="button" onclick="RenderStore()" value="New bolls" />
-		<input type="button" onclick="TestSound()" value="Sound" />
-	</div>
-	<!-- End test area -->
-	<header>
-		<h1 id="gameTitle">JS Bubbles <img src="images/jsb_logo.png" id="jsbLogoIcon" alt="JSBubbles Logo" /></h1>
-		<ul id="gameTopMenu">
-			<li id="boardPanelSwitchBtn"><span class="strings.game">Game:</span> <span id="gameTypeValue"></span></li>
-			<li id="commentsSwitchBtn" class="strings.comments">Comments</li>
-			<li id="optionsSwitchBtn" class="strings.settings">Settings</li>
-			<li id="resultsSwitchBtn" class="strings.scores">Scores</li>
-			<li id="helpSwitchBtn" class="strings.about">About</li>
-		</ul>
-	</header>
-	<div id="prevIcon"><div><img src="images/themes/metro/Return.png"/></div></div>
-	<div id="nextIcon"><div><img src="images/themes/metro/Next.png"/></div></div>
-	<!-- GAME AREA -->
-	<div id="viewPort">
-		<div id="appContainer">
-			<div class="panelsArea">
-				<!-- narzędzia społecznościowe -->
-				<div class="panel" id="socialToolsPanel">
-					<div class="panelContent">
-						<h2 class="strings.socfan">If you're a fan of social networking:</h2>
-						<!-- AddThis Button BEGIN -->
-						<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
-							<a class="addthis_button_facebook"></a>
-							<a class="addthis_button_twitter"></a>
-							<a class="addthis_button_wykop"></a>
-							<a class="addthis_button_blip"></a>
-							<a class="addthis_button_email"></a>
-							<a class="addthis_button_favorites"></a>
-							<a class="addthis_button_compact"></a>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>JS Bubbles</title>
+		<link rel="stylesheet" type="text/css" href="css/themes/theme_metro.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery.jnotify.css" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+	</head>
+	<body>
+		<!-- preloader -->
+		<script type="text/javascript">
+			var blackout = document.createElement('div');
+			blackout.setAttribute("id", "modalBackground");
+			blackout.innerHTML = "<img src='images/jsb_logo.png' /><h1>JS Bubbles loading ...</h1>";
+			document.getElementsByTagName("body")[0].appendChild(blackout);
+		</script>
+		<!-- End of preloader -->
+		<header>
+			<h1 id="gameTitle">JS Bubbles <img src="images/jsb_logo.png" id="jsbLogoIcon" alt="JSBubbles Logo" /></h1>
+			<ul id="gameTopMenu">
+				<li id="boardPanelSwitchBtn"><span class="strings.game">Game:</span> <span id="gameTypeValue"></span></li>
+				<li id="commentsSwitchBtn" class="strings.comments">Comments</li>
+				<li id="optionsSwitchBtn" class="strings.settings">Settings</li>
+				<li id="resultsSwitchBtn" class="strings.scores">Scores</li>
+				<li id="helpSwitchBtn" class="strings.about">About</li>
+			</ul>
+		</header>
+		<div id="prevIcon"><div><img src="images/themes/metro/Return.png"/></div></div>
+		<div id="nextIcon"><div><img src="images/themes/metro/Next.png"/></div></div>
+		<!-- GAME AREA -->
+		<div id="viewPort">
+			<div id="appContainer">
+				<div class="panelsArea">
+					<!-- narzędzia społecznościowe -->
+					<div class="panel" id="socialToolsPanel">
+						<div class="panelContent">
+							<h2 class="strings.socfan">If you're a fan of social networking:</h2>
+							<!-- AddThis Button BEGIN -->
+							<div class="addthis_toolbox addthis_default_style addthis_32x32_style">
+								<a class="addthis_button_facebook"></a>
+								<a class="addthis_button_twitter"></a>
+								<a class="addthis_button_wykop"></a>
+								<a class="addthis_button_blip"></a>
+								<a class="addthis_button_email"></a>
+								<a class="addthis_button_favorites"></a>
+								<a class="addthis_button_compact"></a>
+							</div>
+							<!-- AddThis Button END -->
 						</div>
-						<!-- AddThis Button END -->
 					</div>
-				</div>
-				<div id="boardPanel" class="panel">
-					<div class="panelContent" id="gameArea">
+					<div id="boardPanel" class="panel">
+						<div class="panelContent" id="gameArea">
 							<!-- obszar na magazy kul (zależnie od typu gry) -->
 							<div id="storeArea">
 							</div>
@@ -70,207 +61,205 @@
 							</div>
 							<p id="timeToMove" class="scoreStatsData" title="Get extra points for a quick game"><label class="strings.fastPoints">Fast points</label> <span id="timeToMoveValue"></span></p>
 							<p id="selectedScore" class="scoreStatsData"><label class="strings.points">Points:</label> <span id="scoreValue">0</span></p>
-							<p id="totalScore" class="scoreStatsData"><label class="strings.gameScore">Game score:</span> <span id="totalScoreValue">0</label></p>
+							<p id="totalScore" class="scoreStatsData"><label class="strings.gameScore">Game score:</label> <span id="totalScoreValue">0</span></p>
 							<div id="registerForm">
 								<h2 class="strings.register">Registration</h2>
 								<p class="strings.nameQuestion">If you want to store your result on server please fill your name (nickname).</p>
 								<form>
 									<p><label for="playerNameInput" class="strings.enterName">Enter your name</label>
-									<input type="text" id="playerNameInput" />
-									<input type="button" value="Save" disabled="true" id="saveBtn" class="strings.save" />
-									<input type="reset" value="Cancel" /></p>
+										<input type="text" id="playerNameInput" />
+										<input type="button" value="Save" disabled="true" id="saveBtn" class="strings.save" />
+										<input type="reset" value="Cancel" /></p>
 								</form>
 							</div>
-					</div>
-					<!-- narzędzia gry -->
-					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo" title="Undo move" />
-						<input type="image" src="images/themes/metro/NewGame.png" id="newGameBtn" alt="New game" title="New game" />
+						</div>
+						<!-- narzędzia gry -->
+						<div class="panelButtons">
+							<input type="image" src="images/themes/metro/UndoDisabled.png" id="undoBtn" alt="Undo" title="Undo move" />
+							<input type="image" src="images/themes/metro/NewGame.png" id="newGameBtn" alt="New game" title="New game" />
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div class="panelsArea">
-				<div id="disqusPanel" class="panel">
-					<div class="panelContent">
-						<div id="disqus_thread"></div>
-						<script type="text/javascript">
-							/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-							var disqus_shortname = 'kulki'; // required: replace example with your forum shortname
-							var disqus_developer = 1; // developer mode is on
-							/* * * DON'T EDIT BELOW THIS LINE * * */
-							(function() {
-								var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-								dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-								(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-							})();
-						</script>
-						<noscript><p>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></p></noscript>
-						<p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
+				<div class="panelsArea">
+					<div id="disqusPanel" class="panel">
+						<div class="panelContent">
+							<div id="disqus_thread"></div>
+							<script type="text/javascript">
+								/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+								var disqus_shortname = 'kulki'; // required: replace example with your forum shortname
+								var disqus_developer = 1; // developer mode is on
+								/* * * DON'T EDIT BELOW THIS LINE * * */
+								(function() {
+									var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+									dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+									(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+								})();
+							</script>
+							<noscript><p>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></p></noscript>
+							<p><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a></p>
+						</div>
 					</div>
 				</div>
-			</div>
-			<!-- panele ustawień gry -->
-			<div class="panelsArea">
-				<div id="controlPanel" class="panel">
-					<div class="panelContent" id="options">
-						<p>
-							<label for="boardDimensionId" class="strings.boardSize">Board size:</label>
-							<select name="boardDimension" id="boardDimensionId">
-							</select>
-						</p>
-						<p class="strings.gameType">Game type:</p>
-						<div>
-							<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gm_type1" class="gameTypeIcon" />
-							<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gm_type2" class="gameTypeIcon" />
-							<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gm_type3" class="gameTypeIcon" />
-							<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gm_type4" class="gameTypeIcon" />
+				<!-- panele ustawień gry -->
+				<div class="panelsArea">
+					<div id="controlPanel" class="panel">
+						<div class="panelContent" id="options">
+							<p>
+								<label for="boardDimensionId" class="strings.boardSize">Board size:</label>
+								<select name="boardDimension" id="boardDimensionId">
+								</select>
+							</p>
+							<p class="strings.gameType">Game type:</p>
+							<div>
+								<input type="image" src="images/empty.png" value="Standard" title="Choose a game type: Standard" id="gm_type1" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Compressive" value="Compressive" id="gm_type2" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Add balls" value="Add balls" id="gm_type3" class="gameTypeIcon" />
+								<input type="image" src="images/empty.png" title="Choose a game type: Add balls and compress" value="Add balls and compress" id="gm_type4" class="gameTypeIcon" />
+							</div>
+							<div style="clear: both;" id="boardViewTypeSelector">
+								<p class="strings.boardType">Choose board type:</p>
+								<label><input type="radio" name="point_type" value="bools" checked="checked" id="pointTypeBools" /><img src="images/red_24.png" alt="Bools" /></label>
+								<label><input type="radio" name="point_type" value="squares" id="pointTypeSquares"  /><img alt="Squares" src="images/square.png" /></label>
+							</div>
+							<div style="clear: both;">
+								<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode" class="strings.noselect">Select before remove</label>
+							</div>
+							<!-- <div style="clear: both;" id="boardViewTypeSelector">
+								<label class="strings.selectLanguage">Language:</label>
+								<select name="lang" id="langSelector">
+									<option value="en" >English</option>
+									<option value="pl" >Polski</option>
+								</select>
+							</div>
+							-->
 						</div>
-						<div style="clear: both;" id="boardViewTypeSelector">
-							<p class="strings.boardType">Choose board type:</p>
-							<label><input type="radio" name="point_type" value="bools" checked="checked" id="pointTypeBools" /><img src="images/red_24.png" alt="Bools" /></label>
-							<label><input type="radio" name="point_type" value="squares" id="pointTypeSquares"  /><img alt="Squares" src="images/square.png" /></label>
+						<div class="panelButtons">
+							<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close" id="settingsOkBtn" />
 						</div>
-						<div style="clear: both;">
-							<input type="checkbox" value="1" checked="checked" id="oneClickMode" /><label for="oneClickMode" class="strings.noselect">Select before remove</label>
-						</div>
-						<!-- <div style="clear: both;" id="boardViewTypeSelector">
-							<label class="strings.selectLanguage">Language:</label>
-							<select name="lang" id="langSelector">
-								<option value="en" >English</option>
-								<option value="pl" >Polski</option>
-							</select>
-						</div>
-						-->
-					</div>
-					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/Ok.png" alt="OK" title="Save and close" id="settingsOkBtn" />
-					</div>
-				</div>
-			</div>
-			<!-- panele wyników gry -->
-			<div class="panelsArea">
-				<div id="scorePanel" class="panel">
-					<div class="panelContent">
-						<h2 id="scoredGameType"><label class="strings.gameMode">Game mode:</label> <span id="gameTypeName">0</span></h2>
-						<div id="playerName" class="scoreStatsData">
-							<img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />You: <span id="playerNameValue"></span><!--<input type="button" value="Change" id="playerIdChange" />--></div>
-						<div id="maxScore" class="scoreStatsData"><label class="strings.bestScore">Best score:</label> <span id="maxScoreValue">0</span></div>
-						<div id="playedGames" class="scoreStatsData"><label class="strings.gamesNo">Games:</label> <span id="playedGamesValue">0</span></div>
-						<div id="avgScore" class="scoreStatsData"><label class="strings.avgScore">Avarange score:</label> <span id="avgScoreValue">0</span></div>
-						<hr />
-						<h2 class="strings.results">Your results</h2>
-						<table id="resultsStats">
-							<tr id="resultsStatsHeader">
-								<th class="strings.resultsGameType">
-									Game type
-								</th>
-								<th class="strings.resultsMaxType">
-									Max result
-								</th>
-								<th class="strings.resultsGamesNo">
-									Games
-								</th>
-								<th class="strings.resultsAvgScore">
-									Avg result
-								</th>
-							</tr>
-						</table>
-						<script id="resultsTable" type="text/x-jquery-tmpl">
-						<tr>
-							<td>${gameType}</td>
-							<td>${max}</td>
-							<td>${games}</td>
-							<td>${avg}</td>
-						</tr>
-						</script>
-					</div>
-					<div class="panelButtons">
-						<input type="image" src="images/themes/metro/Remove.png" title="Clear results" value="Clear" id="scoreClearBtn" />
 					</div>
 				</div>
-				<div class="panel" id="topTenPanel">
-					<div class="panelContent">
-						<h2 class="strings.topResults">Top results</h2>
-						<div id="topTenBlock">
-							<table id="topTenStats">
-								<colgroup>
-									<col />
-									<col align="right"/>
-								</colgroup>
-								<tr id="topTenStatsHader">
+				<!-- panele wyników gry -->
+				<div class="panelsArea">
+					<div id="scorePanel" class="panel">
+						<div class="panelContent">
+							<h2 id="scoredGameType"><label class="strings.gameMode">Game mode:</label> <span id="gameTypeName">0</span></h2>
+							<div id="playerName" class="scoreStatsData">
+								<img src="images/user7.png" alt="Best score" style="vertical-align: middle; margin-right: 5px;" />You: <span id="playerNameValue"></span><!--<input type="button" value="Change" id="playerIdChange" />--></div>
+							<div id="maxScore" class="scoreStatsData"><label class="strings.bestScore">Best score:</label> <span id="maxScoreValue">0</span></div>
+							<div id="playedGames" class="scoreStatsData"><label class="strings.gamesNo">Games:</label> <span id="playedGamesValue">0</span></div>
+							<div id="avgScore" class="scoreStatsData"><label class="strings.avgScore">Avarange score:</label> <span id="avgScoreValue">0</span></div>
+							<hr />
+							<h2 class="strings.results">Your results</h2>
+							<table id="resultsStats">
+								<tr id="resultsStatsHeader">
 									<th class="strings.resultsGameType">
 										Game type
 									</th>
 									<th class="strings.resultsMaxType">
 										Max result
 									</th>
-									<th class="strings.playerName">
-										Player
+									<th class="strings.resultsGamesNo">
+										Games
+									</th>
+									<th class="strings.resultsAvgScore">
+										Avg result
 									</th>
 								</tr>
 							</table>
-							<script id="topTenStatsScript" type="text/x-jquery-tmpl">
-							<tr>
-								<td>${game}</td>
-								<td>${max_result}</td>
-								<td>${player}</td>
-							</tr>
-							</script>
+							<script id="resultsTable" type="text/x-jquery-tmpl">
+								<tr>
+									<td>${gameType}</td>
+									<td>${max}</td>
+									<td>${games}</td>
+									<td>${avg}</td>
+								</tr>
+								</script>
+							</div>
+							<div class="panelButtons">
+								<input type="image" src="images/themes/metro/Remove.png" title="Clear results" value="Clear" id="scoreClearBtn" />
+							</div>
+						</div>
+						<div class="panel" id="topTenPanel">
+							<div class="panelContent">
+								<h2 class="strings.topResults">Top results</h2>
+								<div id="topTenBlock">
+									<table id="topTenStats">
+										<colgroup>
+											<col />
+											<col align="right"/>
+										</colgroup>
+										<tr id="topTenStatsHader">
+											<th class="strings.resultsGameType">
+												Game type
+											</th>
+											<th class="strings.resultsMaxType">
+												Max result
+											</th>
+											<th class="strings.playerName">
+												Player
+											</th>
+										</tr>
+									</table>
+									<script id="topTenStatsScript" type="text/x-jquery-tmpl">
+										<tr>
+											<td>${game}</td>
+											<td>${max_result}</td>
+											<td>${player}</td>
+										</tr>
+									</script>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- panele o grze i pomocy -->
+					<div class="panelsArea">
+						<div id="helpPanel" class="panel">
+							<div class="panelContent">
+								<p id="gameVersion"><label class="strings.version">version:</label> </p>								<p style="margin-top: 20px; clear: both;" class="strings.author">Author: <strong>Jarosław Wasilewski</strong></p>
+								<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
+								<p style="margin-top: 20px;"><a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" /></a></p>
+								<p><a href="http://code.google.com/p/js-bubbles/" target="_blank" class="strings.visitWebPage">Visit project page on Google Code</a></p>
+								<p><a href="http://code.google.com/p/js-bubbles/issues/entry" class="strings.sendIssue">Send an issue</a></p>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<!-- panele o grze i pomocy -->
-			<div class="panelsArea">
-				<div id="helpPanel" class="panel">
-					<div class="panelContent">
-						<p id="gameVersion"><label class="strings.version">version:</label> </p>
-						<p style="margin-top: 20px; clear: both;" class="strings.author">Author: <strong>Jarosław Wasilewski</strong></p>
-						<p>e-mail: <a href="mailto:orajo@windowslive.com">orajo@windowslive.com</a></p>
-						<p style="margin-top: 20px;"><a href="http://twitter.com/orajo" title="Follow me on Twitter" target="_blank"><img src="images/twitter.png" alt="Follow me on Twitter" /></a></p>
-						<p><a href="http://code.google.com/p/js-bubbles/" target="_blank" class="strings.visitWebPage">Visit project page on Google Code</a></p>
-						<p><a href="http://code.google.com/p/js-bubbles/issues/entry" class="strings.sendIssue">Send an issue</a></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script type="text/javascript" src="scripts/game-common.js"></script>
-	<script type="text/javascript" src="scripts/jquery-1.7.min.js"></script>
-	<script type="text/javascript" src="scripts/storage.js"></script>
-	<script type="text/javascript" src="scripts/jquery.tmpl.min.js"></script>
-	<script type="text/javascript" src="scripts/jquery.ezCookie_0.8.0.js" async="true"></script>
-	<script type="text/javascript" src="scripts/jquery.jnotify.jw.js" async="true"></script>
-	<script type="text/javascript" src="scripts/game-options.js"></script>
-	<script type="text/javascript" src="scripts/game-stats.js"></script>
-	<script type="text/javascript" src="scripts/game-ui.js"></script>
-	<script type="text/javascript" src="scripts/game-core.js"></script>
+			<script type="text/javascript" src="scripts/game-common.js"></script>
+			<script type="text/javascript" src="scripts/jquery-1.7.min.js"></script>
+			<script type="text/javascript" src="scripts/storage.js"></script>
+			<script type="text/javascript" src="scripts/jquery.tmpl.min.js"></script>
+			<script type="text/javascript" src="scripts/jquery.ezCookie_0.8.0.min.js" async="true"></script>
+			<script type="text/javascript" src="scripts/jquery.jnotify.jw.js" async="true"></script>
+			<script type="text/javascript" src="scripts/game-options.js"></script>
+			<script type="text/javascript" src="scripts/game-stats.js"></script>
+			<script type="text/javascript" src="scripts/game-ui.js"></script>
+			<script type="text/javascript" src="scripts/game-core.js"></script>
 
-	<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4e9200752fd238bc" async="true"></script>
-	<script type="text/javascript">
-		var addthis_config =
-		{
-		   ui_click: true
-		}
-	</script>
-	<script type="text/javascript">
+			<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4e9200752fd238bc" async="true"></script>
+			<script type="text/javascript">
+				var addthis_config =
+					{
+					ui_click: true
+				}
+			</script>
+			<script type="text/javascript">
 
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-19953870-1']);
-		_gaq.push(['_trackPageview']);
+				var _gaq = _gaq || [];
+				_gaq.push(['_setAccount', 'UA-19953870-1']);
+				_gaq.push(['_trackPageview']);
 
-		(function () {
-			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		})();
+				(function () {
+					var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+					ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+				})();
 
-	</script>
-	<script type="text/javascript" src="scripts/jquery-ui-1.8.16.custom.min.js"></script>
-	<script type="text/javascript">
-		$("#testArea").draggable({ cursor: 'move', opacity: 0.5 });
-	</script>
-
-</body>
+			</script>
+			<script type="text/javascript" src="scripts/jquery-ui-1.8.16.custom.min.js"></script>
+			<script type="text/javascript">
+				$("#testArea").draggable({ cursor: 'move', opacity: 0.5 });
+			</script>
+	</body>
 </html>

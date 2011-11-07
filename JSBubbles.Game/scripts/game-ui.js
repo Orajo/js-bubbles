@@ -350,15 +350,7 @@ function loadResources(defLang, lang) {
 		}
 	}
 
-	// test czy już wczesniej zostały załadowane zasoby w innym języku
-	var needReload = false;
-	try {
-		needReload = (resources.lang != lang);
-	}
-	catch (exp) {
-
-	}
-	if (needReload || defLang != lang) {
+	if (defLang != lang) {
 		ga.onload = function(){
 			$('*[class*="strings."]').each(function () {
 				var classNames = this.getAttribute("class");
