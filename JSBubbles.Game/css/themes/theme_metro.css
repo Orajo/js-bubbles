@@ -496,16 +496,16 @@ table#topTenStats td, table#topTenStats th {
 
 #modalBackground {
 	background-color: black;
-    bottom: 0;
-    left: 0;
-    opacity: 0.8;
-    position: fixed;
-    right: 100%;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
+	bottom: 0;
+	left: 0;
+	opacity: 0.8;
+	position: fixed;
+	right: 100%;
+	top: 0;
+	width: 100%;
+	z-index: 1000;
 	padding: 15% 0 0 0;
-    text-align: center;
+	text-align: center;
 	font-size: xx-large;
 	color: white;
 }
