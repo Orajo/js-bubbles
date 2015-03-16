@@ -1,6 +1,6 @@
 JsBubbles is a JavaScript implementation of famous and "number on" game "Bubblets" (Bubble Breaker) written by oopdreams software, inc. 
 
-*Play now!* http://orajo.dicoria.com/kulki/
+**Play now!** http://orajo.dicoria.com/kulki/
 
 # Changelog
 
